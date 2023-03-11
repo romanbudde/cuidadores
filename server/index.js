@@ -55,6 +55,22 @@ app.get("/cuidadores/:id", async(req, res) => {
     }
 });
 
+app.put("/cuidadores/:id", async(req, res) => {
+    try {
+        const {id} = req.params;
+        const {description} = req.body;
+        const updateUser = await pool.query(
+            "UPDATE users SET description = $1 WHERE id = $2", 
+            [description, id]
+        );
+
+        res.json("User was updated successfully.")
+    }
+    catch (error) {
+        console.error(error.message);
+    }
+});
+
 
 app.listen(5000, () => {
     console.log('server started on port 5000.');

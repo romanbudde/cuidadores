@@ -98,6 +98,8 @@ app.delete("/cuidadores/:id", async(req, res) => {
     }
 });
 
-app.listen(5000, () => {
+const port = process.env.PORT; 
+
+app.listen(port, () => {
     console.log('server started on port 5000.');
 });

@@ -2,6 +2,8 @@ import React, { Fragment, useEffect, useState } from 'react';
 
 const EditUser = ({ user, isVisible, onClose }) => {
     
+    console.log(user);
+    
     const [description, setDescription] = useState(user.description);
 
     if(!isVisible) return null;
@@ -11,7 +13,7 @@ const EditUser = ({ user, isVisible, onClose }) => {
         try {
             const bodyJSON = { description };
             const response = await fetch(
-                `http://localhost:5000/cuidadores/${user.id}`, 
+                `http://localhost:5000/cuidadores/${user.id}`,
                 {
                     "method": "PUT",
                     "headers": "Content-Type: application/json",
@@ -32,7 +34,7 @@ const EditUser = ({ user, isVisible, onClose }) => {
 
             <div className='fixed inset-0 bg-black-500 z-50 flex justify-center items-center backdrop-opacity-50'>
                 <div className='flex flex-col'>
-                    <button className='text-black text-xl place-self-end' onClick={ () => onClose }> 
+                    <button className='text-black text-xl place-self-end' onClick={ onClose }> 
                     X
                     </button>
                     <div className='bg-white p-2 rounded flex flex-col gap-5'>

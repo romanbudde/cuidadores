@@ -1,10 +1,16 @@
 import React, { Fragment, useEffect, useState } from 'react';
+import { unstable_renderSubtreeIntoContainer } from 'react-dom';
 
 import EditUser from './EditUser';
 
 const ListUsers = () => {
 
     const [users, setUsers] = useState([]);
+    const [showEditModal, setShowEditModal] = useState(false);
+
+    const toggleModal = () => {
+        setShowEditModal(!showEditModal);
+    }
 
     // delete user function
     const deleteUser = async (id) => {
@@ -33,13 +39,14 @@ const ListUsers = () => {
         }
     };
 
+    // when page loads, get all Users
     useEffect(() => {
         getUsers();
     }, []);
 
     return (
         <Fragment>
-            <table className='w-full text-sm text-left text-gray-500 dark:text-gray-400 mt-10 text-center'>
+            <table className='w-full text-sm text-gray-500 dark:text-gray-400 mt-10 text-center'>
                 <thead className='text-md text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400'>
                     <tr>
                         <th>User ID</th>
@@ -55,7 +62,18 @@ const ListUsers = () => {
                             <td className='p-2'>{user.id}</td>
                             <td className='p-2'>{user.description}</td>
                             <td className='p-2'>
-                                <EditUser user={user} onClick={() => {console.log(user);}}/>
+                                <button
+                                    className='bg-transparent hover:bg-blue-500 text-blue-600 font-semibold hover:text-white py-2 px-4 border border-blue-600 hover:border-transparent rounded'
+                                    onClick={toggleModal}
+                                >
+                                    Edit
+                                </button>
+                                <EditUser
+                                    key={user.id}
+                                    user={user}
+                                    isVisible={showEditModal}
+                                    onClose={toggleModal}
+                                />
                             </td>
                             <td className='p-2'>
                                 <button

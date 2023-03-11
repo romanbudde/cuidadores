@@ -1,44 +1,56 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import { Button, Modal } from 'flowbite-react';
 
-const EditUser = ({ user }) => {
+const EditUser = ({ user, isVisible, onClose }) => {
     
     const [description, setDescription] = useState(user.description);
 
+    if(!isVisible) return null;
+
+    const updateDescription = async (e) => {
+        e.preventDefault();
+        try {
+            const bodyJSON = { description };
+            const response = await fetch(
+                `http://localhost:5000/cuidadores/${user.id}`, 
+                {
+                    "method": "PUT",
+                    "headers": "Content-Type: application/json",
+                    "body": JSON.stringify(bodyJSON)
+                }
+            );
+
+            window.location = '/';
+
+        } catch (error) {
+            console.error(error.message);
+        }
+    };
+
     return (
         <Fragment>
-           <Button className='flex justify-center m-0'>
-                Toggle modal
-            </Button>
-            <Modal
-                show={false}
-                
-            >
-                <Modal.Header>
-                    Terms of Service
-                </Modal.Header>
-                <Modal.Body>
-                    <div className="space-y-6">
-                        <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                        With less than a month to go before the European Union enacts new consumer privacy laws for its citizens, companies around the world are updating their terms of service agreements to comply.
-                        </p>
-                        <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                        The European Union's General Data Protection Regulation (G.D.P.R.) goes into effect on May 25 and is meant to ensure a common set of data rights in the European Union. It requires organizations to notify users as soon as possible of high-risk data breaches that could personally affect them.
-                        </p>
+            {/* <h5>Edit user</h5> */}
+
+            <div className='fixed inset-0 bg-black-500 z-50 flex justify-center items-center backdrop-opacity-50'>
+                <div className='flex flex-col'>
+                    <button className='text-black text-xl place-self-end' onClick={ () => onClose }> 
+                    X
+                    </button>
+                    <div className='bg-white p-2 rounded flex flex-col gap-5'>
+                        <input 
+                            className='rounded'
+                            type="text"
+                            value={description}
+                            onChange={e => setDescription(e.target.value)}
+                        />
+                        <button 
+                            className='bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded'
+                            onClick={(e) => updateDescription(e)}
+                        >
+                            Save user
+                        </button>
                     </div>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button >
-                        I accept
-                    </Button>
-                    <Button
-                        color="gray"
-                        
-                    >
-                        Decline
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+                </div>
+            </div>
         </Fragment>
     );
 }

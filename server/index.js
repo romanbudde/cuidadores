@@ -43,6 +43,18 @@ app.get("/cuidadores", async(req, res) => {
 });
 
 // get individual - cuidador
+app.get("/cuidadores/:id", async(req, res) => {
+    try {
+        const {id} = req.params;
+        const user = await pool.query("SELECT * FROM users WHERE id = $1", [id]);
+
+        res.json(user.rows[0]);
+    }
+    catch (error) {
+        console.error(error.message);
+    }
+});
+
 
 app.listen(5000, () => {
     console.log('server started on port 5000.');

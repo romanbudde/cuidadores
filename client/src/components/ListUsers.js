@@ -1,12 +1,22 @@
 import React, { Fragment, useEffect, useState } from 'react';
 
+import EditUser from './EditUser';
+
 const ListUsers = () => {
 
     const [users, setUsers] = useState([]);
 
     // delete user function
-    const deleteUser = async () => {
+    const deleteUser = async (id) => {
+        try {
+            const deleteUser = await fetch(`http://localhost:5000/cuidadores/${id}`, {
+                method: "DELETE"
+            });
 
+            setUsers(users.filter( user => user.id !== id));
+        } catch (error) {
+            console.error(error.message);
+        }
     }
 
     // get all users function
@@ -45,15 +55,11 @@ const ListUsers = () => {
                             <td className='p-2'>{user.id}</td>
                             <td className='p-2'>{user.description}</td>
                             <td className='p-2'>
-                                <button
-                                    className='bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded'
-                                >
-                                    Edit
-                                </button>
+                                <EditUser user={user} onClick={() => {console.log(user);}}/>
                             </td>
                             <td className='p-2'>
                                 <button
-                                    className='bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded'
+                                    className='bg-transparent hover:bg-red-500 text-red-600 font-semibold hover:text-white py-2 px-4 border border-red-600 hover:border-transparent rounded'
                                     onClick={() => deleteUser(user.id)}
                                 >
                                     Disable

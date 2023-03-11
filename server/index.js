@@ -18,7 +18,7 @@ app.post('/cuidadores', async(req, res) => {
     try {
         const { description } = req.body;
         const newCuidador = await pool.query(
-            "INSERT INTO users (description) VALUES($1)", 
+            "INSERT INTO users (description) VALUES($1) RETURNING *", 
             [description]
          );
 
@@ -30,7 +30,17 @@ app.post('/cuidadores', async(req, res) => {
         console.error(error.message);
     }
 });
+
 // get all - cuidadores
+app.get("/cuidadores", async(req, res) => {
+    try {
+        const allCuidadores = await pool.query("SELECT * from users")
+        res.json(allCuidadores.rows);
+    }
+    catch (error) {
+        console.error(error.message);
+    }
+});
 
 // get individual - cuidador
 

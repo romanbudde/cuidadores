@@ -22,7 +22,6 @@ app.post('/cuidadores', async(req, res) => {
             [description]
          );
 
-        console.log(req.body);
         // res.json(req.body);
         res.json(newCuidador);
     }
@@ -42,7 +41,7 @@ app.get("/cuidadores", async(req, res) => {
     }
 });
 
-// get individual - cuidador
+// get (by id) individual - cuidador
 app.get("/cuidadores/:id", async(req, res) => {
     try {
         const {id} = req.params;
@@ -55,6 +54,7 @@ app.get("/cuidadores/:id", async(req, res) => {
     }
 });
 
+// update individual - cuidador
 app.put("/cuidadores/:id", async(req, res) => {
     try {
         const {id} = req.params;
@@ -64,13 +64,38 @@ app.put("/cuidadores/:id", async(req, res) => {
             [description, id]
         );
 
-        res.json("User was updated successfully.")
+        if(updateUser.rowCount > 0){
+            res.json('User has been updated successfully.');
+        }
+        else {
+            res.json('Oops! No user with given ID (' + id + ') has been found.');
+        }
     }
     catch (error) {
         console.error(error.message);
     }
 });
 
+// delete (by id) individual - cuidador
+app.delete("/cuidadores/:id", async(req, res) => {
+    try {
+        const {id} = req.params;
+        const deleteUser = await pool.query(
+            "DELETE FROM users WHERE id = $1",
+            [id]
+        );
+
+        if(deleteUser.rowCount > 0){
+            res.json('User with ID ' + id + ' has been deleted successfully.');
+        }
+        else {
+            res.json('Oops! No user with given ID (' + id + ') has been found.');
+        }
+    }
+    catch (error) {
+        console.error(error.message);
+    }
+});
 
 app.listen(5000, () => {
     console.log('server started on port 5000.');

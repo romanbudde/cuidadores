@@ -9,11 +9,9 @@ const ListUsers = () => {
     const [showAddUserModal, setShowAddUserModal] = useState(false);
 
     const handleAddUserModalOpen = () => {
-        console.log('----- addUserModalOpen -----');
         setShowAddUserModal(true);
     }
-    const handleAddUserModalClose = () => { 
-        console.log('----- addUserModalClose -----');
+    const handleAddUserModalClose = () => {
         setShowAddUserModal(false); 
     }
 
@@ -47,11 +45,6 @@ const ListUsers = () => {
     useEffect(() => {
         getUsers();
     }, []);
-
-    console.log('showAddUserModal in ListUsers');
-    console.log(showAddUserModal);
-    console.log('onClose in listUsers');
-    console.log(handleAddUserModalClose);
 
     return (
         <Fragment>

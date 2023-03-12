@@ -1,5 +1,4 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import { unstable_renderSubtreeIntoContainer } from 'react-dom';
 import AddUser from './AddUser';
 import User from './User';
 import EditUser from './EditUser';
@@ -7,10 +6,15 @@ import EditUser from './EditUser';
 const ListUsers = () => {
 
     const [users, setUsers] = useState([]);
-    const [showEditModal, setShowEditModal] = useState(false);
+    const [showAddUserModal, setShowAddUserModal] = useState(false);
 
-    const toggleModal = () => {
-        setShowEditModal(!showEditModal);
+    const handleAddUserModalOpen = () => {
+        console.log('----- addUserModalOpen -----');
+        setShowAddUserModal(true);
+    }
+    const handleAddUserModalClose = () => { 
+        console.log('----- addUserModalClose -----');
+        setShowAddUserModal(false); 
     }
 
     // delete user function
@@ -44,9 +48,26 @@ const ListUsers = () => {
         getUsers();
     }, []);
 
+    console.log('showAddUserModal in ListUsers');
+    console.log(showAddUserModal);
+    console.log('onClose in listUsers');
+    console.log(handleAddUserModalClose);
+
     return (
         <Fragment>
-            <AddUser users={users} setUsers={setUsers}/>
+            <AddUser 
+                users={users}
+                setUsers={setUsers}
+                show={showAddUserModal}
+                onClose={handleAddUserModalClose}
+            />
+            <h1 className='mt-10 text-3xl text-center'>Users list</h1>
+            <button
+                className='ml-10 bg-transparent hover:bg-blue-500 text-blue-600 font-semibold hover:text-white py-2 px-4 border border-blue-600 hover:border-transparent rounded'
+                onClick={handleAddUserModalOpen}
+            >
+                Add new user
+            </button>
             <table className='w-full text-sm text-gray-500 dark:text-gray-400 mt-10 text-center'>
                 <thead className='text-md text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400'>
                     <tr>

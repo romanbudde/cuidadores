@@ -30,6 +30,8 @@ const ListUsers = () => {
         try {
             const response = await fetch("http://localhost:5000/cuidadores/");
             const jsonData = await response.json();
+
+            console.log('-------    getUsers:    -------');
             console.log(jsonData);
 
             setUsers(jsonData);

@@ -1,6 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { unstable_renderSubtreeIntoContainer } from 'react-dom';
-
+import AddUser from './AddUser';
+import User from './User';
 import EditUser from './EditUser';
 
 const ListUsers = () => {
@@ -31,9 +32,6 @@ const ListUsers = () => {
             const response = await fetch("http://localhost:5000/cuidadores/");
             const jsonData = await response.json();
 
-            console.log('-------    getUsers:    -------');
-            console.log(jsonData);
-
             setUsers(jsonData);
 
         } catch (error) {
@@ -48,6 +46,7 @@ const ListUsers = () => {
 
     return (
         <Fragment>
+            <AddUser users={users} setUsers={setUsers}/>
             <table className='w-full text-sm text-gray-500 dark:text-gray-400 mt-10 text-center'>
                 <thead className='text-md text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400'>
                     <tr>
@@ -60,32 +59,15 @@ const ListUsers = () => {
                 <tbody>
                     {/* Use a white background for odd rows, and slate-50 for even rows */}
                     {users.map( user => (
-                        <tr key={user.id} className="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
-                            <td className='p-2'>{user.id}</td>
-                            <td className='p-2'>{user.description}</td>
-                            <td className='p-2'>
-                                <button
-                                    className='bg-transparent hover:bg-blue-500 text-blue-600 font-semibold hover:text-white py-2 px-4 border border-blue-600 hover:border-transparent rounded'
-                                    onClick={toggleModal}
-                                >
-                                    Edit
-                                </button>
-                                <EditUser
-                                    key={user.id}
-                                    user={user}
-                                    isVisible={showEditModal}
-                                    onClose={toggleModal}
-                                />
-                            </td>
-                            <td className='p-2'>
-                                <button
-                                    className='bg-transparent hover:bg-red-500 text-red-600 font-semibold hover:text-white py-2 px-4 border border-red-600 hover:border-transparent rounded'
-                                    onClick={() => deleteUser(user.id)}
-                                >
-                                    Disable
-                                </button>
-                            </td>
-                        </tr>
+
+                        <User 
+                            user={user}
+                            users={users}
+                            setUsers={setUsers}
+                            deleteUser = {deleteUser}
+                            key={user.id}
+                        />
+                        
                     ))}
                 </tbody>
             </table>

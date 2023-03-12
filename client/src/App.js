@@ -3,13 +3,13 @@ import React, { Fragment } from "react";
 import './App.css';
 
 // components
-import InputUser from './components/InputUser';
+import AddUser from './components/AddUser';
 import ListUsers from './components/ListUsers';
 
 const App = () => {
   return (
     <Fragment>
-        <InputUser />
+        {/* <AddUser /> */}
         <ListUsers />
     </Fragment>
   );

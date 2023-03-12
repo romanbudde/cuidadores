@@ -24,7 +24,7 @@ app.post('/cuidadores', async(req, res) => {
          );
 
         // res.json(req.body);
-        res.json(newCuidador);
+        res.json(newCuidador.rows[0]);
     }
     catch (error) {
         console.error(error.message);
@@ -66,7 +66,8 @@ app.put("/cuidadores/:id", async(req, res) => {
         );
 
         if(updateUser.rowCount > 0){
-            res.json('User has been updated successfully.');
+            res.json(updateUser);
+            // res.json('asd');
         }
         else {
             res.json('Oops! No user with given ID (' + id + ') has been found.');

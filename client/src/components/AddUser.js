@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from 'react';
 
-const InputUser = () => {
+const AddUser = (users) => {
 
     const [description, setDescription] = useState('');
 
@@ -8,20 +8,30 @@ const InputUser = () => {
         e.preventDefault();
         try {
             const body = {description};
-            console.log('description' + description);
+            let newUser = {};
             const response = await fetch("http://localhost:5000/cuidadores/", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify(body)
-            });
+            })
+                .then(response => response.json())
+                .then(result => {
+                    if(result.id){
+                        console.log('add user result: ');
+                        console.log(result);
+                        newUser = result;
+                    }
+                });
 
-            window.location = '/';
-            // console.log(response);
+            // console.log(response.json();
+
+            users.setUsers(newUser.id? [...users.users, newUser] : users);
+            // window.location = '/';
         }
         catch (error) {
-            console.error (error.message)
+            console.error (error.message);
         }
     }
 
@@ -47,4 +57,4 @@ const InputUser = () => {
     );
 }
 
-export default InputUser;
+export default AddUser;

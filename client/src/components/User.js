@@ -34,7 +34,7 @@ const User = ({ user, users, setUsers, deleteUser }) => {
                     users={users}
                     setUsers={setUsers}
                     show={showEditModal}
-                    onHide={handleClose}
+                    onClose={handleClose}
                 />
             </td>
             <td className='p-2'>

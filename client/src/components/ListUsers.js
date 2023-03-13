@@ -56,7 +56,7 @@ const ListUsers = () => {
             />
             <h1 className='mt-10 text-3xl text-center'>Users list</h1>
             <button
-                className='ml-10 bg-transparent hover:bg-blue-500 text-blue-600 font-semibold hover:text-white py-2 px-4 border border-blue-600 hover:border-transparent rounded'
+                className='ml-10 bg-transparent hover:bg-blue-500 text-green-500 font-semibold hover:text-white py-2 px-4 border border-green-600 hover:border-transparent rounded'
                 onClick={handleAddUserModalOpen}
             >
                 Add new user

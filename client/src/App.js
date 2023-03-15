@@ -1,18 +1,43 @@
 import React, { Fragment } from "react";
+import { BrowserRouter as Router, Switch, Route, Routes } from "react-router-dom";
+import Home from './routes/Home';
+import UsersListPage from './routes/UsersListPage';
 
 import './App.css';
 
 // components
 import AddUser from './components/AddUser';
 import ListUsers from './components/ListUsers';
+import User from "./components/User";
 
 const App = () => {
-  return (
-    <Fragment>
-        {/* <AddUser /> */}
-        <ListUsers />
-    </Fragment>
-  );
+  // return (
+  //   <Fragment>
+  //       <ListUsers />
+  //   </Fragment>
+  // );
+  return <div>
+    <Router>
+      <Routes>
+        <Route 
+          path="/"
+          element={
+            <>
+              { <Home />}
+            </>
+          } 
+        />
+        <Route 
+          path="/users"
+          element={
+            <>
+              { <UsersListPage /> }
+            </>
+          } 
+        />
+      </Routes>
+    </Router>
+  </div>
 }
 
 export default App;

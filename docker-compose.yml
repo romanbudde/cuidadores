@@ -1,0 +1,33 @@
+version: '3.4'
+
+services:
+    server:
+      build: ./server
+      container_name: node_server_container
+      ports:
+        - 5000:5000
+      volumes:
+        - ./server:/app
+      command: npm start
+    client:
+      build: ./client
+      container_name: client_container
+      # environment:
+      #   <<: *common-variables
+      #   NODE_PATH: src
+      ports:
+        - 3000:3000
+      volumes:
+        - ./client/src:/app/src
+      links:
+        - server
+      command: npm start
+    db:
+        image: postgres
+        restart: always
+        ports:
+          - "5432:5432"
+        environment:
+            POSTGRES_PASSWORD: 123456
+        volumes:
+            - ./scripts/db:/docker-entrypoint-initdb.d

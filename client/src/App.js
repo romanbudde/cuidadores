@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 import { BrowserRouter as Router, Switch, Route, Routes } from "react-router-dom";
-import Home from './routes/Home';
+import HomePage from './routes/HomePage';
 import UsersListPage from './routes/UsersListPage';
 
 import './App.css';
@@ -23,7 +23,7 @@ const App = () => {
           path="/"
           element={
             <>
-              { <Home />}
+              { <HomePage />}
             </>
           } 
         />

@@ -2,8 +2,8 @@ import React from 'react';
 
 const Home = () => {
   return (
-    <div>Home page route!</div>
-  );
+    <div>Home page component!</div>
+  )
 }
 
 export default Home;

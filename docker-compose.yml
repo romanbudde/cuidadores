@@ -23,11 +23,17 @@ services:
         - server
       command: npm start
     db:
-        image: postgres
-        restart: always
-        ports:
-          - "5432:5432"
-        environment:
-            POSTGRES_PASSWORD: 123456
-        volumes:
-            - ./scripts/db:/docker-entrypoint-initdb.d
+      image: postgres
+      restart: always
+      ports:
+        - "5432:5432"
+      environment:
+          POSTGRES_PASSWORD: 123456
+      volumes:
+          - ./scripts/db:/docker-entrypoint-initdb.d
+          # - ./scripts/db:/var/lib/postgresql/data
+    adminer:
+      image: adminer
+      restart: always
+      ports:
+        - 8080:8080

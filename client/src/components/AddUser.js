@@ -4,12 +4,15 @@ const AddUser = ( {users, setUsers, show, onClose} ) => {
 
     const [description, setDescription] = useState('');
     const [email, setEmail] = useState('');
+    const [userType, setUserType] = useState('');
 
     const onSubmitUser = async (e) => {
         console.log('----------------- onSubmitUser -------------- ');
         e.preventDefault();
         try {
-            const body = {description};
+            const body = {description, email, userType};
+            console.log(JSON.stringify(body));
+            console.log('---- end of body to be submitted ----');
             let newUser = {};
             const response = await fetch("http://localhost:5000/cuidadores/", {
                 method: "POST",
@@ -79,6 +82,21 @@ const AddUser = ( {users, setUsers, show, onClose} ) => {
                                     onChange={e => setDescription(e.target.value)}
                                     required
                                 />
+                            </div>
+                            <div className='flex flex-col'>
+                                <label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
+                                    User type
+                                </label>
+                                <select 
+                                    id="user_type"
+                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    onChange={e => setUserType(e.target.value)}
+                                >
+                                    <option defaultValue={userType}>Tipo de usuario</option>
+                                    <option value="0">Cliente</option>
+                                    <option value="1">Cuidador</option>
+                                    <option value="2">Admin</option>
+                                </select>
                             </div>
                             <button 
                                 type="submit"

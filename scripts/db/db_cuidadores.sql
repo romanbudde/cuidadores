@@ -24,9 +24,87 @@ CREATE DATABASE db_cuidadores;
 \connect db_cuidadores;
 
 --
--- Name: user_type; Type: TABLE; Schema: public; Owner: postgres
+-- Name: caregiver_score; Type: TABLE; Schema: public; Owner: postgres
 --
 
+CREATE TABLE public.caregiver_score (
+    id integer NOT NULL,
+    caregiver_id integer NOT NULL,
+    customer_id integer NOT NULL,
+    observation character(1) NOT NULL,
+    score real NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    modified_at timestamp without time zone NOT NULL
+);
+
+
+ALTER TABLE public.caregiver_score OWNER TO postgres;
+
+--
+-- Name: caregiver_score_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.caregiver_score_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.caregiver_score_id_seq OWNER TO postgres;
+
+--
+-- Name: caregiver_score_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.caregiver_score_id_seq OWNED BY public.caregiver_score.id;
+
+
+--
+-- Name: contract; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.contract (
+    id integer NOT NULL,
+    status character(1) NOT NULL,
+    start timestamp without time zone NOT NULL,
+    "end" timestamp without time zone NOT NULL,
+    customer_id integer NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    modified_at timestamp without time zone NOT NULL,
+    amount real NOT NULL
+);
+
+
+ALTER TABLE public.contract OWNER TO postgres;
+
+--
+-- Name: contract_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.contract_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.contract_id_seq OWNER TO postgres;
+
+--
+-- Name: contract_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.contract_id_seq OWNED BY public.contract.id;
+
+
+--
+-- Name: user_type; Type: TABLE; Schema: public; Owner: postgres
+--
 
 CREATE TABLE public.user_type (
     id integer,
@@ -85,10 +163,40 @@ ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
 
 
 --
+-- Name: caregiver_score id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.caregiver_score ALTER COLUMN id SET DEFAULT nextval('public.caregiver_score_id_seq'::regclass);
+
+
+--
+-- Name: contract id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.contract ALTER COLUMN id SET DEFAULT nextval('public.contract_id_seq'::regclass);
+
+
+--
 -- Name: users id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
+
+
+--
+-- Data for Name: caregiver_score; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.caregiver_score (id, caregiver_id, customer_id, observation, score, created_at, modified_at) FROM stdin;
+\.
+
+
+--
+-- Data for Name: contract; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.contract (id, status, start, "end", customer_id, created_at, modified_at, amount) FROM stdin;
+\.
 
 
 --
@@ -108,10 +216,40 @@ COPY public.users (id, description, name, last_name, password, mail, type, creat
 
 
 --
+-- Name: caregiver_score_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.caregiver_score_id_seq', 1, false);
+
+
+--
+-- Name: contract_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.contract_id_seq', 1, false);
+
+
+--
 -- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
 SELECT pg_catalog.setval('public.users_id_seq', 1, false);
+
+
+--
+-- Name: caregiver_score caregiver_score_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.caregiver_score
+    ADD CONSTRAINT caregiver_score_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: contract contract_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.contract
+    ADD CONSTRAINT contract_pkey PRIMARY KEY (id);
 
 
 --

@@ -17,11 +17,15 @@ app.use(express.json());
 // create - un cuidador
 app.post('/cuidadores', async(req, res) => {
     try {
-        const { description } = req.body;
+        console.log('---- backend ----');
+        console.log(req.body);
+        const { description, email, userType } = req.body;
+        // const { email } = req.body.email;
+        // const { userType } = req.body.userType;
         const newCuidador = await pool.query(
-            "INSERT INTO users (description) VALUES($1) RETURNING *", 
-            [description]
-         );
+            "INSERT INTO users (description, mail, type) VALUES($1, $2, $3) RETURNING *", 
+            [description, email, userType]
+        );
 
         // res.json(req.body);
         res.json(newCuidador.rows[0]);

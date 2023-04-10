@@ -16,15 +16,58 @@ const ListUsers = () => {
     }
 
     // delete user function
-    const deleteUser = async (id) => {
+    const disableUser = async (id) => {
         try {
-            const deleteUser = await fetch(`http://localhost:5000/cuidadores/${id}`, {
+            let disabledUser = {};
+            const disableUser = await fetch(`http://localhost:5000/cuidadores/${id}`, {
                 method: "DELETE"
-            });
+            })
+                .then(response => response.json());
 
-            setUsers(users.filter( user => user.id !== id));
+            console.log('disableUser: ');
+            console.log(disableUser.rowCount);
+
+            if(disableUser.rowCount > 0) {
+                setUsers(users.map((user) => user.id === id ? { ...user, enabled:false } : user));
+            }
+
         } catch (error) {
-            console.error(error.message);
+            console.error(error);
+        }
+    }
+
+    // enable user function
+    const enableUser = async (id, user) => {
+        try {
+            let bodyJSON = { 
+                description: user.description, 
+                email: user.mail, 
+                firstname: user.name, 
+                lastname: user.last_name, 
+                userType: user.type, 
+                enabled: true 
+            };
+            const enabledUser = await fetch(
+                `http://localhost:5000/cuidadores/${id}`,
+                {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(bodyJSON)
+                }
+            )
+                .then(response => response.json());
+
+            console.log('enabledUser: ');
+            console.log(enabledUser.id);
+
+            if(enabledUser.id) {
+                setUsers(users.map((user) => user.id === id ? { ...user, enabled:true } : user));
+            }
+
+        } catch (error) {
+            console.error(error);
         }
     }
 
@@ -66,8 +109,15 @@ const ListUsers = () => {
                     <tr>
                         <th>User ID</th>
                         <th>Description</th>
+                        <th>Name</th>
+                        <th>Lastname</th>
+                        <th>Email</th>
+                        <th>User Type</th>
+                        <th>Created at</th>
+                        <th>Modified at</th>
+                        <th>Status</th>
                         <th>Edit</th>
-                        <th>Delete</th>
+                        <th>Change Status</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -78,7 +128,8 @@ const ListUsers = () => {
                             user={user}
                             users={users}
                             setUsers={setUsers}
-                            deleteUser = {deleteUser}
+                            disableUser = {disableUser}
+                            enableUser = {enableUser}
                             key={user.id}
                         />
                         

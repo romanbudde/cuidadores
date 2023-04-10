@@ -3,16 +3,20 @@ import React, { Fragment, useEffect, useState } from 'react';
 const EditUser = ({ user, show, onClose, users, setUsers }) => {
 
     const [description, setDescription] = useState(user.description);
+    const [email, setEmail] = useState(user.mail);
+    const [firstname, setFirstname] = useState(user.name);
+    const [lastname, setLastname] = useState(user.last_name);
+    const [userType, setUserType] = useState(user.type);
 
     if(!show) return null;
 
-    const updateDescription = async (e) => {
-        console.log(description);
+    const updateUser = async (e) => {
+        // console.log(description);
         e.preventDefault();
         try {
-            const bodyJSON = { description };
+            const bodyJSON = { description, email, firstname, lastname, userType };
             const id = user.id;
-            const response = await fetch(
+            const userUpdate = await fetch(
                 `http://localhost:5000/cuidadores/${user.id}`,
                 {
                     method: "PUT",
@@ -21,16 +25,29 @@ const EditUser = ({ user, show, onClose, users, setUsers }) => {
                     },
                     body: JSON.stringify(bodyJSON)
                 }
-            );
+            )
+                .then(response => response.json())
 
             console.log('update response:');
-            console.log(response);
-
+            console.log(userUpdate);
+            
             let updatedUser = {
                 description: description,
+                mail: email,
+                name: firstname,
+                last_name: lastname,
+                type: userType,
+                created_at: userUpdate.created_at, 
+                modified_at: userUpdate.modified_at, 
                 id: id
             }
             
+            console.log('updatedUser:');
+            console.log(updatedUser);
+            console.log('user.id === id? :');
+            console.log(user.id === id ? 'true' : 'false');
+
+
             setUsers(users.map((user) => user.id === id ? updatedUser : user));
         } catch (error) {
             console.error(error.message);
@@ -72,8 +89,11 @@ const EditUser = ({ user, show, onClose, users, setUsers }) => {
                                 <input
                                     type="email"
                                     name="email"
-                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" 
+                                    value={email ? email : ''}
+                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                    onChange={e => setEmail(e.target.value)}
                                     placeholder="name@company.com"
+                                    required
                                 />
                             </div>
                             <div className='flex flex-col'>
@@ -86,11 +106,52 @@ const EditUser = ({ user, show, onClose, users, setUsers }) => {
                                     placeholder="The user's description"
                                     required/>
                             </div>
+                            <div className='flex flex-col'>
+                                <label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
+                                    User type
+                                </label>
+                                <select 
+                                    id="user_type"
+                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    onChange={e => setUserType(e.target.value)}
+                                >
+                                    <option defaultValue={userType}>Tipo de usuario</option>
+                                    <option value="0">Cliente</option>
+                                    <option value="1">Cuidador</option>
+                                    <option value="2">Admin</option>
+                                </select>
+                            </div>
+                            <div className='flex flex-col'>
+                                <label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
+                                    First Name
+                                </label>
+                                <input
+                                    type="text"
+                                    name="firstname"
+                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                    value={firstname ? firstname : ''}
+                                    onChange={e => setFirstname(e.target.value)}
+                                    required
+                                />
+                            </div>
+                            <div className='flex flex-col'>
+                                <label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
+                                    Last Name
+                                </label>
+                                <input
+                                    type="text"
+                                    name="lastname"
+                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                    value={lastname ? lastname : ''}
+                                    onChange={e => setLastname(e.target.value)}
+                                    required
+                                />
+                            </div>
                             <button 
                                 type="submit" 
                                 className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                                 onClick={(e) => { 
-                                    updateDescription(e);
+                                    updateUser(e);
                                     onClose();
                                 }}
                             >

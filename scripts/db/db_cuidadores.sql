@@ -20,9 +20,6 @@ SET default_tablespace = '';
 
 SET default_table_access_method = heap;
 
-CREATE DATABASE db_cuidadores;
-\connect db_cuidadores;
-
 --
 -- Name: caregiver_score; Type: TABLE; Schema: public; Owner: postgres
 --
@@ -131,8 +128,8 @@ CREATE TABLE public.users (
     password character varying(255),
     mail character varying(255),
     type integer,
-    created_at date,
-    modified_at date,
+    created_at timestamp without time zone,
+    modified_at timestamp without time zone,
     enabled boolean,
     hourly_rate double precision
 );
@@ -212,6 +209,12 @@ COPY public.user_type (id, caregiver_id, customer_id, observation, score, create
 --
 
 COPY public.users (id, description, name, last_name, password, mail, type, created_at, modified_at, enabled, hourly_rate) FROM stdin;
+2	2222222	22222	222222	\N	222222	0	\N	2023-04-09 21:31:42.079	t	\N
+1	desccc	111111111111	111111111	\N	11111111111	1	\N	2023-04-09 21:31:46.735	t	\N
+30	dasdsadsa	zxczcxczx	wqwqrweqr	\N	wqeeqw	1	2023-04-09 18:04:41.672	2023-04-09 21:24:05.355	f	\N
+4	1111111111	11111111	111111111111	\N	111111111	1	\N	2023-04-09 21:33:08.213	f	\N
+31	qweeqw	123	123	\N	adsasd	0	2023-04-09 18:04:41.672	2023-04-09 21:33:27.778	t	\N
+6	The description	Josh	Peck	\N	email@hotmail.com	1	\N	2023-04-09 21:33:47.788	\N	\N
 \.
 
 
@@ -233,7 +236,7 @@ SELECT pg_catalog.setval('public.contract_id_seq', 1, false);
 -- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.users_id_seq', 1, false);
+SELECT pg_catalog.setval('public.users_id_seq', 45, true);
 
 
 --

@@ -4,13 +4,15 @@ const AddUser = ( {users, setUsers, show, onClose} ) => {
 
     const [description, setDescription] = useState('');
     const [email, setEmail] = useState('');
+    const [firstname, setFirstname] = useState('');
+    const [lastname, setLastname] = useState('');
     const [userType, setUserType] = useState('');
 
     const onSubmitUser = async (e) => {
         console.log('----------------- onSubmitUser -------------- ');
         e.preventDefault();
         try {
-            const body = {description, email, userType};
+            const body = {description, email, userType, firstname, lastname};
             console.log(JSON.stringify(body));
             console.log('---- end of body to be submitted ----');
             let newUser = {};
@@ -32,7 +34,7 @@ const AddUser = ( {users, setUsers, show, onClose} ) => {
 
             // console.log(response.json();
 
-            setUsers(newUser.id? [...users, newUser] : users);
+            setUsers(newUser.id ? [...users, newUser] : users);
             // window.location = '/';
         }
         catch (error) {
@@ -97,6 +99,32 @@ const AddUser = ( {users, setUsers, show, onClose} ) => {
                                     <option value="1">Cuidador</option>
                                     <option value="2">Admin</option>
                                 </select>
+                            </div>
+                            <div className='flex flex-col'>
+                                <label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
+                                    First Name
+                                </label>
+                                <input
+                                    type="text"
+                                    name="firstname"
+                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                    value={firstname}
+                                    onChange={e => setFirstname(e.target.value)}
+                                    required
+                                />
+                            </div>
+                            <div className='flex flex-col'>
+                                <label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
+                                    Last Name
+                                </label>
+                                <input
+                                    type="text"
+                                    name="lastname"
+                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                    value={lastname}
+                                    onChange={e => setLastname(e.target.value)}
+                                    required
+                                />
                             </div>
                             <button 
                                 type="submit"

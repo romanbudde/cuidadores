@@ -8,6 +8,9 @@ const { Client } = require('pg');
 const client = new Client();
 // await client.connect();
 
+// setting GMT -3 Timezone.
+process.env.TZ = 'America/Sao_Paulo';
+
 
 // middleware
 app.use(cors());
@@ -19,12 +22,15 @@ app.post('/cuidadores', async(req, res) => {
     try {
         console.log('---- backend ----');
         console.log(req.body);
-        const { description, email, userType } = req.body;
-        // const { email } = req.body.email;
-        // const { userType } = req.body.userType;
+        const { description, email, userType, firstname, lastname } = req.body;
+        
+        console.log('---- current date ----');
+        const created_at = new Date();
+        console.log(created_at);
+
         const newCuidador = await pool.query(
-            "INSERT INTO users (description, mail, type) VALUES($1, $2, $3) RETURNING *", 
-            [description, email, userType]
+            "INSERT INTO users (description, mail, type, created_at, enabled, name, last_name) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *", 
+            [description, email, userType, created_at, 1, firstname, lastname]
         );
 
         // res.json(req.body);
@@ -63,14 +69,15 @@ app.get("/cuidadores/:id", async(req, res) => {
 app.put("/cuidadores/:id", async(req, res) => {
     try {
         const {id} = req.params;
-        const {description} = req.body;
+        const { description, email, firstname, lastname, userType, enabled } = req.body;
+        const modified_at = new Date();
         const updateUser = await pool.query(
-            "UPDATE users SET description = $1 WHERE id = $2", 
-            [description, id]
+            "UPDATE users SET description = $1, mail = $2, name = $3, last_name = $4, type = $5,  modified_at = $6, enabled = $7 WHERE id = $8 RETURNING *", 
+            [description, email, firstname, lastname, userType, modified_at, enabled, id]
         );
 
         if(updateUser.rowCount > 0){
-            res.json(updateUser);
+            res.json(updateUser.rows[0]);
             // res.json('asd');
         }
         else {
@@ -87,12 +94,13 @@ app.delete("/cuidadores/:id", async(req, res) => {
     try {
         const {id} = req.params;
         const deleteUser = await pool.query(
-            "DELETE FROM users WHERE id = $1",
+            "UPDATE users SET enabled = false WHERE id = $1", 
+            // "DELETE FROM users WHERE id = $1",
             [id]
         );
 
         if(deleteUser.rowCount > 0){
-            res.json('User with ID ' + id + ' has been deleted successfully.');
+            res.json(deleteUser);
         }
         else {
             res.json('Oops! No user with given ID (' + id + ') has been found.');

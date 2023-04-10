@@ -14,7 +14,14 @@ const EditUser = ({ user, show, onClose, users, setUsers }) => {
         // console.log(description);
         e.preventDefault();
         try {
-            const bodyJSON = { description, email, firstname, lastname, userType };
+            const bodyJSON = { 
+                description,
+                email,
+                firstname,
+                lastname,
+                userType,
+                enabled: user.enabled
+            };
             const id = user.id;
             const userUpdate = await fetch(
                 `http://localhost:5000/cuidadores/${user.id}`,
@@ -38,7 +45,8 @@ const EditUser = ({ user, show, onClose, users, setUsers }) => {
                 last_name: lastname,
                 type: userType,
                 created_at: userUpdate.created_at, 
-                modified_at: userUpdate.modified_at, 
+                modified_at: userUpdate.modified_at,
+                enabled: userUpdate.enabled, 
                 id: id
             }
             

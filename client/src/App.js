@@ -1,7 +1,8 @@
 import React, { Fragment } from "react";
-import { BrowserRouter as Router, Switch, Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, Routes, Navigate } from "react-router-dom";
 import HomePage from './routes/HomePage';
 import UsersListPage from './routes/UsersListPage';
+import RegisterPage from './routes/RegisterPage';
 
 import './App.css';
 
@@ -24,6 +25,14 @@ const App = () => {
           element={
             <>
               { <HomePage />}
+            </>
+          } 
+        />
+        <Route 
+          path="/register"
+          element={
+            <>
+              { <RegisterPage />}
             </>
           } 
         />

@@ -4,6 +4,7 @@ const AddUser = ( {users, setUsers, show, onClose} ) => {
 
     const [description, setDescription] = useState('');
     const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [firstname, setFirstname] = useState('');
     const [lastname, setLastname] = useState('');
     const [userType, setUserType] = useState('');
@@ -12,7 +13,7 @@ const AddUser = ( {users, setUsers, show, onClose} ) => {
         console.log('----------------- onSubmitUser -------------- ');
         e.preventDefault();
         try {
-            const body = {description, email, userType, firstname, lastname};
+            const body = {description, email, userType, firstname, lastname, password};
             console.log(JSON.stringify(body));
             console.log('---- end of body to be submitted ----');
             let newUser = {};
@@ -70,6 +71,18 @@ const AddUser = ( {users, setUsers, show, onClose} ) => {
                                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                                     value={email}
                                     onChange={e => setEmail(e.target.value)}
+                                />
+                            </div>
+                            <div className='flex flex-col'>
+                                <label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
+                                    Password
+                                </label>
+                                <input
+                                    type="password"
+                                    name="password"
+                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                    value={password}
+                                    onChange={e => setPassword(e.target.value)}
                                 />
                             </div>
                             <div className='flex flex-col'>

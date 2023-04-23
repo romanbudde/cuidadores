@@ -20,6 +20,9 @@ SET default_tablespace = '';
 
 SET default_table_access_method = heap;
 
+CREATE DATABASE db_cuidadores;
+\connect db_cuidadores;
+
 --
 -- Name: caregiver_score; Type: TABLE; Schema: public; Owner: postgres
 --
@@ -209,12 +212,12 @@ COPY public.user_type (id, caregiver_id, customer_id, observation, score, create
 --
 
 COPY public.users (id, description, name, last_name, password, mail, type, created_at, modified_at, enabled, hourly_rate) FROM stdin;
-2	2222222	22222	222222	\N	222222	0	\N	2023-04-09 21:31:42.079	t	\N
-1	desccc	111111111111	111111111	\N	11111111111	1	\N	2023-04-09 21:31:46.735	t	\N
-30	dasdsadsa	zxczcxczx	wqwqrweqr	\N	wqeeqw	1	2023-04-09 18:04:41.672	2023-04-09 21:24:05.355	f	\N
 4	1111111111	11111111	111111111111	\N	111111111	1	\N	2023-04-09 21:33:08.213	f	\N
 31	qweeqw	123	123	\N	adsasd	0	2023-04-09 18:04:41.672	2023-04-09 21:33:27.778	t	\N
-6	The description	Josh	Peck	\N	email@hotmail.com	1	\N	2023-04-09 21:33:47.788	\N	\N
+2	2222222	22222	222222	\N	222222	0	\N	2023-04-16 15:19:41.429	t	\N
+1	desccc	111111111111	111111111	\N	11111111111	1	\N	2023-04-09 21:31:46.735	f	\N
+30	dasdsadsa	zxczcxczx	wqwqrweqr	\N	wqeeqw	1	2023-04-09 18:04:41.672	2023-04-16 15:19:49.124	t	\N
+6	The description	Josh	Peck	$2y$10$iKJBVKYUMF6u967o8KWBae8rcBYfyugYgO38WeBWSdXXQV56PQ6Z2	email@hotmail.com	1	\N	2023-04-09 21:33:47.788	\N	\N
 \.
 
 
@@ -236,7 +239,7 @@ SELECT pg_catalog.setval('public.contract_id_seq', 1, false);
 -- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.users_id_seq', 45, true);
+SELECT pg_catalog.setval('public.users_id_seq', 47, true);
 
 
 --

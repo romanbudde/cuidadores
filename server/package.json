@@ -10,10 +10,16 @@
   "author": "Alvarez Facco Santiago & Budde Roman",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
+    "ejs": "^3.1.9",
     "express": "^4.18.2",
+    "express-flash": "^0.0.2",
+    "express-session": "^1.17.3",
     "nodemon": "^2.0.21",
+    "passport": "^0.6.0",
+    "passport-local": "^1.0.0",
     "pg": "^8.10.0"
   }
 }

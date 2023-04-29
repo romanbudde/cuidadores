@@ -3,35 +3,49 @@ const app = express();
 const cors = require('cors');
 const pool = require('./db');
 const bcrypt = require('bcrypt');
+
 const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+
 const flash = require('express-flash')
 const session = require('express-session')
 
-const initializePassport = require('./passport-config');
-// initializePassport(passport, email => {
+passport.use(new LocalStrategy(
+    function(username, password, done) {
+      // Authenticate the user
+    }
+));
 
-// });
+passport.serializeUser(function(user, done) {
+    done(null, user.id);
+  });
+  
+  passport.deserializeUser(function(id, done) {
+    // Retrieve user information from database
+    done(null, user);
+  });
+
 require('dotenv').config();
 
 const { Client } = require('pg');
 const client = new Client();
-// await client.connect();
 
 // setting GMT -3 Timezone.
 process.env.TZ = 'America/Sao_Paulo';
-
 
 // middleware
 app.use(cors());
 app.use(express.json());
 app.use(flash())
+
+// initialize PassportJS and enable session support
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false
-}))
-app.use(passport.initialize())
-app.use(passport.session())
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Routes
 // create - un cuidador

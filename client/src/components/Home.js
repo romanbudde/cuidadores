@@ -1,5 +1,6 @@
 import React, { Fragment, useState } from 'react';
 import { useNavigate } from "react-router-dom";
+const cookies = new Cookies();
 
 const Home = () => {
 
@@ -28,6 +29,12 @@ const Home = () => {
                 if(result.user.id){
                     console.log('login returns the user: ');
                     console.log(result.user);
+
+                    // set the cookie
+                    cookies.set("TOKEN", result.data.token, {
+                        path: "/",
+                    });
+
                     navigate('/users');
                 }
             });
@@ -81,7 +88,7 @@ const Home = () => {
             Iniciar sesión
         </button>
         <div className="flex flex-row w-full justify-between">
-            <p>No tienes una cuenta?</p>
+            <a href="/register">No tienes una cuenta?</a>
             <a className="text-cyan-500 font-bold" href="">Crear cuenta</a>
         </div>
 

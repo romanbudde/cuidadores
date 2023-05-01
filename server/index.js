@@ -3,32 +3,19 @@ const app = express();
 const cors = require('cors');
 const pool = require('./db');
 const bcrypt = require('bcrypt');
-
-const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
-
-const flash = require('express-flash')
-const session = require('express-session')
-
-passport.use(new LocalStrategy(
-    function(username, password, done) {
-      // Authenticate the user
-    }
-));
-
-passport.serializeUser(function(user, done) {
-    done(null, user.id);
-  });
-  
-  passport.deserializeUser(function(id, done) {
-    // Retrieve user information from database
-    done(null, user);
-  });
+const router = express.Router();
+const bodyParser = require('body-parser');
 
 require('dotenv').config();
 
 const { Client } = require('pg');
 const client = new Client();
+
+const passport = require('passport');
+const LocalStrategy = require('passport-local');
+
+const flash = require('express-flash')
+const session = require('express-session')
 
 // setting GMT -3 Timezone.
 process.env.TZ = 'America/Sao_Paulo';
@@ -38,16 +25,79 @@ app.use(cors());
 app.use(express.json());
 app.use(flash())
 
+app.use(bodyParser.json());
+
 // initialize PassportJS and enable session support
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false
 }));
+
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(router);
+
+app.use(cors({
+    origin: "http://localhost:3000"
+}))
+
+passport.use(new LocalStrategy(
+    async function(email, password, done) {
+        // Authenticate the user
+        console.log('--- AT login localStrategy ---');
+        const { rows } = await pool.query(
+            'SELECT * FROM users WHERE email = $1',
+            [email]
+          );
+          const user = rows[0];
+          if (!user) {
+            return done(null, false, { message: 'Email no registrado.' });
+          }
+
+          const match = await bcrypt.compare(password, user.password)
+            .then((isMatch) => {
+                if (isMatch) {
+                    console.log('matchhhhheeesss!!');
+                    return done(null, user);
+                    // return res.status(200).json({
+                    //     message: "logged in successfully!",
+                    //     user: {
+                    //         id: user.id,
+                    //         email: user.email
+                    //     }
+                    // });
+                }
+                else {
+                    console.log('DOES NOT MATCH!!');
+                    return done(null, false, { message: 'Contraseña incorrecta.' });
+                }
+            });
+    }
+));
+
+passport.serializeUser(function(user, done) {
+    done(null, user.id);
+});
+  
+passport.deserializeUser(async function(id, done) {
+    // Retrieve user information from database
+    try {
+        const user = await pool.query("SELECT * FROM users WHERE id = $1", [id]);
+        done(null, user.rows[0]);
+    }
+    catch (error) {
+        done (err)
+    }
+});
 
 // Routes
+
+// login cuidador
+app.post('/login', passport.authenticate('local'), (req, res) => {
+    console.log('loginnnnnn functionality');
+});
+
 // create - un cuidador
 app.post('/cuidadores', async(req, res) => {
     try {
@@ -76,61 +126,55 @@ app.post('/cuidadores', async(req, res) => {
 });
 
 // user login
-app.post('/login', async(req, res) => {
-    try {
-        console.log('---- backend (login route) ----');
-        console.log(req.body);
-        const { email, password } = req.body;
-        // const hashedPassword = await bcrypt.hash(password, 10);
+// app.post('/login', async(req, res) => {
+//     try {
+//         console.log('---- backend (login route) ----');
+//         console.log(req.body);
+//         const { email, password } = req.body;
+//         // const hashedPassword = await bcrypt.hash(password, 10);
 
-        const { rows } = await pool.query(
-            'SELECT * FROM users WHERE mail = $1',
-            [email]
-        );
-        const user = rows[0];
-        // res.json({"user": user});
+//         const { rows } = await pool.query(
+//             'SELECT * FROM users WHERE mail = $1',
+//             [email]
+//         );
+//         const user = rows[0];
+//         // res.json({"user": user});
 
-        if(!user){
-            return res.status(401).json({ error: 'Email no registrado.' });
-        }
+//         if(!user){
+//             return res.status(401).json({ error: 'Email no registrado.' });
+//         }
 
-        // Compare the password with the hashed password in the database
-        const hashedPassword = await bcrypt.hash(password, 10);
-        console.log('hashed password: ', hashedPassword);
-        console.log('users password: ', user.password);
-        console.log('passed password: ', password);
-        // console.log('hashedPassword: ', hashedPassword);
-        const match = await bcrypt.compare(password, user.password)
-            .then((isMatch) => {
-                if (isMatch) {
-                    console.log('matchhhhheeesss!!');
-                    // return done(null, user);
-                    return res.status(200).json({
-                        message: "logged in successfully!",
-                        user: {
-                            id: user.id,
-                            email: user.email
-                        }
-                    });
-                }
-                else {
-                    console.log('DOES NOT MATCH!!');
-                    return res.status(401).json({ error: 'Contraseña incorrecta.' });
-                }
-            });
+//         // Compare the password with the hashed password in the database
+//         const hashedPassword = await bcrypt.hash(password, 10);
+//         console.log('hashed password: ', hashedPassword);
+//         console.log('users password: ', user.password);
+//         console.log('passed password: ', password);
+//         // console.log('hashedPassword: ', hashedPassword);
+//         const match = await bcrypt.compare(password, user.password)
+//             .then((isMatch) => {
+//                 if (isMatch) {
+//                     console.log('matchhhhheeesss!!');
+//                     // return done(null, user);
+//                     return res.status(200).json({
+//                         message: "logged in successfully!",
+//                         user: {
+//                             id: user.id,
+//                             email: user.email
+//                         }
+//                     });
+//                 }
+//                 else {
+//                     console.log('DOES NOT MATCH!!');
+//                     return res.status(401).json({ error: 'Contraseña incorrecta.' });
+//                 }
+//             });
 
-    }
-    catch (error) {
-        console.error(error.message);
-        return res.status(500).json({ error: error.message });
-    }
-});
-
-// app.post('login', passport.authenticate('local', {
-//     sucessRedirect: '/'
-//     failureRedirect: '/login',
-//     failureFlash: true
-// }))
+//     }
+//     catch (error) {
+//         console.error(error.message);
+//         return res.status(500).json({ error: error.message });
+//     }
+// });
 
 // user register
 app.post('/register', async(req, res) => {
@@ -143,7 +187,7 @@ app.post('/register', async(req, res) => {
 
 
         const userExists = await pool.query(
-            "SELECT * FROM users WHERE mail = $1", 
+            "SELECT * FROM users WHERE mail = $1",
             [email]
         );
 

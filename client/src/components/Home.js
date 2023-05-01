@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from 'react';
 import { useNavigate } from "react-router-dom";
-const cookies = new Cookies();
+// const cookies = new Cookies();
 
 const Home = () => {
 
@@ -22,7 +22,10 @@ const Home = () => {
             },
             body: JSON.stringify(body)
         })
-            .then(response => response.json())
+            .then(response => {
+                console.log(response);
+                return response.json();
+            })
             .then(result => {
                 console.log('there is a result: ');
                 console.log(result);
@@ -30,12 +33,12 @@ const Home = () => {
                     console.log('login returns the user: ');
                     console.log(result.user);
 
-                    // set the cookie
-                    cookies.set("TOKEN", result.data.token, {
-                        path: "/",
-                    });
+                    // // set the cookie
+                    // cookies.set("TOKEN", result.data.token, {
+                    //     path: "/",
+                    // });
 
-                    navigate('/users');
+                    // navigate('/users');
                 }
             });
 
@@ -45,7 +48,8 @@ const Home = () => {
         // window.location = '/';
     }
     catch (error) {
-        console.error (error.message);
+        console.log(error);
+        // console.error (error.message);
     }
   };
 

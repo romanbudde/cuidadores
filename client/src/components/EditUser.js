@@ -1,5 +1,8 @@
 import React, { Fragment, useEffect, useState } from 'react';
 
+import { useNavigate } from "react-router-dom";
+import Cookies from 'universal-cookie';
+
 const EditUser = ({ user, show, onClose, users, setUsers }) => {
 
     const [description, setDescription] = useState(user.description);
@@ -7,11 +10,21 @@ const EditUser = ({ user, show, onClose, users, setUsers }) => {
     const [firstname, setFirstname] = useState(user.name);
     const [lastname, setLastname] = useState(user.last_name);
     const [userType, setUserType] = useState(user.type);
+	const navigate = useNavigate();
+	const cookies = new Cookies();
 
     if(!show) return null;
 
+	
+
     const updateUser = async (e) => {
         // console.log(description);
+
+		const authToken = cookies.get('auth-token');
+		if(!authToken) {
+			return navigate('/');
+		}
+
         e.preventDefault();
         try {
             const bodyJSON = { 

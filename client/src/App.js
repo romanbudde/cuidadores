@@ -2,7 +2,10 @@ import React, { Fragment } from "react";
 import { BrowserRouter as Router, Switch, Route, Routes, Navigate } from "react-router-dom";
 import HomePage from './routes/HomePage';
 import UsersListPage from './routes/UsersListPage';
+import UserLandingPage from './routes/UserLandingPage';
 import RegisterPage from './routes/RegisterPage';
+import FilterCuidadoresPage from './routes/FilterCuidadoresPage';
+import { AuthProvider, AuthContext } from './components/AuthContext';
 
 import './App.css';
 
@@ -18,34 +21,52 @@ const App = () => {
   //   </Fragment>
   // );
   return <div>
-    <Router>
-      <Routes>
-        <Route 
-          path="/"
-          element={
-            <>
-              { <HomePage />}
-            </>
-          } 
-        />
-        <Route 
-          path="/register"
-          element={
-            <>
-              { <RegisterPage />}
-            </>
-          } 
-        />
-        <Route 
-          path="/users"
-          element={
-            <>
-              { <UsersListPage /> }
-            </>
-          } 
-        />
-      </Routes>
-    </Router>
+	<AuthProvider>
+		<Router>
+			<Routes>
+				<Route 
+				path="/"
+				element={
+					<>
+					{ <HomePage />}
+					</>
+				} 
+				/>
+				<Route 
+				path="/register"
+				element={
+					<>
+					{ <RegisterPage />}
+					</>
+				} 
+				/>
+				<Route 
+				path="/users"
+				element={
+					<>
+					{ <UsersListPage /> }
+					</>
+				} 
+				/>
+				<Route 
+				path="/landing"
+				element={
+					<>
+					{ <UserLandingPage /> }
+					</>
+				} 
+				/>
+				<Route 
+				path="/filter-cuidadores"
+				element={
+					<>
+					{ <FilterCuidadoresPage /> }
+					</>
+				} 
+				/>
+			</Routes>
+		</Router>
+	</AuthProvider>
   </div>
 }
 

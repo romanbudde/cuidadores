@@ -43,11 +43,12 @@ app.use(cors({
 }))
 
 passport.use(new LocalStrategy(
+	{usernameField:"email", passwordField:"password"},
     async function(email, password, done) {
         // Authenticate the user
         console.log('--- AT login localStrategy ---');
         const { rows } = await pool.query(
-            'SELECT * FROM users WHERE email = $1',
+            'SELECT * FROM users WHERE mail = $1',
             [email]
           );
           const user = rows[0];
@@ -95,7 +96,8 @@ passport.deserializeUser(async function(id, done) {
 
 // login cuidador
 app.post('/login', passport.authenticate('local'), (req, res) => {
-    console.log('loginnnnnn functionality');
+	console.log(req.user);
+    console.log('Login has been authenticated!');
 });
 
 // create - un cuidador

@@ -5,6 +5,7 @@ const pool = require('./db');
 const bcrypt = require('bcrypt');
 const router = express.Router();
 const bodyParser = require('body-parser');
+const jwt = require('jsonwebtoken');
 
 require('dotenv').config();
 
@@ -98,6 +99,18 @@ passport.deserializeUser(async function(id, done) {
 app.post('/login', passport.authenticate('local'), (req, res) => {
 	console.log(req.user);
     console.log('Login has been authenticated!');
+
+	// generate the JWT that we're gonna send back as a response to the client.
+	const payload = { userId: req.user.id };
+	const secretKey = process.env.JWT_SECRET;
+	// Generate token
+	const token = jwt.sign(payload, secretKey);
+	console.log("JWT Token: ", token);
+
+	// send token back to the client
+	res.json(token);
+
+
 });
 
 // create - un cuidador

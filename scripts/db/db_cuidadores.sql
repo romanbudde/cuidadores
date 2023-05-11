@@ -31,10 +31,10 @@ CREATE TABLE public.caregiver_score (
     id integer NOT NULL,
     caregiver_id integer NOT NULL,
     customer_id integer NOT NULL,
-    observation character(1) NOT NULL,
-    score real NOT NULL,
+    observation character varying(500) NOT NULL,
+    score numeric NOT NULL,
     created_at timestamp without time zone NOT NULL,
-    modified_at timestamp without time zone NOT NULL
+    modified_at timestamp without time zone
 );
 
 
@@ -130,7 +130,8 @@ CREATE TABLE public.users (
     created_at timestamp without time zone,
     modified_at timestamp without time zone,
     enabled boolean,
-    hourly_rate double precision
+    hourly_rate double precision,
+    average_review_score numeric
 );
 
 
@@ -184,6 +185,45 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_
 --
 
 COPY public.caregiver_score (id, caregiver_id, customer_id, observation, score, created_at, modified_at) FROM stdin;
+2	4	2	review dos	8.5	2023-04-10 12:34:56	2023-04-10 12:34:56
+1	6	2	el mejor servicio de todos	9.5	2023-04-10 12:34:56	2023-04-10 12:34:56
+3	30	2	review tres	7.5	2023-04-10 12:34:56	2023-04-10 12:34:56
+4	48	2	review cuatro	6.5	2023-04-10 12:34:56	2023-04-10 12:34:56
+6	6	2	el mejor servicio lejos	8	2023-05-11 15:25:13.574	\N
+7	6	2	el mejor servicio lejos	8	2023-05-11 15:25:55.713	\N
+38	6	2	el mejor servicio lejos	7	2023-05-11 16:02:27.524	\N
+39	6	2	el mejor servicio lejos	7	2023-05-11 16:03:34.143	\N
+40	6	2	el mejor servicio lejos	7	2023-05-11 16:03:57.092	\N
+41	6	2	el mejor servicio lejos	7	2023-05-11 16:05:17.656	\N
+42	6	2	el mejor servicio lejos	7	2023-05-11 16:07:12.944	\N
+43	6	2	el mejor servicio lejos	7	2023-05-11 16:11:17.508	\N
+44	6	2	el mejor servicio lejos	7	2023-05-11 16:11:35.94	\N
+45	6	2	el mejor servicio lejos	7	2023-05-11 16:11:59.325	\N
+46	6	2	el mejor servicio lejos	7	2023-05-11 16:12:56.677	\N
+47	6	2	el mejor servicio lejos	7	2023-05-11 16:13:11.435	\N
+48	6	2	el mejor servicio lejos	7	2023-05-11 16:13:26.826	\N
+49	6	2	el mejor servicio lejos	7	2023-05-11 16:13:45.884	\N
+50	6	2	el mejor servicio lejos	7	2023-05-11 16:14:21.988	\N
+51	6	2	el mejor servicio lejos	8	2023-05-11 16:14:37.817	\N
+52	6	2	el mejor servicio lejos	8	2023-05-11 16:15:28.664	\N
+53	6	2	el mejor servicio lejos	8	2023-05-11 16:17:43.511	\N
+54	49	2	el mejor servicio lejos	8	2023-05-11 16:18:38.832	\N
+55	49	2	el mejor servicio lejos	7	2023-05-11 16:18:43.847	\N
+56	49	2	el mejor servicio lejos	7	2023-05-11 16:19:15.397	\N
+57	49	2	el mejor servicio lejos	6	2023-05-11 16:19:20.047	\N
+58	49	2	el mejor servicio lejos	10	2023-05-11 16:19:30.053	\N
+59	49	2	el mejor servicio lejos	10	2023-05-11 16:19:30.728	\N
+60	49	2	el mejor servicio lejos	10	2023-05-11 16:19:33.368	\N
+61	49	2	el mejor servicio lejos	10	2023-05-11 16:19:35.287	\N
+62	49	2	el mejor servicio lejos	10	2023-05-11 16:20:31.156	\N
+63	49	2	el mejor servicio lejos	10	2023-05-11 16:34:24.556	\N
+64	49	2	el mejor servicio lejos	10	2023-05-11 16:35:25.347	\N
+65	48	2	el mejor servicio lejos	10	2023-05-11 16:40:56.726	\N
+66	48	2	el mejor servicio lejos	10	2023-05-11 16:43:23.537	\N
+67	48	2	el mejor servicio lejos	10	2023-05-11 16:43:35.809	\N
+68	48	2	el mejor servicio lejos	10	2023-05-11 16:43:48.122	\N
+69	48	2	el mejor servicio lejos	10	2023-05-11 16:44:59.035	\N
+70	4	2	el mejor servicio lejos	10	2023-05-11 16:49:46.464	\N
 \.
 
 
@@ -208,14 +248,14 @@ COPY public.user_type (id, user_type_number, user_type) FROM stdin;
 -- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.users (id, description, name, last_name, password, mail, type, created_at, modified_at, enabled, hourly_rate) FROM stdin;
-4	1111111111	11111111	111111111111	\N	111111111	1	\N	2023-04-09 21:33:08.213	f	\N
-31	qweeqw	123	123	\N	adsasd	0	2023-04-09 18:04:41.672	2023-04-09 21:33:27.778	t	\N
-2	2222222	22222	222222	\N	222222	0	\N	2023-04-16 15:19:41.429	t	\N
-1	desccc	111111111111	111111111	\N	11111111111	1	\N	2023-04-09 21:31:46.735	f	\N
-30	dasdsadsa	zxczcxczx	wqwqrweqr	\N	wqeeqw	1	2023-04-09 18:04:41.672	2023-04-16 15:19:49.124	t	\N
-6	The description	Josh	Peck	$2y$10$iKJBVKYUMF6u967o8KWBae8rcBYfyugYgO38WeBWSdXXQV56PQ6Z2	email@hotmail.com	1	\N	2023-04-09 21:33:47.788	\N	\N
-48	The description	firstname	lastname	$2a$10$N0IU4mQeWMBBx0JacWifdOgSXsiKg3AejjuaWQ4RIJ9CUbsJTPOIi	asd	1	\N	\N	t	\N
+COPY public.users (id, description, name, last_name, password, mail, type, created_at, modified_at, enabled, hourly_rate, average_review_score) FROM stdin;
+48	The description	firstname	lastname	$2a$10$N0IU4mQeWMBBx0JacWifdOgSXsiKg3AejjuaWQ4RIJ9CUbsJTPOIi	asd	1	\N	2023-05-11 16:44:59.035	t	35	9.42
+4	1111111111	11111111	111111111111	\N	111111111	1	\N	2023-05-11 16:49:46.464	t	27	9.25
+31	qweeqw	123	123	\N	adsasd	0	2023-04-09 18:04:41.672	2023-05-11 15:47:46.231	t	\N	\N
+2	2222222	22222	222222	\N	222222	0	\N	2023-05-11 15:47:46.231	t	\N	\N
+1	desccc	111111111111	111111111	\N	11111111111	1	\N	2023-05-11 15:47:46.231	f	45	\N
+30	dasdsadsa	zxczcxczx	wqwqrweqr	\N	wqeeqw	1	2023-04-09 18:04:41.672	2023-05-11 15:47:46.231	t	15	\N
+6	The description	Josh	Peck	$2y$10$iKJBVKYUMF6u967o8KWBae8rcBYfyugYgO38WeBWSdXXQV56PQ6Z2	email@hotmail.com	1	\N	2023-05-11 15:58:45.628	t	75	7.55
 \.
 
 
@@ -223,7 +263,7 @@ COPY public.users (id, description, name, last_name, password, mail, type, creat
 -- Name: caregiver_score_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.caregiver_score_id_seq', 1, false);
+SELECT pg_catalog.setval('public.caregiver_score_id_seq', 70, true);
 
 
 --
@@ -237,7 +277,7 @@ SELECT pg_catalog.setval('public.contract_id_seq', 1, false);
 -- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.users_id_seq', 48, true);
+SELECT pg_catalog.setval('public.users_id_seq', 49, true);
 
 
 --

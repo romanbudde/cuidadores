@@ -25,16 +25,26 @@ const ListUsers = () => {
 		navigate('/filter-cuidadores');
 	}
 
+	const redirectProfile = () => {
+		navigate('/filter-cuidadores');
+	}
+
 	if(isAuthenticated){
 		return (
 			<Fragment>
 				<div className='space-y-5 p-10 my-20 mx-auto flex flex-col justify-center items-center bg-gray-100 min-w-70 w-96 rounded-md bg-slate-200z'>
 					<h1>User landing page</h1>
-					<button 
+					<button
 						className='w-full text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'
 						onClick={ (e) => { redirectBuscarCuidadores(e) }}
 					>
 						Buscar cuidadores
+					</button>
+					<button
+						className='w-full text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'
+						onClick={ (e) => { redirectProfile(e) }}
+					>
+						Mi perfil
 					</button>
 				</div>
 			</Fragment>

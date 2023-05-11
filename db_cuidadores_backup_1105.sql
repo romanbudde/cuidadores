@@ -107,17 +107,35 @@ ALTER SEQUENCE public.contract_id_seq OWNED BY public.contract.id;
 --
 
 CREATE TABLE public.user_type (
-    id integer,
-    caregiver_id integer,
-    customer_id integer,
-    observation character varying(255),
-    score double precision,
-    created_at date,
-    modified_at date
+    user_type_number character varying(5) NOT NULL,
+    user_type character varying(99) NOT NULL,
+    id integer NOT NULL
 );
 
 
 ALTER TABLE public.user_type OWNER TO postgres;
+
+--
+-- Name: user_type_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.user_type_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.user_type_id_seq OWNER TO postgres;
+
+--
+-- Name: user_type_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.user_type_id_seq OWNED BY public.user_type.id;
+
 
 --
 -- Name: users; Type: TABLE; Schema: public; Owner: postgres
@@ -177,6 +195,13 @@ ALTER TABLE ONLY public.contract ALTER COLUMN id SET DEFAULT nextval('public.con
 
 
 --
+-- Name: user_type id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.user_type ALTER COLUMN id SET DEFAULT nextval('public.user_type_id_seq'::regclass);
+
+
+--
 -- Name: users id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -203,7 +228,10 @@ COPY public.contract (id, status, start, "end", customer_id, created_at, modifie
 -- Data for Name: user_type; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.user_type (id, caregiver_id, customer_id, observation, score, created_at, modified_at) FROM stdin;
+COPY public.user_type (user_type_number, user_type, id) FROM stdin;
+0	client	1
+1	cuidador	3
+2	admin	4
 \.
 
 
@@ -218,6 +246,7 @@ COPY public.users (id, description, name, last_name, password, mail, type, creat
 1	desccc	111111111111	111111111	\N	11111111111	1	\N	2023-04-09 21:31:46.735	f	\N
 30	dasdsadsa	zxczcxczx	wqwqrweqr	\N	wqeeqw	1	2023-04-09 18:04:41.672	2023-04-16 15:19:49.124	t	\N
 6	The description	Josh	Peck	$2y$10$iKJBVKYUMF6u967o8KWBae8rcBYfyugYgO38WeBWSdXXQV56PQ6Z2	email@hotmail.com	1	\N	2023-04-09 21:33:47.788	\N	\N
+48	The description	firstname	lastname	$2a$10$N0IU4mQeWMBBx0JacWifdOgSXsiKg3AejjuaWQ4RIJ9CUbsJTPOIi	asd	1	\N	\N	t	\N
 \.
 
 
@@ -236,10 +265,17 @@ SELECT pg_catalog.setval('public.contract_id_seq', 1, false);
 
 
 --
+-- Name: user_type_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.user_type_id_seq', 4, true);
+
+
+--
 -- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.users_id_seq', 47, true);
+SELECT pg_catalog.setval('public.users_id_seq', 48, true);
 
 
 --
@@ -256,6 +292,14 @@ ALTER TABLE ONLY public.caregiver_score
 
 ALTER TABLE ONLY public.contract
     ADD CONSTRAINT contract_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: user_type user_type_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.user_type
+    ADD CONSTRAINT user_type_pkey PRIMARY KEY (id);
 
 
 --

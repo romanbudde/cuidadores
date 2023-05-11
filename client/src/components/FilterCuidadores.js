@@ -65,7 +65,7 @@ const FilterCuidadores = () => {
 		let bodyJSON = { 
 			min_rate: tarifaMinima, 
 			max_rate: tarifaMaxima,
-			checkboxes_reviews: checkboxesReviews
+			lowest_score_acceptable: lowestScoreAcceptable
 		};
 		const response = await fetch(
 			"http://localhost:5000/search_cuidadores/",

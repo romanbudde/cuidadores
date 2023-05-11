@@ -10,7 +10,24 @@ const FilterCuidadores = () => {
 	
 	const { isAuthenticated } = useContext(AuthContext);
 	const [search, setSearch] = useState('');
+
+	const [checkboxesReviews, setCheckboxesReviews] = useState({
+		satisfactorio: false,
+		bueno: false,
+		muybueno: false,
+		fantastico: false
+	});
     
+	const handleCheckboxReviewsChange = (event) => {
+		const { name, checked } = event.target;
+		setCheckboxesReviews(prevState => ({
+			...prevState,
+			[name]: checked
+		}));
+	};
+	console.log('checkboxesReviews state: ');
+	console.log(checkboxesReviews);
+
 	const navigate = useNavigate();
 	const cookies = new Cookies();
 
@@ -43,10 +60,11 @@ const FilterCuidadores = () => {
 						<input
 							type="checkbox"
 							name="fantastico"
+							checked={checkboxesReviews.fantastico}
 							className="bg-gray-50 border text-gray-900 text-sm focus:ring-gray-600 focus:border-gray-200 block p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white  bg-transparent rounded-lg border-b border-gray-400 border-solid border-opacity-100 focus:outline-none focus:outline-0"
 							placeholder=""
 							value={search}
-							onChange={e => setSearch(e.target.value)}
+							onChange={handleCheckboxReviewsChange}
 						/>
 						<label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white whitespace-nowrap">
 							Fantastico: 9+
@@ -55,11 +73,12 @@ const FilterCuidadores = () => {
 					<div className='flex flex-row space-x-4 items-start w-full'>
 						<input
 							type="checkbox"
-							name="muy_bueno"
+							name="muybueno"
+							checked={checkboxesReviews.muybueno}
 							className="bg-gray-50 border text-gray-900 text-sm focus:ring-gray-600 focus:border-gray-200 block p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white  bg-transparent rounded-lg border-b border-gray-400 border-solid border-opacity-100 focus:outline-none focus:outline-0"
 							placeholder=""
 							value={search}
-							onChange={e => setSearch(e.target.value)}
+							onChange={handleCheckboxReviewsChange}
 						/>
 						<label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white whitespace-nowrap">
 							Muy bueno: 8+
@@ -69,10 +88,11 @@ const FilterCuidadores = () => {
 						<input
 							type="checkbox"
 							name="bueno"
+							checked={checkboxesReviews.bueno}
 							className="bg-gray-50 border text-gray-900 text-sm focus:ring-gray-600 focus:border-gray-200 block p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white  bg-transparent rounded-lg border-b border-gray-400 border-solid border-opacity-100 focus:outline-none focus:outline-0"
 							placeholder=""
 							value={search}
-							onChange={e => setSearch(e.target.value)}
+							onChange={handleCheckboxReviewsChange}
 						/>
 						<label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white whitespace-nowrap">
 							Bueno: 7+
@@ -82,10 +102,11 @@ const FilterCuidadores = () => {
 						<input
 							type="checkbox"
 							name="satisfactorio"
+							checked={checkboxesReviews.satisfactorio}
 							className="bg-gray-50 border text-gray-900 text-sm focus:ring-gray-600 focus:border-gray-200 block p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white  bg-transparent rounded-lg border-b border-gray-400 border-solid border-opacity-100 focus:outline-none focus:outline-0"
 							placeholder=""
 							value={search}
-							onChange={e => setSearch(e.target.value)}
+							onChange={handleCheckboxReviewsChange}
 						/>
 						<label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white whitespace-nowrap">
 							Satisfactorio: 6+

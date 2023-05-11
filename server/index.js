@@ -239,6 +239,92 @@ app.get("/cuidadores", async(req, res) => {
     }
 });
 
+// filtrar cuidadores (desde el lado del usuario)
+app.post("/search_cuidadores", async(req, res) => {
+    try {
+		const { min_rate, max_rate, checkboxes_reviews } = req.body;
+		console.log(min_rate);
+		console.log(max_rate);
+		console.log(checkboxes_reviews);
+
+		let query = "SELECT * FROM users WHERE type = '1' AND enabled = true";
+
+		const values = [];
+
+		if (min_rate && max_rate) {
+			query += " AND hourly_rate BETWEEN $1 AND $2";
+			values.push(min_rate);
+			values.push(max_rate);
+		} else if (min_rate) {
+			query += " AND hourly_rate >= $1";
+			values.push(min_rate);
+		} else if (max_rate) {
+			query += " AND hourly_rate <= $1";
+			values.push(max_rate);
+		}
+
+        const allCuidadores = await pool.query(query, values);
+		console.log(allCuidadores);
+        res.json(allCuidadores.rows);
+    }
+    catch (error) {
+        console.error(error.message);
+    }
+});
+
+// add review for a caregiver and update users average_review_score
+app.post("/caregiver_review", async(req, res) => {
+    try {
+		const { observation, caregiver_id, customer_id, review_score } = req.body;
+		console.log('observation: ', observation);
+		console.log('caregiver_id: ', caregiver_id);
+		console.log('review_score: ', review_score);
+
+		let query = "INSERT INTO caregiver_score (caregiver_id, customer_id, score, observation, created_at) VALUES($1, $2, $3, $4, $5) RETURNING *";
+
+		const created_at = new Date();
+		const modified_at = new Date();
+
+        const allCuidadores = await pool.query(query, [caregiver_id, customer_id, review_score, observation, created_at ]);
+		// console.log(allCuidadores);
+        res.json(allCuidadores.rows[0]);
+
+		// check that the review has been created (it has an id greater than 0)
+		// update users table with newer score average
+		if(allCuidadores.rows[0].id > 0){
+			const allScores = await pool.query("SELECT * FROM caregiver_score WHERE caregiver_id = $1", [caregiver_id]);
+
+			// get new average
+			let scores_amount = 0;
+			let scores_accumulated = 0;
+			let score_average = 0;
+
+			if(allScores.rows.length > 0) {
+				allScores.rows.forEach( review => {
+					console.log("review.score: ", review.score);
+					scores_accumulated = scores_accumulated + parseFloat(review.score);
+					scores_amount++;
+				});
+				score_average = scores_accumulated / scores_amount;
+				score_average = score_average.toFixed(2);
+			} else {
+				score_average = review_score;
+			}
+
+			console.log('scores_accumulated: ', scores_accumulated);
+			console.log('scores_amount: ', scores_amount);
+			console.log('scores_average: ', score_average);
+
+			if(score_average){
+				const updateCuidadorScore = await pool.query("UPDATE users SET average_review_score = $1, modified_at = $2 WHERE id = $3 RETURNING *", [score_average, modified_at, caregiver_id]);
+			}
+		}
+    }
+    catch (error) {
+        console.error(error.message);
+    }
+});
+
 // get (by id) individual - cuidador
 app.get("/cuidadores/:id", async(req, res) => {
     try {

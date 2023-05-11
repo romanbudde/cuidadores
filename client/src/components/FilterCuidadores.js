@@ -10,7 +10,8 @@ const FilterCuidadores = () => {
 	
 	const { isAuthenticated } = useContext(AuthContext);
 	const [search, setSearch] = useState('');
-
+	const [tarifaMinima, setTarifaMinima] = useState('');
+	const [tarifaMaxima, setTarifaMaxima] = useState('');
 	const [checkboxesReviews, setCheckboxesReviews] = useState({
 		satisfactorio: false,
 		bueno: false,
@@ -25,13 +26,11 @@ const FilterCuidadores = () => {
 			[name]: checked
 		}));
 	};
-	console.log('checkboxesReviews state: ');
-	console.log(checkboxesReviews);
 
 	const navigate = useNavigate();
 	const cookies = new Cookies();
 
-	console.log("isAuthenticated: ", isAuthenticated);
+	// console.log("isAuthenticated: ", isAuthenticated);
 
 	const logout = () => {
 		// unset cookie
@@ -44,8 +43,43 @@ const FilterCuidadores = () => {
 		navigate('/filter-cuidadores');
 	}
 
-	const searchCuidadores = () => {
-		
+	const searchCuidadores = async (e) => {
+		e.preventDefault();
+
+		let lowestScoreAcceptable = 0;
+		// get the mininum review score to filter by.
+		if(checkboxesReviews['fantastico']){
+			lowestScoreAcceptable = 9;
+		}
+		if(checkboxesReviews['muybueno']){
+			lowestScoreAcceptable = 8;
+		}
+		if(checkboxesReviews['bueno']){
+			lowestScoreAcceptable = 7;
+		}
+		if(checkboxesReviews['satisfactorio']){
+			lowestScoreAcceptable = 6;
+		}
+		console.log('lowest review score acceptable: ', lowestScoreAcceptable);
+
+		let bodyJSON = { 
+			min_rate: tarifaMinima, 
+			max_rate: tarifaMaxima,
+			checkboxes_reviews: checkboxesReviews
+		};
+		const response = await fetch(
+			"http://localhost:5000/search_cuidadores/",
+			{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify(bodyJSON)
+			}
+		).then(response => response.json());
+
+		console.log('response of searching for cuidadores: ');
+		console.log(response);
 	}
 
 	if(isAuthenticated){
@@ -63,7 +97,6 @@ const FilterCuidadores = () => {
 							checked={checkboxesReviews.fantastico}
 							className="bg-gray-50 border text-gray-900 text-sm focus:ring-gray-600 focus:border-gray-200 block p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white  bg-transparent rounded-lg border-b border-gray-400 border-solid border-opacity-100 focus:outline-none focus:outline-0"
 							placeholder=""
-							value={search}
 							onChange={handleCheckboxReviewsChange}
 						/>
 						<label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white whitespace-nowrap">
@@ -77,7 +110,6 @@ const FilterCuidadores = () => {
 							checked={checkboxesReviews.muybueno}
 							className="bg-gray-50 border text-gray-900 text-sm focus:ring-gray-600 focus:border-gray-200 block p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white  bg-transparent rounded-lg border-b border-gray-400 border-solid border-opacity-100 focus:outline-none focus:outline-0"
 							placeholder=""
-							value={search}
 							onChange={handleCheckboxReviewsChange}
 						/>
 						<label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white whitespace-nowrap">
@@ -91,7 +123,6 @@ const FilterCuidadores = () => {
 							checked={checkboxesReviews.bueno}
 							className="bg-gray-50 border text-gray-900 text-sm focus:ring-gray-600 focus:border-gray-200 block p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white  bg-transparent rounded-lg border-b border-gray-400 border-solid border-opacity-100 focus:outline-none focus:outline-0"
 							placeholder=""
-							value={search}
 							onChange={handleCheckboxReviewsChange}
 						/>
 						<label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white whitespace-nowrap">
@@ -105,12 +136,37 @@ const FilterCuidadores = () => {
 							checked={checkboxesReviews.satisfactorio}
 							className="bg-gray-50 border text-gray-900 text-sm focus:ring-gray-600 focus:border-gray-200 block p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white  bg-transparent rounded-lg border-b border-gray-400 border-solid border-opacity-100 focus:outline-none focus:outline-0"
 							placeholder=""
-							value={search}
 							onChange={handleCheckboxReviewsChange}
 						/>
 						<label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white whitespace-nowrap">
 							Satisfactorio: 6+
 						</label>
+					</div>
+					<div className='flex flex-row space-x-4 items-center w-full'>
+						<label className="block mr-auto text-sm font-medium text-gray-900 dark:text-white whitespace-nowrap">
+							Tarifa minima
+						</label>
+						<input
+							type="text"
+							name="satisfactorio"
+							className="bg-gray-50 border text-gray-900 text-sm focus:ring-gray-600 focus:border-gray-200 block p-2 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white  bg-transparent rounded-lg border-b border-gray-400 border-solid border-opacity-100 focus:outline-none focus:outline-0"
+							placeholder=""
+							value={tarifaMinima}
+							onChange={e => setTarifaMinima(e.target.value)}
+						/>
+					</div>
+					<div className='flex flex-row space-x-4 items-center w-full'>
+						<label className="block mr-auto text-sm font-medium text-gray-900 dark:text-white whitespace-nowrap">
+							Tarifa maxima
+						</label>
+						<input
+							type="text"
+							name="tarifa_maxima"
+							className="bg-gray-50 border text-gray-900 text-sm focus:ring-gray-600 focus:border-gray-200 block p-2 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white bg-transparent rounded-lg border-b border-gray-400 border-solid border-opacity-100 focus:outline-none focus:outline-0"
+							placeholder=""
+							value={tarifaMaxima}
+							onChange={e => setTarifaMaxima(e.target.value)}
+						/>
 					</div>
 					<button 
 						type="submit"

@@ -18,6 +18,7 @@ const FilterCuidadores = () => {
 		muybueno: false,
 		fantastico: false
 	});
+	const [cuidadores, setCuidadores] = useState([]);
     
 	const handleCheckboxReviewsChange = (event) => {
 		const { name, checked } = event.target;
@@ -80,7 +81,10 @@ const FilterCuidadores = () => {
 
 		console.log('response of searching for cuidadores: ');
 		console.log(response);
+		setCuidadores(response);
 	}
+	console.log('cuidadores: ', cuidadores.length)
+	// console.log(cuidadores)
 
 	if(isAuthenticated){
 		return (
@@ -168,7 +172,7 @@ const FilterCuidadores = () => {
 							onChange={e => setTarifaMaxima(e.target.value)}
 						/>
 					</div>
-					<button 
+					<button
 						type="submit"
 						className="w-full text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
 						onClick={ (e) => { searchCuidadores(e) }}
@@ -176,6 +180,19 @@ const FilterCuidadores = () => {
 						Buscar
 					</button>
 				</form>
+				<div className='flex flex-col space-y-10 mx-auto items-center bg-gray-100 rounded-md justify-start w-96 py-10'>
+					<h1>Cuidadores search result:</h1>
+					{cuidadores.length > 0 && cuidadores.map(cuidador => (
+						<div 
+							className='bg-gray-200 p-5 rounded-md'
+							key={cuidador.id}
+						>
+							<h2>Cuidador: {cuidador.name}</h2>
+							<h2>Hourly rate: ${cuidador.hourly_rate}</h2>
+							<h2>Average review score: {cuidador.average_review_score}</h2>
+						</div>
+					))}
+				</div>
 			</Fragment>
 		);
 	}

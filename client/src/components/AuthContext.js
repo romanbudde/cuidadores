@@ -12,9 +12,12 @@ const AuthProvider = ({ children }) => {
 	const [isAuthenticated, setIsAuthenticated] = useState(
 		Boolean(cookies.get('auth-token'))
 	);
+	const [userId, setUserId] = useState(
+		Boolean(cookies.get('user-id'))
+	);
 
 	return (
-		<AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated }}>
+		<AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, userId, setUserId }}>
 		{children}
 		</AuthContext.Provider>
 	);

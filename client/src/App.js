@@ -5,6 +5,8 @@ import UsersListPage from './routes/UsersListPage';
 import UserLandingPage from './routes/UserLandingPage';
 import RegisterPage from './routes/RegisterPage';
 import FilterCuidadoresPage from './routes/FilterCuidadoresPage';
+import LandingCuidadorPage from './routes/LandingCuidadorPage';
+import FechasHorariosPage from './routes/FechasHorariosPage';
 import { AuthProvider, AuthContext } from './components/AuthContext';
 
 import './App.css';
@@ -61,6 +63,22 @@ const App = () => {
 				element={
 					<>
 					{ <FilterCuidadoresPage /> }
+					</>
+				} 
+				/>
+				<Route 
+				path="/landing-cuidador"
+				element={
+					<>
+					{ <LandingCuidadorPage /> }
+					</>
+				} 
+				/>
+				<Route 
+				path="/fechas-y-horarios"
+				element={
+					<>
+					{ <FechasHorariosPage /> }
 					</>
 				} 
 				/>

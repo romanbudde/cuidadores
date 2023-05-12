@@ -6,6 +6,7 @@ import { AuthProvider, AuthContext } from './AuthContext';
 const Home = () => {
 	
 	const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
+	const { userId, setUserId } = useContext(AuthContext);
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const navigate = useNavigate();
@@ -37,12 +38,29 @@ const Home = () => {
 						console.log(result);
 
 						// set the cookie
-						cookies.set('auth-token', result, { path: '/' });
-
+						cookies.set('auth-token', result.auth_token, { path: '/' });
+						
 						// set global context for isAuthenticated to true.
 						setIsAuthenticated(true);
+						
+						// set global context for userId
+						cookies.set('user-id', result.user_id, { path: '/' });
+						setUserId(result.user_id);
 
-						navigate('/users');
+						// redirect a landing de user o de cuidadores o de admin segun el tipo de usuario.
+						console.log('user type: ', result.user_type);
+
+						switch(result.user_type){
+							case 0: 
+								navigate('/landing');
+								break;
+							case 1: 
+								navigate('/landing-cuidador');
+								break;
+							case 2: 
+								navigate('/landing-admin');
+								break;
+						}
 					}
 				});
 
@@ -86,7 +104,7 @@ const Home = () => {
 				onChange={e => setPassword(e.target.value)}
 			/>
 			<a className="text-cyan-500 ml-auto font-bold text-md" href="">
-			Olvidaste tu contraseña?
+				Olvidaste tu contraseña?
 			</a>
 			<button 
 				type="submit"

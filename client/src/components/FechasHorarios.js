@@ -157,6 +157,7 @@ const FechasHorarios = () => {
 		createTimeArray(selectedHoraDesde, selectedHoraHasta);
 
 		// backend call para updatear la DB con los nuevos horarios para el dia
+		
 	}
 
 	console.log('horariosDisponibles');
@@ -227,11 +228,18 @@ const FechasHorarios = () => {
 					<ul className='flex flex-col w-full rounded-md bg-green-300 max-h-60 overflow-auto'>
 						{console.log('date: ', date)}
 						{console.log('formatted date: ', formattedDate)}
-						{horariosDisponibles[formattedDate] && horariosDisponibles[formattedDate].length > 0 && horariosDisponibles[formattedDate].map(horario => (
-							<li className='p-2 pl-5'>
+						{horariosDisponibles && horariosDisponibles[formattedDate] && horariosDisponibles[formattedDate].length > 0 ? 
+						(
+							horariosDisponibles[formattedDate].map(horario => (
+								<li className='p-2 pl-5'>
 								<p>{horario}</p>
+								</li>
+							))
+						) : (
+							<li className='p-2 pl-5 bg-slate-300'>
+								<p>Aún no hay horarios disponibles para este día</p>
 							</li>
-						))}
+						)}
 					</ul>
 					
 				</div>

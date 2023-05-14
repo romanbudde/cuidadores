@@ -20,8 +20,39 @@ SET default_tablespace = '';
 
 SET default_table_access_method = heap;
 
-CREATE DATABASE db_cuidadores;
-\connect db_cuidadores;
+--
+-- Name: caregiver_availability; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.caregiver_availability (
+    id bigint NOT NULL,
+    caregiver_id bigint NOT NULL,
+    dates json NOT NULL
+);
+
+
+ALTER TABLE public.caregiver_availability OWNER TO postgres;
+
+--
+-- Name: caregiver_availability_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.caregiver_availability_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.caregiver_availability_id_seq OWNER TO postgres;
+
+--
+-- Name: caregiver_availability_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.caregiver_availability_id_seq OWNED BY public.caregiver_availability.id;
+
 
 --
 -- Name: caregiver_score; Type: TABLE; Schema: public; Owner: postgres
@@ -160,6 +191,13 @@ ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
 
 
 --
+-- Name: caregiver_availability id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.caregiver_availability ALTER COLUMN id SET DEFAULT nextval('public.caregiver_availability_id_seq'::regclass);
+
+
+--
 -- Name: caregiver_score id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -178,6 +216,16 @@ ALTER TABLE ONLY public.contract ALTER COLUMN id SET DEFAULT nextval('public.con
 --
 
 ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
+
+
+--
+-- Data for Name: caregiver_availability; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.caregiver_availability (id, caregiver_id, dates) FROM stdin;
+3	48	{"14/05/2023":["04:00","04:30","05:00"],"15/05/2023":["05:00","05:30","06:00"],"16/05/2023":["06:30","07:00","07:30"],"17/05/2023":["08:00","08:30","09:00"]}
+9	4	{"30/05/2023":["06:30","07:00","07:30"],"31/05/2023":["08:00","08:30","09:00"]}
+\.
 
 
 --
@@ -260,6 +308,13 @@ COPY public.users (id, description, name, last_name, password, mail, type, creat
 
 
 --
+-- Name: caregiver_availability_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.caregiver_availability_id_seq', 9, true);
+
+
+--
 -- Name: caregiver_score_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -278,6 +333,14 @@ SELECT pg_catalog.setval('public.contract_id_seq', 1, false);
 --
 
 SELECT pg_catalog.setval('public.users_id_seq', 49, true);
+
+
+--
+-- Name: caregiver_availability caregiver_availability_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.caregiver_availability
+    ADD CONSTRAINT caregiver_availability_pkey PRIMARY KEY (id);
 
 
 --

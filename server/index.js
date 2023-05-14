@@ -335,12 +335,48 @@ app.post("/caregiver_review", async(req, res) => {
     }
 });
 
-// add review for a caregiver and update users average_review_score
-app.post("/caregiver_update_available_dates", async(req, res) => {
+// update available dates json for a specific caregiver
+app.post("/caregiver_update_available_dates", async (req, res) => {
     try {
-		const { observation, caregiver_id, customer_id, review_score } = req.body;
-		
+		const { dates, caregiver_id } = req.body;
+		console.log('dates');
+		console.log(dates);
+
+		const previousAvailabilities = await pool.query("SELECT * FROM caregiver_availability WHERE caregiver_id = $1", [caregiver_id]);
+
+		console.log('previousAvailabilities: ');
+		// console.log(previousAvailabilities.rows[0]);
+
+		let newAvailabilities;
         
+		if(!previousAvailabilities.rows[0]){
+			newAvailabilities = await pool.query("INSERT INTO caregiver_availability (dates, caregiver_id) VALUES ($1, $2) RETURNING *", [dates, caregiver_id]);
+		}
+		else {
+			newAvailabilities = await pool.query("UPDATE caregiver_availability SET dates = $1 WHERE caregiver_id = $2 RETURNING *", [dates, caregiver_id]);
+		}
+
+		res.json({
+			"newAvailabilities": newAvailabilities.rows[0]
+		});
+    }
+    catch (error) {
+        console.error(error.message);
+    }
+});
+
+// get available dates json for a specific caregiver
+app.get("/caregiver_get_available_dates", async (req, res) => {
+    try {
+		const { caregiver_id } = req.query;
+		// console.log('dates');
+		console.log(req.params);
+
+		const availabilities = await pool.query("SELECT * FROM caregiver_availability WHERE caregiver_id = $1", [caregiver_id]);
+
+		res.json({
+			"availabilities": availabilities.rows[0]
+		});
     }
     catch (error) {
         console.error(error.message);

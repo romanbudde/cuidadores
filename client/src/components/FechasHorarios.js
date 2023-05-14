@@ -105,6 +105,26 @@ const FechasHorarios = () => {
 		setSelectedHoraHasta(e.value);
 	}
 
+	// get all users function
+    const getHorarios = async () => {
+        try {
+            const response = await fetch("http://localhost:5000/caregiver_get_available_dates?caregiver_id=" + userId);
+            const jsonData = await response.json();
+
+			console.log('---- inside getHorarios ----');
+			console.log(jsonData);
+
+            setHorariosDisponibles(jsonData.availabilities.dates);
+        } catch (error) {
+            console.error(error.message);
+        }
+    };
+
+    // when page loads, get all Users
+    useEffect(() => {
+        getHorarios();
+    }, []);
+
 	const createTimeArray = (startTime, endTime) => {
 		console.log('in createTimeArray');
 		const start = new Date(`01/01/2000 ${startTime}`);
@@ -128,9 +148,6 @@ const FechasHorarios = () => {
 	  
 		setHorariosDisponibles(timeArray);
 	}
-	
-	console.log('horarios disponibles: ');
-	console.log(horariosDisponibles);
 
 	const disponibilizarHorarios = () => {
 		console.log('disponibilizar horarios');
@@ -140,8 +157,16 @@ const FechasHorarios = () => {
 		createTimeArray(selectedHoraDesde, selectedHoraHasta);
 
 		// backend call para updatear la DB con los nuevos horarios para el dia
-		
 	}
+
+	console.log('horariosDisponibles');
+	console.log(horariosDisponibles);
+	console.log('horariosDisponibles 14/05/2023');
+	console.log(horariosDisponibles['14/05/2023']);
+
+
+	let formattedDate = date.toLocaleDateString("en-GB");
+	console.log(formattedDate);
 
 	if(isAuthenticated){
 		return (
@@ -196,15 +221,16 @@ const FechasHorarios = () => {
 					>
 						Disponibilizar horarios
 					</button>
-					<h4>Tus horarios para el día</h4>
-					{console.log('horarios disponibles in return')}
-					{console.log(horariosDisponibles)}
+					<h4>Tus horarios para el día {formattedDate}</h4>
+					{console.log('horariosDisponibles[formattedDate] in return')}
+					{console.log(horariosDisponibles[formattedDate])}
 					<ul className='flex flex-col w-full rounded-md bg-green-300 max-h-60 overflow-auto'>
-						{horariosDisponibles.length > 0 && horariosDisponibles.map(horario => (
+						{console.log('date: ', date)}
+						{console.log('formatted date: ', formattedDate)}
+						{horariosDisponibles[formattedDate] && horariosDisponibles[formattedDate].length > 0 && horariosDisponibles[formattedDate].map(horario => (
 							<li className='p-2 pl-5'>
 								<p>{horario}</p>
 							</li>
-								
 						))}
 					</ul>
 					

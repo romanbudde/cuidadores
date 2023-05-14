@@ -108,7 +108,12 @@ app.post('/login', passport.authenticate('local'), (req, res) => {
 	console.log("JWT Token: ", token);
 
 	// send token back to the client
-	res.json(token);
+	res.json({
+		"auth_token": token,
+		"user_id": req.user.id,
+		"user_type": req.user.type
+
+	});
 
 
 });
@@ -324,6 +329,18 @@ app.post("/caregiver_review", async(req, res) => {
 				}
 			}
 		}
+    }
+    catch (error) {
+        console.error(error.message);
+    }
+});
+
+// add review for a caregiver and update users average_review_score
+app.post("/caregiver_update_available_dates", async(req, res) => {
+    try {
+		const { observation, caregiver_id, customer_id, review_score } = req.body;
+		
+        
     }
     catch (error) {
         console.error(error.message);

@@ -13,7 +13,7 @@ const AuthProvider = ({ children }) => {
 		Boolean(cookies.get('auth-token'))
 	);
 	const [userId, setUserId] = useState(
-		Boolean(cookies.get('user-id'))
+		cookies.get('user-id')
 	);
 
 	return (

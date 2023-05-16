@@ -18,6 +18,9 @@ const FechasHorarios = () => {
 	const navigate = useNavigate();
 	const cookies = new Cookies();
 
+	let formattedDate = date.toLocaleDateString("en-GB");
+	console.log(formattedDate);
+
 	const options = [
 		{ value: '00:00', label: '00:00' },
 		{ value: '00:30', label: '00:30' },
@@ -129,10 +132,26 @@ const FechasHorarios = () => {
 		console.log('in createTimeArray');
 		const start = new Date(`01/01/2000 ${startTime}`);
 		const end = new Date(`01/01/2000 ${endTime}`);
-		const timeArray = [];
+		console.log('formattedDate at createTimeArray(): ');
+		console.log(formattedDate);
+		// if(horariosDisponibles())
 
-		console.log('start: ', start);
-		console.log('end: ', end);
+		let timeArray = [];
+
+		if (horariosDisponibles[formattedDate] && horariosDisponibles[formattedDate].length > 0) {
+			timeArray = horariosDisponibles[formattedDate];
+		}
+		else {
+			timeArray = [];
+		}
+
+		// console.log('start: ', start);
+		// console.log('end: ', end);
+
+		console.log('horariosDisponibles');
+		console.log(horariosDisponibles);
+		console.log('horariosDisponibles[formattedDate]');
+		console.log(horariosDisponibles[formattedDate]);
 	  
 		let currentTime = start;
 		while (currentTime < end) {
@@ -142,11 +161,29 @@ const FechasHorarios = () => {
 			hour12: false,
 		  });
 	  
-		  timeArray.push(formattedTime);
+		  
+		  if (!timeArray.includes(formattedTime)) {
+			timeArray.push(formattedTime);
+		  }
+
 		  currentTime.setMinutes(currentTime.getMinutes() + 30);
 		}
-	  
-		setHorariosDisponibles(timeArray);
+
+		// Sort the timeArray
+		timeArray.sort(timeComparator);
+
+		// console.log('-------- timeArray (after being sorted) ---------');
+		// console.log(timeArray);
+		
+		let newHorariosDisponibles = {...horariosDisponibles};
+		newHorariosDisponibles[formattedDate] = timeArray;
+
+		// console.log('---------newHorariosDisponibles ---------');
+		// console.log(newHorariosDisponibles);
+		// console.log('---------newHorariosDisponibles[25/05/2023] ---------');
+		// console.log(newHorariosDisponibles['25/05/2023']);
+
+		setHorariosDisponibles(newHorariosDisponibles);
 	}
 
 	const disponibilizarHorarios = () => {
@@ -157,17 +194,45 @@ const FechasHorarios = () => {
 		createTimeArray(selectedHoraDesde, selectedHoraHasta);
 
 		// backend call para updatear la DB con los nuevos horarios para el dia
+
 		
+		
+	}
+
+		const renderHorarios = () => {
+			console.log('-------formattedDate---------');
+			console.log(formattedDate.toString());
+			console.log('-------horariosDisponibles---------');
+			console.log(horariosDisponibles);
+			console.log('-------horariosDisponibles[formattedDate]---------');
+			console.log(horariosDisponibles['25/05/2023']);
+			if (horariosDisponibles && horariosDisponibles[formattedDate] && horariosDisponibles[formattedDate].length > 0) {
+				return horariosDisponibles[formattedDate].map((horario) => (
+					<li className="p-2 pl-5">
+					<p>{horario}</p>
+					</li>
+				));
+			}
+			else {
+				return (
+					<li className="p-2 pl-5 bg-slate-300">
+					<p>Aún no hay horarios disponibles para este día</p>
+					</li>
+				);
+			}
+		};
+
+	// Custom comparator function to sort time strings
+	function timeComparator(a, b) {
+		const timeA = new Date(`1970/01/01 ${a}`);
+		const timeB = new Date(`1970/01/01 ${b}`);
+		return timeA - timeB;
 	}
 
 	console.log('horariosDisponibles');
 	console.log(horariosDisponibles);
 	console.log('horariosDisponibles 14/05/2023');
 	console.log(horariosDisponibles['14/05/2023']);
-
-
-	let formattedDate = date.toLocaleDateString("en-GB");
-	console.log(formattedDate);
 
 	if(isAuthenticated){
 		return (
@@ -225,21 +290,10 @@ const FechasHorarios = () => {
 					<h4>Tus horarios para el día {formattedDate}</h4>
 					{console.log('horariosDisponibles[formattedDate] in return')}
 					{console.log(horariosDisponibles[formattedDate])}
-					<ul className='flex flex-col w-full rounded-md bg-green-300 max-h-60 overflow-auto'>
+					<ul className="flex flex-col w-full rounded-md bg-green-300 max-h-60 overflow-auto">
 						{console.log('date: ', date)}
 						{console.log('formatted date: ', formattedDate)}
-						{horariosDisponibles && horariosDisponibles[formattedDate] && horariosDisponibles[formattedDate].length > 0 ? 
-						(
-							horariosDisponibles[formattedDate].map(horario => (
-								<li className='p-2 pl-5'>
-								<p>{horario}</p>
-								</li>
-							))
-						) : (
-							<li className='p-2 pl-5 bg-slate-300'>
-								<p>Aún no hay horarios disponibles para este día</p>
-							</li>
-						)}
+						{renderHorarios()}
 					</ul>
 					
 				</div>

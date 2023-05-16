@@ -128,6 +128,33 @@ const FechasHorarios = () => {
         getHorarios();
     }, []);
 
+	const api_caregiver_update_available_dates = async newHorariosDisponibles => {
+		// backend call para updatear la DB con los nuevos horarios para el dia
+
+		console.log('----- newHorariosDisponibles at backend call -----');
+		console.log(newHorariosDisponibles);
+
+		let bodyJSON = { 
+			caregiver_id: userId, 
+			dates: newHorariosDisponibles
+		};
+
+		const response = await fetch("http://localhost:5000/caregiver_update_available_dates/", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify(bodyJSON)
+		})
+			.then(response => response.json())
+			.then(result => {
+				if(result){
+					console.log('newAvailabilities: ');
+					console.log(result);
+				}
+			});
+	}
+
 	const createTimeArray = (startTime, endTime) => {
 		console.log('in createTimeArray');
 		const start = new Date(`01/01/2000 ${startTime}`);
@@ -148,10 +175,10 @@ const FechasHorarios = () => {
 		// console.log('start: ', start);
 		// console.log('end: ', end);
 
-		console.log('horariosDisponibles');
-		console.log(horariosDisponibles);
-		console.log('horariosDisponibles[formattedDate]');
-		console.log(horariosDisponibles[formattedDate]);
+		// console.log('horariosDisponibles');
+		// console.log(horariosDisponibles);
+		// console.log('horariosDisponibles[formattedDate]');
+		// console.log(horariosDisponibles[formattedDate]);
 	  
 		let currentTime = start;
 		while (currentTime < end) {
@@ -184,28 +211,25 @@ const FechasHorarios = () => {
 		// console.log(newHorariosDisponibles['25/05/2023']);
 
 		setHorariosDisponibles(newHorariosDisponibles);
+
+		api_caregiver_update_available_dates(newHorariosDisponibles);
 	}
 
-	const disponibilizarHorarios = () => {
+	const disponibilizarHorarios = async () => {
 		console.log('disponibilizar horarios');
 		// para la hora desde a hora hasta, armar de a media hora cada horario disponible, y armarlo en un arreglo
 		// de horariosDisponibles, por ej: ['00:00', '00:30', '01:00', ...]
 
 		createTimeArray(selectedHoraDesde, selectedHoraHasta);
-
-		// backend call para updatear la DB con los nuevos horarios para el dia
-
-		
-		
 	}
 
 		const renderHorarios = () => {
-			console.log('-------formattedDate---------');
-			console.log(formattedDate.toString());
-			console.log('-------horariosDisponibles---------');
-			console.log(horariosDisponibles);
-			console.log('-------horariosDisponibles[formattedDate]---------');
-			console.log(horariosDisponibles['25/05/2023']);
+			// console.log('-------formattedDate---------');
+			// console.log(formattedDate.toString());
+			// console.log('-------horariosDisponibles---------');
+			// console.log(horariosDisponibles);
+			// console.log('-------horariosDisponibles[formattedDate]---------');
+			// console.log(horariosDisponibles['25/05/2023']);
 			if (horariosDisponibles && horariosDisponibles[formattedDate] && horariosDisponibles[formattedDate].length > 0) {
 				return horariosDisponibles[formattedDate].map((horario) => (
 					<li className="p-2 pl-5">
@@ -229,10 +253,10 @@ const FechasHorarios = () => {
 		return timeA - timeB;
 	}
 
-	console.log('horariosDisponibles');
-	console.log(horariosDisponibles);
-	console.log('horariosDisponibles 14/05/2023');
-	console.log(horariosDisponibles['14/05/2023']);
+	// console.log('horariosDisponibles');
+	// console.log(horariosDisponibles);
+	// console.log('horariosDisponibles 14/05/2023');
+	// console.log(horariosDisponibles['14/05/2023']);
 
 	if(isAuthenticated){
 		return (

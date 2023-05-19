@@ -7,6 +7,8 @@ import Select from 'react-select';
 import 'react-calendar/dist/Calendar.css';
 import { useContext } from 'react';
 import { AuthContext } from './AuthContext';
+import Datepicker from "react-tailwindcss-datepicker";
+import dayjs from 'dayjs';
 
 const FechasHorarios = () => {
 	const { isAuthenticated } = useContext(AuthContext);
@@ -14,6 +16,10 @@ const FechasHorarios = () => {
     const [date, setDate] = useState(new Date());
     const [selectedHoraDesde, setSelectedHoraDesde] = useState();
     const [selectedHoraHasta, setSelectedHoraHasta] = useState();
+    const [selectedDatesInterval, setSelectedDatesInterval] = useState({ 
+		startDate: new Date(), 
+		endDate: new Date()
+	});
 	const [horariosDisponibles, setHorariosDisponibles] = useState([]);
 	const navigate = useNavigate();
 	const cookies = new Cookies();
@@ -107,6 +113,67 @@ const FechasHorarios = () => {
 		console.log('change hora hasta: ', e.value);
 		setSelectedHoraHasta(e.value);
 	}
+
+	const handleSelectedDatesIntervalChange = (newInterval) => {
+		console.log("Dates interval new value:", newInterval);
+		let startDate = formatDate(newInterval.startDate);
+		let endDate = formatDate(newInterval.endDate);
+		// console.log("Formatted dates interval new value:", newInterval);
+		setSelectedDatesInterval(newInterval);
+
+		console.log('start date: ', startDate);
+		console.log('end date: ', endDate);
+		console.log('horarios Disponibles: ', horariosDisponibles);
+
+		let newHorariosDisponibles = {...horariosDisponibles};
+		// newHorariosDisponibles[formattedDate] = timeArray;
+
+		const datesArrayToAdd = createDatesArray(startDate, endDate);
+
+		console.log('dates interval in between the 2 selected dates: ', datesArrayToAdd);
+
+		// console.log('---------newHorariosDisponibles ---------');
+		// console.log(newHorariosDisponibles);
+		// console.log('---------newHorariosDisponibles[25/05/2023] ---------');
+		// console.log(newHorariosDisponibles['25/05/2023']);
+
+		// setHorariosDisponibles(newHorariosDisponibles);
+
+		// api_caregiver_update_available_dates(newHorariosDisponibles);
+
+	}
+
+	function createDatesArray(startDate, endDate) {
+		const dates = [];
+		const startDateParts = startDate.split('/');
+		const endDateParts = endDate.split('/');
+
+		console.log('startDateParts: ', startDateParts)
+	  
+		const start = new Date(
+		  startDateParts[2],
+		  startDateParts[1] - 1,
+		  startDateParts[0]
+		);
+
+		console.log('start: ', start);
+		const end = new Date(endDateParts[2], endDateParts[1] - 1, endDateParts[0]);
+	  
+		// Loop through each date and add it to the array
+		for (let date = start; date <= end; date.setDate(date.getDate() + 1)) {
+		  const formattedDate = `${date
+			.getDate()
+			.toString()
+			.padStart(2, '0')}/${(date.getMonth() + 1)
+			.toString()
+			.padStart(2, '0')}/${date.getFullYear()}`;
+	  
+		  dates.push(formattedDate);
+		}
+	  
+		return dates;
+	}
+	  
 
 	// get all users function
     const getHorarios = async () => {
@@ -223,35 +290,45 @@ const FechasHorarios = () => {
 		createTimeArray(selectedHoraDesde, selectedHoraHasta);
 	}
 
-		const renderHorarios = () => {
-			// console.log('-------formattedDate---------');
-			// console.log(formattedDate.toString());
-			// console.log('-------horariosDisponibles---------');
-			// console.log(horariosDisponibles);
-			// console.log('-------horariosDisponibles[formattedDate]---------');
-			// console.log(horariosDisponibles['25/05/2023']);
-			if (horariosDisponibles && horariosDisponibles[formattedDate] && horariosDisponibles[formattedDate].length > 0) {
-				return horariosDisponibles[formattedDate].map((horario) => (
-					<li className="p-2 pl-5">
-					<p>{horario}</p>
-					</li>
-				));
-			}
-			else {
-				return (
-					<li className="p-2 pl-5 bg-slate-300">
-					<p>Aún no hay horarios disponibles para este día</p>
-					</li>
-				);
-			}
-		};
+	const renderHorarios = () => {
+		// console.log('-------formattedDate---------');
+		// console.log(formattedDate.toString());
+		// console.log('-------horariosDisponibles---------');
+		// console.log(horariosDisponibles);
+		// console.log('-------horariosDisponibles[formattedDate]---------');
+		// console.log(horariosDisponibles['25/05/2023']);
+		if (horariosDisponibles && horariosDisponibles[formattedDate] && horariosDisponibles[formattedDate].length > 0) {
+			return horariosDisponibles[formattedDate].map((horario) => (
+				<li className="p-2 pl-5">
+				<p>{horario}</p>
+				</li>
+			));
+		}
+		else {
+			return (
+				<li className="p-2 pl-5 bg-slate-300">
+				<p>Aún no hay horarios disponibles para este día</p>
+				</li>
+			);
+		}
+	};
 
-	// Custom comparator function to sort time strings
-	function timeComparator(a, b) {
+	// Custom comparator function to sort time strings.
+	const timeComparator = (a, b) => {
 		const timeA = new Date(`1970/01/01 ${a}`);
 		const timeB = new Date(`1970/01/01 ${b}`);
 		return timeA - timeB;
 	}
+
+	// Convert a date from the format "yyyy-mm-dd" to "dd/mm/yyyy".
+	const formatDate = (dateString) => {
+		console.log('dateString to format: ', dateString);
+		const date = dayjs(dateString);
+		const formattedDate = date.format('DD/MM/YYYY');
+		
+		console.log(formattedDate);
+		return formattedDate;
+	  };
 
 	// console.log('horariosDisponibles');
 	// console.log(horariosDisponibles);
@@ -264,6 +341,19 @@ const FechasHorarios = () => {
 				<div className='space-y-5 p-10 my-20 mx-auto flex flex-col justify-center items-center bg-blue-100 min-w-70 w-96 rounded-md bg-slate-200z'>
 					<h1>Tus dias y horarios disponibles</h1>
 					<Calendar className={'rounded-md border-transparent'} onChange={onChange} value={date} />
+					<div className='w-full flex flex-row items-center gap-10'>
+						<div className='flex flex-col justify-between w-full'>
+							<p>Puede seleccionar un intervalo de fechas:</p>
+							<Datepicker
+								primaryColor={"emerald"}
+								dateFormat="MMMM eeee d, yyyy h:mm aa"
+								separator={"a"}
+								displayFormat={"DD/MM/YYYY"} 
+								value={selectedDatesInterval}
+								onChange={handleSelectedDatesIntervalChange}
+							/>
+						</div>
+					</div>
 					<div className='w-full flex flex-row items-center gap-10'>
 						<div className='flex flex-col justify-between w-full'>
 							<p>Desde</p>

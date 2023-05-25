@@ -9,6 +9,7 @@ import { useContext } from 'react';
 import { AuthContext } from './AuthContext';
 import Datepicker from "react-tailwindcss-datepicker";
 import dayjs from 'dayjs';
+import moment from 'moment';
 
 const FechasHorarios = () => {
 	const { isAuthenticated } = useContext(AuthContext);
@@ -21,6 +22,7 @@ const FechasHorarios = () => {
 		endDate: new Date()
 	});
 	const [horariosDisponibles, setHorariosDisponibles] = useState([]);
+	const [datesArrayToAdd, setDatesArrayToAdd] = useState([]);
 	const navigate = useNavigate();
 	const cookies = new Cookies();
 
@@ -128,9 +130,10 @@ const FechasHorarios = () => {
 		let newHorariosDisponibles = {...horariosDisponibles};
 		// newHorariosDisponibles[formattedDate] = timeArray;
 
-		const datesArrayToAdd = createDatesArray(startDate, endDate);
+		// const datesArrayToAdd = createDatesArray(startDate, endDate);
+		setDatesArrayToAdd(createDatesArray(startDate, endDate));
 
-		console.log('dates interval in between the 2 selected dates: ', datesArrayToAdd);
+		console.log('dates interval in between the 2 selected dates: ', createDatesArray(startDate, endDate));
 
 		// console.log('---------newHorariosDisponibles ---------');
 		// console.log(newHorariosDisponibles);
@@ -224,58 +227,59 @@ const FechasHorarios = () => {
 
 	const createTimeArray = (startTime, endTime) => {
 		console.log('in createTimeArray');
-		const start = new Date(`01/01/2000 ${startTime}`);
-		const end = new Date(`01/01/2000 ${endTime}`);
+		// const start = new Date(`01/01/2000 ${startTime}`);
+		// const end = new Date(`01/01/2000 ${endTime}`);
 		console.log('formattedDate at createTimeArray(): ');
 		console.log(formattedDate);
 		// if(horariosDisponibles())
 
+		let newHorariosDisponibles = {...horariosDisponibles};
+		let currentTime;
+		let end;
 		let timeArray = [];
 
-		if (horariosDisponibles[formattedDate] && horariosDisponibles[formattedDate].length > 0) {
-			timeArray = horariosDisponibles[formattedDate];
-		}
-		else {
-			timeArray = [];
-		}
+		datesArrayToAdd.forEach(day => {
+			// console.log('day we are adding (foreach loop): ', day);
+			if (horariosDisponibles[day] && horariosDisponibles[day].length > 0) {
+				timeArray = horariosDisponibles[day];
+			}
+			else {
+				timeArray = [];
+			}
+			
+			// currentTime = new Date(`${day} ${startTime}`);
+			// end = new Date(`${day} ${endTime}`);
 
-		// console.log('start: ', start);
-		// console.log('end: ', end);
+			currentTime = moment(`${day} ${startTime}`, 'DD/MM/YYYY HH:mm');
+			end = moment(`${day} ${endTime}`, 'DD/MM/YYYY HH:mm');
 
-		// console.log('horariosDisponibles');
-		// console.log(horariosDisponibles);
-		// console.log('horariosDisponibles[formattedDate]');
-		// console.log(horariosDisponibles[formattedDate]);
-	  
-		let currentTime = start;
-		while (currentTime < end) {
-		  const formattedTime = currentTime.toLocaleTimeString('en-US', {
-			hour: 'numeric',
-			minute: 'numeric',
-			hour12: false,
-		  });
-	  
-		  
-		  if (!timeArray.includes(formattedTime)) {
-			timeArray.push(formattedTime);
-		  }
+			// console.log(`time array for day ${day}: `, timeArray);
 
-		  currentTime.setMinutes(currentTime.getMinutes() + 30);
-		}
+			// console.log(`startTime: ${startTime}, endTime: ${endTime}`);
+			// console.log(`currentTime: ${currentTime}`);
+			// console.log(`end: ${end}`);
+			
+			while (currentTime < end) {
+				const formattedTime = currentTime.format('HH:mm')
 
-		// Sort the timeArray
-		timeArray.sort(timeComparator);
-
-		// console.log('-------- timeArray (after being sorted) ---------');
-		// console.log(timeArray);
+				// console.log(`formated time inside while ${formattedTime}`);
+			
+				
+				if (!timeArray.includes(formattedTime)) {
+					timeArray.push(formattedTime);
+				}
 		
-		let newHorariosDisponibles = {...horariosDisponibles};
-		newHorariosDisponibles[formattedDate] = timeArray;
-
-		// console.log('---------newHorariosDisponibles ---------');
-		// console.log(newHorariosDisponibles);
-		// console.log('---------newHorariosDisponibles[25/05/2023] ---------');
-		// console.log(newHorariosDisponibles['25/05/2023']);
+				currentTime.add(30, 'minutes');
+			}
+	
+			// Sort the timeArray
+			timeArray.sort(timeComparator);
+			
+			newHorariosDisponibles[day] = timeArray;
+	
+			console.log('---------newHorariosDisponibles ---------');
+			console.log(newHorariosDisponibles);
+		});
 
 		setHorariosDisponibles(newHorariosDisponibles);
 

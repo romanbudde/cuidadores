@@ -26,7 +26,7 @@ const LandingCuidador = () => {
 	}
 
 	const redirectProfile = () => {
-		navigate('/filter-cuidadores');
+		navigate('/account');
 	}
 
 	if(isAuthenticated){

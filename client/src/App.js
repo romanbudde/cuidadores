@@ -7,6 +7,7 @@ import RegisterPage from './routes/RegisterPage';
 import FilterCuidadoresPage from './routes/FilterCuidadoresPage';
 import LandingCuidadorPage from './routes/LandingCuidadorPage';
 import FechasHorariosPage from './routes/FechasHorariosPage';
+import AccountPage from './routes/AccountPage';
 import { AuthProvider, AuthContext } from './components/AuthContext';
 
 import './App.css';
@@ -79,6 +80,14 @@ const App = () => {
 				element={
 					<>
 					{ <FechasHorariosPage /> }
+					</>
+				} 
+				/>
+				<Route 
+				path="/account"
+				element={
+					<>
+					{ <AccountPage /> }
 					</>
 				} 
 				/>

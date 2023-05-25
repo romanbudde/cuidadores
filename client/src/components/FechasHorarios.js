@@ -350,7 +350,7 @@ const FechasHorarios = () => {
 							<p>Puede seleccionar un intervalo de fechas:</p>
 							<Datepicker
 								primaryColor={"emerald"}
-								dateFormat="MMMM eeee d, yyyy h:mm aa"
+								// dateFormat="MMMM eeee d, yyyy h:mm aa"
 								separator={"a"}
 								displayFormat={"DD/MM/YYYY"} 
 								value={selectedDatesInterval}
@@ -360,16 +360,17 @@ const FechasHorarios = () => {
 					</div>
 					<div className='w-full flex flex-row items-center gap-10'>
 						<div className='flex flex-col justify-between w-full'>
-							<p>Desde</p>
+							<p className='pl-2'>Desde</p>
 							<Select
 								value={selectedHoraDesde}
 								onChange={e => handleHoraDesdeChange(e)}
-								placeholder={selectedHoraDesde ? selectedHoraDesde : 'Select...'}
+								placeholder={selectedHoraDesde ? selectedHoraDesde : 'Hora'}
 								options={options}
 								maxMenuHeight={240}
+								className='rounded-md'
 								theme={(theme) => ({
 									...theme,
-									borderRadius: 0,
+									borderRadius: 10,
 									colors: {
 									...theme.colors,
 									primary25: '#8FD5FF',
@@ -380,16 +381,16 @@ const FechasHorarios = () => {
 							
 						</div>
 						<div className='flex flex-col justify-between w-full'>
-							<p>Hasta</p>
+							<p className='pl-2'>Hasta</p>
 							<Select
 								value={selectedHoraHasta}
 								onChange={e => handleHoraHastaChange(e)}
-								placeholder={selectedHoraHasta ? selectedHoraHasta : 'Select...'}
+								placeholder={selectedHoraHasta ? selectedHoraHasta : 'Hora'}
 								options={options}
 								maxMenuHeight={240}
 								theme={(theme) => ({
 									...theme,
-									borderRadius: 0,
+									borderRadius: 10,
 									colors: {
 									...theme.colors,
 									primary25: '#8FD5FF',

@@ -26,7 +26,7 @@ const ListUsers = () => {
 	}
 
 	const redirectProfile = () => {
-		navigate('/filter-cuidadores');
+		navigate('/account');
 	}
 
 	if(isAuthenticated){

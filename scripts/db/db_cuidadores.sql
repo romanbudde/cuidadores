@@ -20,6 +20,9 @@ SET default_tablespace = '';
 
 SET default_table_access_method = heap;
 
+CREATE DATABASE db_cuidadores;
+\connect db_cuidadores;
+
 --
 -- Name: caregiver_availability; Type: TABLE; Schema: public; Owner: postgres
 --

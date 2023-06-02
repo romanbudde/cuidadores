@@ -45,7 +45,7 @@ const UserEditData = ({ user, setUser, show, onClose, userTypes }) => {
                 email,
                 firstname,
                 lastname,
-                // userType,
+                userType,
                 enabled: user.enabled,
 				hourlyRate: hourlyRate
             };
@@ -70,7 +70,7 @@ const UserEditData = ({ user, setUser, show, onClose, userTypes }) => {
                 mail: email,
                 name: firstname,
                 last_name: lastname,
-                // type: userType,
+                type: userType,
                 created_at: userUpdate.created_at, 
                 modified_at: userUpdate.modified_at,
                 enabled: userUpdate.enabled, 

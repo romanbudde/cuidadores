@@ -3,21 +3,32 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import Cookies from 'universal-cookie';
 
-const UserEditData = ({ user, show, onClose }) => {
+const UserEditData = ({ user, setUser, show, onClose, userTypes }) => {
 
 	console.log('user passed: ', user);
 
-    const [description, setDescription] = useState(user.description);
-    const [email, setEmail] = useState(user.mail);
-    const [firstname, setFirstname] = useState(user.name);
-    const [lastname, setLastname] = useState(user.last_name);
+    const [description, setDescription] = useState('');
+    const [email, setEmail] = useState('');
+    const [firstname, setFirstname] = useState('');
+    const [lastname, setLastname] = useState('');
+    const [hourlyRate, setHourlyRate] = useState('');
+    const [userType, setUserType] = useState('');
     // const [userType, setUserType] = useState(user.type);
 	const navigate = useNavigate();
 	const cookies = new Cookies();
 
-    if(!show) return null;
+	useEffect(() => {
+        if (user) {
+            setDescription(user.description);
+            setEmail(user.mail);
+            setFirstname(user.name);
+            setLastname(user.last_name);
+            setHourlyRate(user.hourly_rate);
+            setUserType(user.type);
+        }
+    }, [user]);
 
-	
+    if(!show) return null;
 
     const updateUser = async (e) => {
         // console.log(description);
@@ -35,7 +46,8 @@ const UserEditData = ({ user, show, onClose }) => {
                 firstname,
                 lastname,
                 // userType,
-                enabled: user.enabled
+                enabled: user.enabled,
+				hourlyRate: hourlyRate
             };
             const id = user.id;
             const userUpdate = await fetch(
@@ -64,6 +76,8 @@ const UserEditData = ({ user, show, onClose }) => {
                 enabled: userUpdate.enabled, 
                 id: id
             }
+
+			setUser(userUpdate.id? userUpdate : user);
             
             console.log('updatedUser:');
             console.log(updatedUser);
@@ -118,19 +132,35 @@ const UserEditData = ({ user, show, onClose }) => {
                                 />
                             </div>
                             <div className='flex flex-col'>
-                                <label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">Description</label>
+                                <label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
+									Descripcion
+								</label>
                                 <input 
                                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                                     value={description ? description : ''}
                                     onChange={e => setDescription(e.target.value)}
                                     name="description" 
-                                    placeholder="The user's description"
-                                    required/>
+                                    placeholder="Tu descripcion"
+                                    required
+									/>
+                            </div>
+
+							<div className='flex flex-col'>
+                                <label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
+									Tipo de usuario
+								</label>
+                                <input 
+                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                    value={userType ? userType : ''}
+                                    onChange={e => setUserType(e.target.value)}
+                                    name="user_type"
+                                    disabled
+									/>
                             </div>
                             
                             <div className='flex flex-col'>
                                 <label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
-                                    First Name
+                                    Nombre
                                 </label>
                                 <input
                                     type="text"
@@ -143,7 +173,7 @@ const UserEditData = ({ user, show, onClose }) => {
                             </div>
                             <div className='flex flex-col'>
                                 <label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
-                                    Last Name
+                                    Apellido
                                 </label>
                                 <input
                                     type="text"
@@ -154,7 +184,24 @@ const UserEditData = ({ user, show, onClose }) => {
                                     required
                                 />
                             </div>
-                            <button 
+
+
+							<div className='flex flex-col'>
+                                <label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
+                                    Tarifa por hora:
+                                </label>
+                                <input
+                                    type="text"
+                                    name="lastname"
+                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                    value={hourlyRate ? hourlyRate : ''}
+                                    onChange={e => setHourlyRate(e.target.value)}
+                                    required
+                                />
+                            </div>
+
+
+                            <button
                                 type="submit" 
                                 className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                                 onClick={(e) => { 

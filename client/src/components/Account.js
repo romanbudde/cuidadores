@@ -10,7 +10,9 @@ import UserEditData from './UserEditData';
 const Account = () => {
 	const { isAuthenticated } = useContext(AuthContext);
 	const { userId } = useContext(AuthContext);
+
 	const [user, setUser] = useState('');
+	const [userTypes, setUserTypes] = useState([]);
 
 	const [showEditModal, setShowEditModal] = useState(false);
     
@@ -43,8 +45,25 @@ const Account = () => {
 		setUser(jsonData);
 	}
 
+	// get all users function
+    const getUserTypes = async () => {
+        try {
+            const response = await fetch("http://localhost:5000/user_types/");
+            const jsonData = await response.json();
+
+			console.log('---- inside getUserTypes ----');
+			console.log(jsonData);
+
+			setUserTypes(jsonData);
+        } catch (error) {
+            console.error(error.message);
+        }
+    };
+
 	useEffect(() => {
         getUserData();
+
+		getUserTypes();
     }, []);
 
 	if(isAuthenticated){
@@ -61,7 +80,9 @@ const Account = () => {
 					</button>
 					<UserEditData
 						user={user}
+						setUser={setUser}
 						show={showEditModal}
+						userTypes={userTypes}
 						onClose={handleClose}
 					/>
 					<p>Tu mail actual es {user.mail}</p>

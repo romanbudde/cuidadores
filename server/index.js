@@ -244,6 +244,17 @@ app.get("/cuidadores", async(req, res) => {
     }
 });
 
+// get all - user types
+app.get("/user_types", async(req, res) => {
+    try {
+        const userTypes = await pool.query("SELECT * from user_type")
+        res.json(userTypes.rows);
+    }
+    catch (error) {
+        console.error(error.message);
+    }
+});
+
 // filtrar cuidadores (desde el lado del usuario)
 app.post("/search_cuidadores", async(req, res) => {
     try {
@@ -400,11 +411,11 @@ app.get("/cuidadores/:id", async(req, res) => {
 app.put("/cuidadores/:id", async(req, res) => {
     try {
         const {id} = req.params;
-        const { description, email, firstname, lastname, userType, enabled } = req.body;
+        const { description, email, firstname, lastname, userType, enabled, hourlyRate } = req.body;
         const modified_at = new Date();
         const updateUser = await pool.query(
-            "UPDATE users SET description = $1, mail = $2, name = $3, last_name = $4, type = $5,  modified_at = $6, enabled = $7 WHERE id = $8 RETURNING *", 
-            [description, email, firstname, lastname, userType, modified_at, enabled, id]
+            "UPDATE users SET description = $1, mail = $2, name = $3, last_name = $4, type = $5,  modified_at = $6, enabled = $7, hourly_rate = $8 WHERE id = $9 RETURNING *", 
+            [description, email, firstname, lastname, userType, modified_at, enabled, hourlyRate, id]
         );
 
         if(updateUser.rowCount > 0){

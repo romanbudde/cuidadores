@@ -120,6 +120,10 @@ const FechasHorarios = () => {
 		console.log("Dates interval new value:", newInterval);
 		let startDate = formatDate(newInterval.startDate);
 		let endDate = formatDate(newInterval.endDate);
+
+		console.log(`startDate at Interval Change: ${startDate}`);
+		console.log(`endDate at Interval Change: ${endDate}`);
+
 		// console.log("Formatted dates interval new value:", newInterval);
 		setSelectedDatesInterval(newInterval);
 
@@ -196,6 +200,9 @@ const FechasHorarios = () => {
     // when page loads, get all Users
     useEffect(() => {
         getHorarios();
+
+		const today = moment().format('DD/MM/YYYY');
+		setDatesArrayToAdd([today]);
     }, []);
 
 	const api_caregiver_update_available_dates = async newHorariosDisponibles => {
@@ -237,6 +244,9 @@ const FechasHorarios = () => {
 		let currentTime;
 		let end;
 		let timeArray = [];
+
+		// console.log(`----- datesArrayToAdd: -----`);
+		// console.log(datesArrayToAdd);
 
 		datesArrayToAdd.forEach(day => {
 			// console.log('day we are adding (foreach loop): ', day);

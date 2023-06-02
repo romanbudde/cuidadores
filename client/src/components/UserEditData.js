@@ -105,7 +105,7 @@ const UserEditData = ({ user, setUser, show, onClose, userTypes }) => {
                             
                         </div>
                         <form className="space-y-6">
-                            <div className='flex flex-col'>
+                            <div className='flex flex-col hidden'>
                                 <label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
                                     User ID (non editable)
                                 </label>
@@ -145,7 +145,7 @@ const UserEditData = ({ user, setUser, show, onClose, userTypes }) => {
 									/>
                             </div>
 
-							<div className='flex flex-col'>
+							<div className='flex flex-col hidden'>
                                 <label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
 									Tipo de usuario
 								</label>

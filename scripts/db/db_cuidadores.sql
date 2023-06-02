@@ -20,9 +20,6 @@ SET default_tablespace = '';
 
 SET default_table_access_method = heap;
 
-CREATE DATABASE db_cuidadores;
-\connect db_cuidadores;
-
 --
 -- Name: caregiver_availability; Type: TABLE; Schema: public; Owner: postgres
 --
@@ -141,13 +138,34 @@ ALTER SEQUENCE public.contract_id_seq OWNED BY public.contract.id;
 --
 
 CREATE TABLE public.user_type (
-    id integer NOT NULL,
     user_type_number character varying(5) NOT NULL,
-    user_type character varying(99) NOT NULL
+    user_type character varying(99) NOT NULL,
+    id bigint NOT NULL
 );
 
 
 ALTER TABLE public.user_type OWNER TO postgres;
+
+--
+-- Name: user_type_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.user_type_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.user_type_id_seq OWNER TO postgres;
+
+--
+-- Name: user_type_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.user_type_id_seq OWNED BY public.user_type.id;
+
 
 --
 -- Name: users; Type: TABLE; Schema: public; Owner: postgres
@@ -215,6 +233,13 @@ ALTER TABLE ONLY public.contract ALTER COLUMN id SET DEFAULT nextval('public.con
 
 
 --
+-- Name: user_type id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.user_type ALTER COLUMN id SET DEFAULT nextval('public.user_type_id_seq'::regclass);
+
+
+--
 -- Name: users id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -226,8 +251,8 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_
 --
 
 COPY public.caregiver_availability (id, caregiver_id, dates) FROM stdin;
-3	48	{"14/05/2023":["04:00","04:30","05:00"],"15/05/2023":["05:00","05:30","06:00"],"16/05/2023":["06:30","07:00","07:30"],"17/05/2023":["08:00","08:30","09:00"]}
 9	4	{"30/05/2023":["06:30","07:00","07:30"],"31/05/2023":["08:00","08:30","09:00"]}
+3	48	{"14/05/2023":["04:00","04:30","05:00"],"15/05/2023":["05:00","05:30","06:00"],"16/05/2023":["06:30","07:00","07:30"],"17/05/2023":["08:00","08:30","09:00"],"02/06/2023":["01:30","02:00","02:30","03:00","07:30","08:00","08:30","09:00","09:30","10:00"],"03/06/2023":["01:30","02:00","02:30","03:00","03:30","04:00","04:30","05:00","05:30","06:00"],"09/06/2023":["02:00","02:30","03:00","03:30","04:00","04:30"],"10/06/2023":["02:00","02:30","03:00","03:30","04:00","04:30"],"11/06/2023":["02:00","02:30","03:00","03:30","04:00","04:30"],"14/06/2023":["02:30","03:00","03:30","04:30","05:00","05:30"],"15/06/2023":["02:30","03:00","03:30","04:30","05:00","05:30"],"16/06/2023":["04:30","05:00","05:30"],"17/06/2023":["04:30","05:00","05:30"]}
 \.
 
 
@@ -290,8 +315,10 @@ COPY public.contract (id, status, start, "end", customer_id, created_at, modifie
 -- Data for Name: user_type; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.user_type (id, user_type_number, user_type) FROM stdin;
-0	0	client
+COPY public.user_type (user_type_number, user_type, id) FROM stdin;
+0	client	1
+1	cuidador	2
+2	admin	3
 \.
 
 
@@ -300,13 +327,13 @@ COPY public.user_type (id, user_type_number, user_type) FROM stdin;
 --
 
 COPY public.users (id, description, name, last_name, password, mail, type, created_at, modified_at, enabled, hourly_rate, average_review_score) FROM stdin;
-48	The description	firstname	lastname	$2a$10$N0IU4mQeWMBBx0JacWifdOgSXsiKg3AejjuaWQ4RIJ9CUbsJTPOIi	asd	1	\N	2023-05-11 16:44:59.035	t	35	9.42
 4	1111111111	11111111	111111111111	\N	111111111	1	\N	2023-05-11 16:49:46.464	t	27	9.25
 31	qweeqw	123	123	\N	adsasd	0	2023-04-09 18:04:41.672	2023-05-11 15:47:46.231	t	\N	\N
 2	2222222	22222	222222	\N	222222	0	\N	2023-05-11 15:47:46.231	t	\N	\N
 1	desccc	111111111111	111111111	\N	11111111111	1	\N	2023-05-11 15:47:46.231	f	45	\N
 30	dasdsadsa	zxczcxczx	wqwqrweqr	\N	wqeeqw	1	2023-04-09 18:04:41.672	2023-05-11 15:47:46.231	t	15	\N
 6	The description	Josh	Peck	$2y$10$iKJBVKYUMF6u967o8KWBae8rcBYfyugYgO38WeBWSdXXQV56PQ6Z2	email@hotmail.com	1	\N	2023-05-11 15:58:45.628	t	75	7.55
+48	newwdescccc	updatedAgain	lastname	$2a$10$N0IU4mQeWMBBx0JacWifdOgSXsiKg3AejjuaWQ4RIJ9CUbsJTPOIi	updatedEmail	\N	\N	2023-06-02 14:30:02.391	t	21	9.42
 \.
 
 
@@ -329,6 +356,13 @@ SELECT pg_catalog.setval('public.caregiver_score_id_seq', 70, true);
 --
 
 SELECT pg_catalog.setval('public.contract_id_seq', 1, false);
+
+
+--
+-- Name: user_type_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.user_type_id_seq', 3, true);
 
 
 --
@@ -363,11 +397,11 @@ ALTER TABLE ONLY public.contract
 
 
 --
--- Name: user_type id; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: user_type user_type_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.user_type
-    ADD CONSTRAINT id PRIMARY KEY (id);
+    ADD CONSTRAINT user_type_pkey PRIMARY KEY (id);
 
 
 --

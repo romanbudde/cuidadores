@@ -28,6 +28,9 @@ const UserEditData = ({ user, setUser, show, onClose, userTypes }) => {
         }
     }, [user]);
 
+    console.log('----------- userType ---------');
+    console.log(userType);
+
     if(!show) return null;
 
     const updateUser = async (e) => {
@@ -185,20 +188,21 @@ const UserEditData = ({ user, setUser, show, onClose, userTypes }) => {
                                 />
                             </div>
 
-
-							<div className='flex flex-col'>
-                                <label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
-                                    Tarifa por hora:
-                                </label>
-                                <input
-                                    type="text"
-                                    name="lastname"
-                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                                    value={hourlyRate ? hourlyRate : ''}
-                                    onChange={e => setHourlyRate(e.target.value)}
-                                    required
-                                />
-                            </div>
+                            { userType === 1 && (
+                                <div className='flex flex-col'>
+                                    <label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
+                                        Tarifa por hora:
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="lastname"
+                                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                        value={hourlyRate ? hourlyRate : ''}
+                                        onChange={e => setHourlyRate(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                            )}
 
 
                             <button

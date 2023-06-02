@@ -220,8 +220,19 @@ app.post('/register', async(req, res) => {
                 [email, hashedPassword, '0', created_at, 1, firstname, lastname]
             );
     
-            // res.json(req.body);
-            res.json(newUser.rows[0]);
+            // Generate token
+            const payload = { userEmail: email };
+            const secretKey = process.env.JWT_SECRET;
+
+            const token = jwt.sign(payload, secretKey);
+            console.log("JWT Token: ", token);
+
+            // send token back to the client
+            
+            res.json({
+                "user": newUser.rows[0],
+                "token": token
+            });
         }
 
         // res.json(req.body);
@@ -229,7 +240,7 @@ app.post('/register', async(req, res) => {
     }
     catch (error) {
         console.error(error.message);
-        res.json('Usuario y/o contraseña incorrectos.')
+        res.json(error.message);
     }
 });
 

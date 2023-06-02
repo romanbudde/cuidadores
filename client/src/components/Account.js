@@ -69,7 +69,7 @@ const Account = () => {
 	if(isAuthenticated){
 		return (
 			<Fragment>
-				<div className='space-y-5 p-10 my-20 mx-auto flex flex-col justify-center items-center bg-gray-100 min-w-70 w-96 rounded-md bg-slate-200z'>
+				<div className='space-y-5 p-10 my-20 mx-auto flex flex-col justify-center items-center bg-gray-300 min-w-70 w-96 rounded-md bg-slate-200z'>
 					<h1>Account page component!</h1>
 					<h1>Hello, {user.name}!</h1>
 					<button 

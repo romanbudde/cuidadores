@@ -1,6 +1,14 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useContext } from 'react';
+import { useNavigate } from "react-router-dom";
+import Cookies from 'universal-cookie';
+import { AuthProvider, AuthContext } from './AuthContext';
 
 const Register = () => {
+
+  const cookies = new Cookies();
+  const navigate = useNavigate();
+  const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
+  const { userId, setUserId } = useContext(AuthContext);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -13,6 +21,7 @@ const Register = () => {
     e.preventDefault();
     try {
         const body = {email, firstname, lastname, password};
+
         console.log(JSON.stringify(body));
         console.log('---- end of body to be submitted ----');
         let newUser = {};
@@ -27,9 +36,34 @@ const Register = () => {
             .then(result => {
               console.log('register user result: ');
               console.log(result);
-                if(result.id){
+                if(result.user.id){
                     console.log(result);
-                    newUser = result;
+                    newUser = result.user;
+
+                    // set the cookie
+                    cookies.set('auth-token', result.token, { path: '/' });
+                    
+                    // set global context for isAuthenticated to true.
+                    setIsAuthenticated(true);
+                    
+                    // set global context for userId
+                    cookies.set('user-id', newUser.id, { path: '/' });
+                    setUserId(newUser.id);
+
+                    // redirect a landing de user o de cuidadores o de admin segun el tipo de usuario.
+                    console.log('user type: ', newUser.type);
+
+                    switch(newUser.type){
+                      case 0: 
+                        navigate('/landing');
+                        break;
+                      case 1: 
+                        navigate('/landing-cuidador');
+                        break;
+                      case 2: 
+                        navigate('/landing-admin');
+                        break;
+                    }
                 }
             });
 

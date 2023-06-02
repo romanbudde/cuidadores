@@ -115,7 +115,7 @@ const Home = () => {
 			</button>
 			<div className="flex flex-row w-full justify-between">
 				<a href="/register">No tienes una cuenta?</a>
-				<a className="text-cyan-500 font-bold" href="">Crear cuenta</a>
+				<a className="text-cyan-500 font-bold" href="/register">Crear cuenta</a>
 			</div>
 	
 		</form>

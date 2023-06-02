@@ -89,7 +89,7 @@ const FilterCuidadores = () => {
 	if(isAuthenticated){
 		return (
 			<Fragment>
-				<form className='space-y-5 p-10 my-20 mx-auto flex flex-col justify-start items-center bg-gray-100 min-w-70 w-96 rounded-md bg-slate-200z'>
+				<form className='space-y-5 p-10 my-20 mx-auto flex flex-col justify-start items-center bg-gray-300 min-w-70 w-96 rounded-md bg-slate-200z'>
 					<h1>Buscar cuidadores</h1>
 					<label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
 						Por puntaje de los usuarios
@@ -180,7 +180,7 @@ const FilterCuidadores = () => {
 						Buscar
 					</button>
 				</form>
-				<div className='flex flex-col space-y-10 mx-auto items-center bg-gray-100 rounded-md justify-start w-96 py-10'>
+				<div className='flex flex-col space-y-10 mx-auto items-center bg-gray-300 rounded-md justify-start w-96 py-10'>
 					<h1>Cuidadores search result:</h1>
 					{cuidadores.length > 0 && cuidadores.map(cuidador => (
 						<div 

@@ -17,6 +17,7 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
 	const cookies = new Cookies();
     const [date, setDate] = useState(new Date());
 	const [horariosDisponibles, setHorariosDisponibles] = useState([]);
+	const [checkedHorarios, setCheckedHorarios] = useState([]);
 
 	let formattedDate = date.toLocaleDateString("en-GB");
 
@@ -45,12 +46,29 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
 		// const today = moment().format('DD/MM/YYYY');
     }, []);
 
+    // const handleHorariosArray = (horario) => {
+    //     console.log('clicked an horario: ', horario);
+    // }
+    
+    const handleCheckboxChange = (horario) => {
+        console.log('clicked an horario: ', horario);
+        if (checkedHorarios.includes(horario)) {
+          setCheckedHorarios(checkedHorarios.filter((item) => item !== horario));
+        } else {
+          setCheckedHorarios([...checkedHorarios, horario]);
+        }
+      };
+    
+
     const onChange = (selectedDate) => {
         // esto deberia tambien llamar al backend y traer los horarios disponibles para esa fecha.
         
 		setDate(selectedDate);
 		console.log("selected date: ", selectedDate);
 	};
+
+    console.log('checkedHorarios: ');
+    console.log(checkedHorarios);
 
 	const renderHorarios = () => {
 		// console.log('-------formattedDate---------');
@@ -60,16 +78,39 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
 		// console.log('-------horariosDisponibles[formattedDate]---------');
 		// console.log(horariosDisponibles['25/05/2023']);
 		if (horariosDisponibles && horariosDisponibles[formattedDate] && horariosDisponibles[formattedDate].length > 0) {
-			return horariosDisponibles[formattedDate].map((horario) => (
-				<li className="p-2 pl-5">
-				<p>{horario}</p>
-				</li>
-			));
+            return horariosDisponibles[formattedDate].map((horario, index) => {
+                console.log('checkedHorarios: ', checkedHorarios);
+                checkedHorarios.includes(horario) ? console.log('includes') : console.log('does NOT include');
+
+                return(
+                    <li className='flex flex-row items-center p-7 gap-2 relative' key={index}>
+                        <label htmlFor={horario} className='w-full flex items-center cursor-pointer'>
+                            <span className={`absolute p-5 inset-0 transition ${checkedHorarios.includes(horario) ? 'bg-green-400' : 'bg-gray-300'}`}>
+                                {horario}
+                            </span>
+                            <input
+                                type='checkbox'
+                                className='hidden'
+                                value={horario}
+                                name={horario}
+                                id={horario}
+                                // onClick={ (e) => console.log('clicked an horario: ', horario)}
+                                onChange={() => handleCheckboxChange(horario)}
+                            />
+                        </label>
+                    </li>
+                );
+                    
+
+                    // <li className="p-2 pl-5" onClick={ (e) => console.log('clicked an horario: ', horario)}>
+                    //     <p>{horario}</p>
+                    // </li>
+            });
 		}
 		else {
 			return (
 				<li className="p-2 pl-5 bg-slate-300">
-				<p>Aún no hay horarios disponibles para este día</p>
+				    <p>Aún no hay horarios disponibles para este día</p>
 				</li>
 			);
 		}
@@ -94,12 +135,16 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
                         <Calendar className={'rounded-md border-transparent'} onChange={onChange} value={date} />
 						<p>Tafira por hora: ${cuidador.hourly_rate}</p>
 						<p>Horarios disponibles para el dia {date.toLocaleDateString("en-GB")}</p>
-						<ul className="flex flex-col w-96 rounded-md bg-green-300 max-h-60 overflow-auto">
+						<ul className="flex flex-col w-96 rounded-md max-h-60 overflow-scroll">
 							{console.log('date: ', date)}
 							{/* {console.log('formatted date: ', formattedDate)} */}
 							{renderHorarios()}
 						</ul>
-                        
+                        {horariosDisponibles && horariosDisponibles[formattedDate] && horariosDisponibles[formattedDate].length > 0 && (
+                            <button className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'>
+                                Crear contrato para este día
+                            </button>
+                        )}
                     </div>
                 </div>
             </div>

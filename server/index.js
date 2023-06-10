@@ -357,6 +357,63 @@ app.post("/caregiver_review", async(req, res) => {
     }
 });
 
+// create a contract
+app.post("/contract", async(req, res) => {
+    try {
+		const { caregiver_id, customer_id, date, horarios } = req.body;
+		console.log('customer_id: ', customer_id);
+		console.log('caregiver_id: ', caregiver_id);
+		console.log('date: ', date);
+		console.log('horarios: ', horarios);
+
+        const caregiver = await pool.query("SELECT * FROM users WHERE type = '1' AND enabled = true AND id = $1", [caregiver_id]);
+		if(caregiver.rows[0].id > 0) {
+			let query = "INSERT INTO caregiver_score (caregiver_id, customer_id, score, observation, created_at) VALUES($1, $2, $3, $4, $5) RETURNING *";
+	
+			const created_at = new Date();
+			const modified_at = new Date();
+	
+			const allCuidadores = await pool.query(query, [caregiver_id, customer_id, review_score, observation, created_at ]);
+			// console.log(allCuidadores);
+			res.json(allCuidadores.rows[0]);
+	
+			// check that the review has been created (it has an id greater than 0)
+			// update users table with newer score average
+			if(allCuidadores.rows[0].id > 0){
+				const allScores = await pool.query("SELECT * FROM caregiver_score WHERE caregiver_id = $1", [caregiver_id]);
+	
+				// get new average
+				let scores_amount = 0;
+				let scores_accumulated = 0;
+				let score_average = 0;
+	
+				if(allScores.rows.length > 0) {
+					allScores.rows.forEach( review => {
+						console.log("review.score: ", review.score);
+						scores_accumulated = scores_accumulated + parseFloat(review.score);
+						scores_amount++;
+					});
+					score_average = scores_accumulated / scores_amount;
+					score_average = score_average.toFixed(2);
+				} else {
+					score_average = review_score;
+				}
+	
+				console.log('scores_accumulated: ', scores_accumulated);
+				console.log('scores_amount: ', scores_amount);
+				console.log('scores_average: ', score_average);
+	
+				if(score_average){
+					const updateCuidadorScore = await pool.query("UPDATE users SET average_review_score = $1, modified_at = $2 WHERE id = $3 RETURNING *", [score_average, modified_at, caregiver_id]);
+				}
+			}
+		}
+    }
+    catch (error) {
+        console.error(error.message);
+    }
+});
+
 // update available dates json for a specific caregiver
 app.post("/caregiver_update_available_dates", async (req, res) => {
     try {

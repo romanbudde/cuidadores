@@ -31,8 +31,6 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
 	// get all users function
     const getHorarios = async () => {
         try {
-            
-
             const response = await fetch("http://localhost:5000/caregiver_get_available_dates?caregiver_id=" + cuidador.id);
             const jsonData = await response.json();
 
@@ -77,13 +75,34 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
     // console.log(checkedHorarios);
     // console.log('date selected: ', date);
     
-    const createContract = () => {
+    const createContract = async () => {
         // usando los datos de: checkedHorarios, date, userId, cuidadorId. voy al backend y creo el contract.
         const contractDate = date.toLocaleDateString("en-GB");
         console.log('contractDate: ', contractDate);
         console.log('contractCheckedHorarios: ', checkedHorarios);
         console.log('contract cuidador id: ', cuidador.id);
         console.log('contract user id: ', userId);
+
+        let cuidador_id = cuidador.id;
+
+        const body = {
+            caregiver_id: cuidador_id, 
+            customer_id: userId, 
+            date: contractDate, 
+            horarios: checkedHorarios
+        };
+
+        const response = await fetch("http://localhost:5000/contract/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(body)
+        })
+            .then(response => response.json())
+            .then(result => {
+                console.log(result);
+            });
     }
 
 	const renderHorarios = () => {

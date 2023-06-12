@@ -409,17 +409,25 @@ app.post("/contract", async(req, res) => {
             }
 
             // check that the client does not have an active contract for any of the horarios in the new contract.
-            const clientExistingContracts = await pool.query("SELECT * FROM contract WHERE customer_id = $1 AND status = 'active'", [customer_id]);
+            const clientExistingContracts = await pool.query("SELECT * FROM contract WHERE customer_id = $1 AND status = 'active' AND date = $2",
+            [customer_id, date]);
             console.log('clientExistingContracts: ');
-            console.log(clientExistingContracts.rows[0].horarios);
+            console.log(clientExistingContracts.rows);
             if(clientExistingContracts.rows.length > 0) {
-                if (clientExistingContracts.rows[0].horarios.length > 0){
-                    
-                    let existingContractHorarios = clientExistingContracts.rows[0].horarios;
-    
-                    if (existingContractHorarios.some(time => horarios.includes(time))){
-                        // then, the client already has a contract for that date in one or more of the selected times.
-                        return res.status(401).json({ error: 'Error: el cliente ya tiene otro contrato existente para ese día en alguno de esos horarios.' });
+                for (let i = 0; i < clientExistingContracts.rows.length; i++) {
+                    const contract = clientExistingContracts.rows[i];
+                    if (contract.horarios.length > 0){
+                        
+                        let existingContractHorarios = contract.horarios;
+                        console.log("existingContractHorarios:");
+                        console.log(existingContractHorarios);
+                        console.log("horarios: ");
+                        console.log(horarios);
+        
+                        if (existingContractHorarios.some(time => horarios.includes(time))){
+                            // then, the client already has a contract for that date in one or more of the selected times.
+                            return res.status(401).json({ error: 'Error: el cliente ya tiene otro contrato existente para ese día en alguno de esos horarios.' });
+                        }
                     }
                 }
             }
@@ -428,14 +436,14 @@ app.post("/contract", async(req, res) => {
             // create contract now that we have the caregiver availabilities updated, and we've checked that the client does NOT have a contract
             // for any of those times already.
 
-			let query = "INSERT INTO contract (customer_id, caregiver_id, created_at, modified_at, amount, horarios, status) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *";
+			let query = "INSERT INTO contract (customer_id, caregiver_id, created_at, modified_at, amount, horarios, date, status) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *";
 
             console.log('horarios json encoded: ');
             console.log(JSON.stringify(horarios));
 
             let horarios_json = JSON.stringify(horarios);
 	
-			const newContract = await pool.query(query, [customer_id, caregiver_id, created_at, modified_at, amount, horarios_json, 'active' ]);
+			const newContract = await pool.query(query, [customer_id, caregiver_id, created_at, modified_at, amount, horarios_json, date, 'active' ]);
 			// console.log(allCuidadores);
 			res.json(newContract.rows[0]);
 

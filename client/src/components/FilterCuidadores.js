@@ -162,9 +162,9 @@ const FilterCuidadores = () => {
 							Satisfactorio: 6+
 						</label>
 					</div>
-					<div className='flex flex-row space-x-4 items-center w-full'>
+					<div className='flex flex-col items-start space-y-2 w-full'>
 						<label className="block mr-auto text-sm font-medium text-gray-900 dark:text-white whitespace-nowrap">
-							Tarifa minima
+							Tarifa minima (por media hora)
 						</label>
 						<input
 							type="text"
@@ -175,9 +175,9 @@ const FilterCuidadores = () => {
 							onChange={e => setTarifaMinima(e.target.value)}
 						/>
 					</div>
-					<div className='flex flex-row space-x-4 items-center w-full'>
+					<div className='flex flex-col items-start space-y-2 w-full'>
 						<label className="block mr-auto text-sm font-medium text-gray-900 dark:text-white whitespace-nowrap">
-							Tarifa maxima
+							Tarifa maxima (por media hora)
 						</label>
 						<input
 							type="text"

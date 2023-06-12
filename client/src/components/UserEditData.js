@@ -191,7 +191,7 @@ const UserEditData = ({ user, setUser, show, onClose, userTypes }) => {
                             { userType === 1 && (
                                 <div className='flex flex-col'>
                                     <label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
-                                        Tarifa por hora:
+                                        Tarifa por media hora:
                                     </label>
                                     <input
                                         type="text"

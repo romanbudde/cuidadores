@@ -86,7 +86,7 @@ const Account = () => {
 						onClose={handleClose}
 					/>
 					<p>Tu mail actual es {user.mail}</p>
-					<p>Tarifa por hora: {user.hourly_rate}</p>
+					<p>Tarifa por media hora: {user.hourly_rate}</p>
 					<p>Puntaje promedio segun las reseñas: {user.average_review_score}</p>
 				</div>
 			</Fragment>

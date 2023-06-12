@@ -365,48 +365,86 @@ app.post("/contract", async(req, res) => {
 		console.log('caregiver_id: ', caregiver_id);
 		console.log('date: ', date);
 		console.log('horarios: ', horarios);
+		console.log('horarios.length: ', horarios.length);
 
-        const caregiver = await pool.query("SELECT * FROM users WHERE type = '1' AND enabled = true AND id = $1", [caregiver_id]);
-		if(caregiver.rows[0].id > 0) {
-			let query = "INSERT INTO caregiver_score (caregiver_id, customer_id, score, observation, created_at) VALUES($1, $2, $3, $4, $5) RETURNING *";
+        const caregiverQuery = await pool.query("SELECT * FROM users WHERE type = '1' AND enabled = true AND id = $1", [caregiver_id]);
+        const clientQuery = await pool.query("SELECT * FROM users WHERE type = '0' AND enabled = true AND id = $1", [customer_id]);
+        const created_at = new Date();
+        const modified_at = new Date();
+
+        
+        
+		if(caregiverQuery.rows[0].id > 0 && clientQuery.rows[0].id > 0) {
+            
+            const caregiver = caregiverQuery.rows[0];
+            const client = clientQuery.rows[0];
+            // calculate the total amount of the contract using cuidador's rate and the amount of horarios.
+            let amount = horarios.length * caregiver.hourly_rate;
+    
+            console.log('total amount: ', amount);
+
+            // si hay cliente y cuidador, tengo que traer las availabilities del cuidador, removerle aquellas en 'horarios', y volver a guardarlas en la DB.
+
+            const previousAvailabilities = await pool.query("SELECT * FROM caregiver_availability WHERE caregiver_id = $1", [caregiver_id]);
+
+            console.log('caregiver availabilities for date: ', date);
+            console.log(previousAvailabilities.rows[0].dates[date]);
+
+            if(previousAvailabilities.rows[0].dates[date].length > 0) {
+                let allAvailabilities = previousAvailabilities.rows[0].dates;
+                let availabilitiesForDate = previousAvailabilities.rows[0].dates[date];
+                let filteredAvailabilities = availabilitiesForDate.filter(time => !horarios.includes(time));
+
+                console.log('filteredAvailabilities: ');
+                console.log(filteredAvailabilities);
+                allAvailabilities[date] = filteredAvailabilities;
+
+                console.log('allAvailabilities entero y updateado: ');
+                console.log(allAvailabilities);
+
+                const newAvailabilities = await pool.query("UPDATE caregiver_availability SET dates = $1 WHERE caregiver_id = $2 RETURNING *", [allAvailabilities, caregiver_id]);
+            } else {
+                // return error because times for that date are NOT available.
+                return res.status(401).json({ error: 'Error: alguno de los horarios no esta disponible para la fecha elegida.' });
+            }
+
+            // check that the client does not have an active contract for any of the horarios in the new contract.
+            const clientExistingContracts = await pool.query("SELECT * FROM contract WHERE customer_id = $1 AND status = 'active'", [customer_id]);
+            console.log('clientExistingContracts: ');
+            console.log(clientExistingContracts.rows[0].horarios);
+            if(clientExistingContracts.rows.length > 0) {
+                if (clientExistingContracts.rows[0].horarios.length > 0){
+                    
+                    let existingContractHorarios = clientExistingContracts.rows[0].horarios;
+    
+                    if (existingContractHorarios.some(time => horarios.includes(time))){
+                        // then, the client already has a contract for that date in one or more of the selected times.
+                        return res.status(401).json({ error: 'Error: el cliente ya tiene otro contrato existente para ese día en alguno de esos horarios.' });
+                    }
+                }
+            }
+
+
+            // create contract now that we have the caregiver availabilities updated, and we've checked that the client does NOT have a contract
+            // for any of those times already.
+
+			let query = "INSERT INTO contract (customer_id, caregiver_id, created_at, modified_at, amount, horarios, status) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *";
+
+            console.log('horarios json encoded: ');
+            console.log(JSON.stringify(horarios));
+
+            let horarios_json = JSON.stringify(horarios);
 	
-			const created_at = new Date();
-			const modified_at = new Date();
-	
-			const allCuidadores = await pool.query(query, [caregiver_id, customer_id, review_score, observation, created_at ]);
+			const newContract = await pool.query(query, [customer_id, caregiver_id, created_at, modified_at, amount, horarios_json, 'active' ]);
 			// console.log(allCuidadores);
-			res.json(allCuidadores.rows[0]);
+			res.json(newContract.rows[0]);
+
+            console.log(' SUCCESS -------- CREATED NEW CONTRACT!');
 	
-			// check that the review has been created (it has an id greater than 0)
-			// update users table with newer score average
-			if(allCuidadores.rows[0].id > 0){
-				const allScores = await pool.query("SELECT * FROM caregiver_score WHERE caregiver_id = $1", [caregiver_id]);
-	
-				// get new average
-				let scores_amount = 0;
-				let scores_accumulated = 0;
-				let score_average = 0;
-	
-				if(allScores.rows.length > 0) {
-					allScores.rows.forEach( review => {
-						console.log("review.score: ", review.score);
-						scores_accumulated = scores_accumulated + parseFloat(review.score);
-						scores_amount++;
-					});
-					score_average = scores_accumulated / scores_amount;
-					score_average = score_average.toFixed(2);
-				} else {
-					score_average = review_score;
-				}
-	
-				console.log('scores_accumulated: ', scores_accumulated);
-				console.log('scores_amount: ', scores_amount);
-				console.log('scores_average: ', score_average);
-	
-				if(score_average){
-					const updateCuidadorScore = await pool.query("UPDATE users SET average_review_score = $1, modified_at = $2 WHERE id = $3 RETURNING *", [score_average, modified_at, caregiver_id]);
-				}
-			}
+			// check that the contract has been created (it has an id greater than 0)
+			// if(newContract.rows[0].id > 0){
+				
+			// }
 		}
     }
     catch (error) {

@@ -357,6 +357,18 @@ app.post("/caregiver_review", async(req, res) => {
     }
 });
 
+// get a contract by user id
+app.get("/contract", async(req, res) => {
+    try {
+        const { customer_id } = req.query;
+        const contracts = await pool.query("SELECT * from contract WHERE customer_id = $1", [customer_id]);
+        res.json(contracts.rows);
+    }
+    catch (error) {
+        console.error(error.message);
+    }
+});
+
 // create a contract
 app.post("/contract", async(req, res) => {
     try {
@@ -426,7 +438,7 @@ app.post("/contract", async(req, res) => {
         
                         if (existingContractHorarios.some(time => horarios.includes(time))){
                             // then, the client already has a contract for that date in one or more of the selected times.
-                            return res.status(401).json({ error: 'Error: el cliente ya tiene otro contrato existente para ese día en alguno de esos horarios.' });
+                            return res.status(401).json({ error: 'Ya tienes otro contrato existente para ese día en alguno de esos horarios.' });
                         }
                     }
                 }

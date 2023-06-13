@@ -7,6 +7,7 @@ import RegisterPage from './routes/RegisterPage';
 import FilterCuidadoresPage from './routes/FilterCuidadoresPage';
 import LandingCuidadorPage from './routes/LandingCuidadorPage';
 import FechasHorariosPage from './routes/FechasHorariosPage';
+import MisContratosPage from './routes/MisContratosPage';
 import AccountPage from './routes/AccountPage';
 import { AuthProvider, AuthContext } from './components/AuthContext';
 
@@ -64,6 +65,14 @@ const App = () => {
 				element={
 					<>
 					{ <FilterCuidadoresPage /> }
+					</>
+				} 
+				/>
+				<Route 
+				path="/mis-contratos"
+				element={
+					<>
+					{ <MisContratosPage /> }
 					</>
 				} 
 				/>

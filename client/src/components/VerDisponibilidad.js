@@ -10,6 +10,9 @@ import Select from 'react-select';
 import Datepicker from "react-tailwindcss-datepicker";
 import { useContext } from 'react';
 import { AuthContext } from './AuthContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCircleXmark, faCircleCheck } from '@fortawesome/free-solid-svg-icons'
+
 
 
 const VerDisponibilidad = ({ cuidador, show, onClose }) => {
@@ -22,6 +25,9 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
     const [date, setDate] = useState(new Date());
 	const [horariosDisponibles, setHorariosDisponibles] = useState([]);
 	const [checkedHorarios, setCheckedHorarios] = useState([]);
+	const [displayCreateContractMessage, setDisplayCreateContractMessage] = useState(false);
+	const [createContractMessage, setCreateContractMessage] = useState('');
+	const [contractResponseError, setContractResponseError] = useState(false);
 
 	let formattedDate = date.toLocaleDateString("en-GB");
 
@@ -54,6 +60,9 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
     //     console.log('clicked an horario: ', horario);
     // }
     
+    console.log('checkedHorarios: ', checkedHorarios);
+    console.log(checkedHorarios);
+    
     const handleCheckboxChange = (horario) => {
         console.log('clicked an horario: ', horario);
         if (checkedHorarios.includes(horario)) {
@@ -65,11 +74,14 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
     
 
     const onChange = (selectedDate) => {
-        // esto deberia tambien llamar al backend y traer los horarios disponibles para esa fecha.
-        
 		setDate(selectedDate);
 		console.log("selected date: ", selectedDate);
+        setCheckedHorarios([]);
 	};
+
+    const closeContractResponseModal = () => {
+        setDisplayCreateContractMessage(false);
+    }
 
     // console.log('checkedHorarios: ');
     // console.log(checkedHorarios);
@@ -101,7 +113,20 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
         })
             .then(response => response.json())
             .then(result => {
+                console.log('111111111');
                 console.log(result);
+                setDisplayCreateContractMessage(true);
+                if(result.error){
+                    setContractResponseError(true);
+                    console.log('Display error: ', result.error);
+                    setCreateContractMessage(result.error);
+                }
+                else {
+                    setContractResponseError(false);
+                    setDisplayCreateContractMessage(true);
+                    setCreateContractMessage(`Contrato creado con éxito para el día ${date.toLocaleDateString("en-GB")}.`);
+                }
+                console.log('222222222');
             });
     }
 
@@ -114,8 +139,8 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
 		// console.log(horariosDisponibles['25/05/2023']);
 		if (horariosDisponibles && horariosDisponibles[formattedDate] && horariosDisponibles[formattedDate].length > 0) {
             return horariosDisponibles[formattedDate].map((horario, index) => {
-                console.log('checkedHorarios: ', checkedHorarios);
-                checkedHorarios.includes(horario) ? console.log('includes') : console.log('does NOT include');
+                // console.log('checkedHorarios: ', checkedHorarios);
+                // checkedHorarios.includes(horario) ? console.log('includes') : console.log('does NOT include');
 
                 return(
                     <li className='flex flex-row items-center p-7 gap-2 relative' key={index}>
@@ -167,7 +192,7 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
                                 Fechas disponibles para el cuidador {cuidador.name} {cuidador.last_name}:
                             </h3>
                         </div>
-                        <Calendar className={'rounded-md border-transparent'} onChange={onChange} value={date} />
+                        <Calendar locale={'es-ES'} className={'rounded-md border-transparent'} onChange={onChange} value={date} />
 						<p>Tafira por hora: ${cuidador.hourly_rate}</p>
 						<p>Horarios disponibles para el dia {date.toLocaleDateString("en-GB")}</p>
 						<ul className="flex flex-col w-full rounded-md max-h-44 overflow-scroll">
@@ -186,6 +211,44 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
                     </div>
                 </div>
             </div>
+            {  displayCreateContractMessage && contractResponseError === true  &&(
+                <div className='fixed inset-0 bg-gray-900 bg-opacity-40 z-50 flex justify-center items-center'>
+                    <div className='bg-red-500 p-5 rounded w-9/12 flex flex-col gap-5 items-center justify-center relative'>
+                        <button onClick={ closeContractResponseModal } type="button" className="absolute top-2 right-2 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="defaultModal">
+                            <svg aria-hidden="true" className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"></path></svg>
+                            <span className="sr-only">Close modal</span>
+                        </button>
+                        <p className='font-bold text-2xl text-white'>Error!</p>
+                        <p className='text-white text-center text-md'>{ createContractMessage }</p>
+                        <FontAwesomeIcon icon={faCircleXmark} size="2xl" className='text-8xl' style={{color: "#fff",}} />
+                        <button
+                            className='bg-red-800 mt-10 hover:bg-blue-700 text-white font-bold py-2 px-16 rounded-full'
+                            onClick={ closeContractResponseModal }
+                        >
+                            Continuar
+                        </button>
+                    </div>
+                </div>
+            )}
+            {  displayCreateContractMessage && contractResponseError === false && (
+                <div className='fixed inset-0 bg-gray-900 bg-opacity-40 z-50 flex justify-center items-center'>
+                    <div className='bg-white p-5 rounded w-9/12 flex flex-col gap-5 items-center justify-center relative'>
+                        <button onClick={ closeContractResponseModal } type="button" className="absolute top-2 right-2 text-gray-200 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="defaultModal">
+                            <svg aria-hidden="true" className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"></path></svg>
+                            <span className="sr-only">Close modal</span>
+                        </button>
+                        <p className='font-bold text-xl text-black'>Contrato creado!</p>
+                        <p className='text-black text-center'>{ createContractMessage }</p>
+                        <FontAwesomeIcon icon={faCircleCheck} size="2xl" className='text-8xl' style={{color: "#0BF300",}} />
+                        <button
+                            className='bg-green-500 mt-10 hover:bg-blue-700 text-white font-bold py-2 px-16 rounded-full'
+                            onClick={ closeContractResponseModal }
+                        >
+                            Continuar
+                        </button>
+                    </div>
+                </div>
+            )}
         </Fragment>
     );
 }

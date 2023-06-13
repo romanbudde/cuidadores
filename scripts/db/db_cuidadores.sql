@@ -102,13 +102,14 @@ ALTER SEQUENCE public.caregiver_score_id_seq OWNED BY public.caregiver_score.id;
 
 CREATE TABLE public.contract (
     id integer NOT NULL,
-    status character(1) NOT NULL,
-    start timestamp without time zone NOT NULL,
-    "end" timestamp without time zone NOT NULL,
+    status character varying NOT NULL,
+    date character varying NOT NULL,
     customer_id integer NOT NULL,
     created_at timestamp without time zone NOT NULL,
     modified_at timestamp without time zone NOT NULL,
-    amount real NOT NULL
+    amount real NOT NULL,
+    caregiver_id integer NOT NULL,
+    horarios json NOT NULL
 );
 
 
@@ -255,7 +256,7 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_
 
 COPY public.caregiver_availability (id, caregiver_id, dates) FROM stdin;
 9	4	{"30/05/2023":["06:30","07:00","07:30"],"31/05/2023":["08:00","08:30","09:00"]}
-3	48	{"14/05/2023":["04:00","04:30","05:00"],"15/05/2023":["05:00","05:30","06:00"],"16/05/2023":["06:30","07:00","07:30"],"17/05/2023":["08:00","08:30","09:00"],"02/06/2023":["01:30","02:00","02:30","03:00","07:30","08:00","08:30","09:00","09:30","10:00"],"03/06/2023":["01:30","02:00","02:30","03:00","03:30","04:00","04:30","05:00","05:30","06:00"],"09/06/2023":["02:00","02:30","03:00","03:30","04:00","04:30"],"10/06/2023":["02:00","02:30","03:00","03:30","04:00","04:30"],"11/06/2023":["02:00","02:30","03:00","03:30","04:00","04:30"],"14/06/2023":["02:30","03:00","03:30","04:30","05:00","05:30"],"15/06/2023":["02:30","03:00","03:30","04:30","05:00","05:30"],"16/06/2023":["04:30","05:00","05:30"],"17/06/2023":["04:30","05:00","05:30"]}
+3	48	{"14/05/2023":["04:00","04:30","05:00"],"15/05/2023":["05:00","05:30","06:00"],"16/05/2023":["06:30","07:00","07:30"],"17/05/2023":["08:00","08:30","09:00"],"02/06/2023":["01:30","02:00","02:30","03:00","07:30","08:00","08:30","09:00","09:30","10:00"],"03/06/2023":["01:30","02:00","02:30","03:00","03:30","04:00","04:30","05:00","05:30","06:00"],"09/06/2023":["02:00","02:30","03:00","03:30","04:00","04:30"],"10/06/2023":["02:00","02:30","03:00","03:30","04:00","04:30"],"11/06/2023":["02:00","02:30","03:00","03:30","04:00","04:30"],"14/06/2023":[],"15/06/2023":[],"16/06/2023":["04:30","05:00","05:30"],"17/06/2023":["04:30","05:00","05:30"]}
 \.
 
 
@@ -310,7 +311,13 @@ COPY public.caregiver_score (id, caregiver_id, customer_id, observation, score, 
 -- Data for Name: contract; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.contract (id, status, start, "end", customer_id, created_at, modified_at, amount) FROM stdin;
+COPY public.contract (id, status, date, customer_id, created_at, modified_at, amount, caregiver_id, horarios) FROM stdin;
+1	active	15/06/2023	50	2023-06-13 11:46:21.859	2023-06-13 11:46:21.859	21	48	["03:00"]
+2	active	15/06/2023	50	2023-06-13 12:14:41.018	2023-06-13 12:14:41.018	21	48	["03:30"]
+3	active	15/06/2023	50	2023-06-13 12:15:32.325	2023-06-13 12:15:32.325	21	48	["04:30"]
+4	active	14/06/2023	50	2023-06-13 12:16:31.982	2023-06-13 12:16:31.982	21	48	["02:30"]
+5	active	14/06/2023	50	2023-06-13 13:06:44.39	2023-06-13 13:06:44.39	21	48	["05:30"]
+6	active	15/06/2023	50	2023-06-13 13:07:13.505	2023-06-13 13:07:13.505	21	48	["05:00"]
 \.
 
 
@@ -360,7 +367,7 @@ SELECT pg_catalog.setval('public.caregiver_score_id_seq', 70, true);
 -- Name: contract_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.contract_id_seq', 1, false);
+SELECT pg_catalog.setval('public.contract_id_seq', 6, true);
 
 
 --

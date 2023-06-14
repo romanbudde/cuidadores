@@ -17,6 +17,7 @@ const MisContratos = () => {
     const [contracts, setContracts] = useState([]);
     const [displayedContracts, setDisplayedContracts] = useState([]);
     const [dateFilter, setDateFilter] = useState('newest');
+    const [statusFilter, setStatusFilter] = useState('all');
     const [user, setUser] = useState([]);
 	const navigate = useNavigate();
 	const cookies = new Cookies();
@@ -50,35 +51,49 @@ const MisContratos = () => {
 		navigate('/landing');
 	}
 
-	const handleFilterEstadoChange = (e) => {
+	const handleStatusFilterChange = (e) => {
+
+		setStatusFilter(e.value)
+
+		newSortContracts();
+
 		// console.log("e: ");
 		// console.log(e);
-		if(e.value === 'active'){
-			sortContractsByActive();
-		}
-		if(e.value === 'inactive'){
-			sortContractsByInactive();
-		}
-		if(e.value === 'completed'){
-			sortContractsByCompleted();
-		}
-		if(e.value === 'cancelled'){
-			sortContractsByCancelled();
-		}
-		if(e.value === 'all'){
-			sortContractsByAll();
-		}
+		// if(e.value === 'active'){
+		// 	sortContractsByActive();
+		// }
+		// if(e.value === 'inactive'){
+		// 	sortContractsByInactive();
+		// }
+		// if(e.value === 'completed'){
+		// 	sortContractsByCompleted();
+		// }
+		// if(e.value === 'cancelled'){
+		// 	sortContractsByCancelled();
+		// }
+		// if(e.value === 'all'){
+		// 	sortContractsByAll();
+		// }
 	}
 
-	const handleFilterFechaChange = (e) => {
+	const handleDateFilterChange = (e) => {
+
+		setDateFilter(e.value);
+
+		newSortContracts();
+
 		// console.log("e: ");
 		// console.log(e);
-		if(e.value === 'oldest'){
-			sortContractsByOldest();
-		}
-		if(e.value === 'newest'){
-			sortContractsByNewest();
-		}
+		// if(e.value === 'oldest'){
+		// 	sortContractsByOldest();
+		// }
+		// if(e.value === 'newest'){
+		// 	sortContractsByNewest();
+		// }
+	}
+
+	const newSortContracts = () => {
+		
 	}
 
 	const sortContractsByActive = () => {
@@ -181,6 +196,27 @@ const MisContratos = () => {
 		return sortedArray;
 	}
 
+
+	const sortContracts = () => {
+		console.log('sortContractsByNewest');
+
+		setDateFilter('newest');
+
+		let sortedArray = [...contracts];
+
+		sortedArray.sort((a, b) => {
+			const dateA = moment(a.date, 'DD/MM/YYYY');
+			const dateB = moment(b.date, 'DD/MM/YYYY');
+			return dateB.diff(dateA);
+		});
+
+		setDisplayedContracts(sortedArray);
+
+		console.log('by newest contracts: ', sortedArray);
+
+		return sortedArray;
+	}
+
     // get all users function
     const getContracts = async () => {
         try {
@@ -240,7 +276,7 @@ const MisContratos = () => {
 						<div className='flex flex-row'>
 							<Select
 								// value={selectedHoraDesde}
-								onChange={e => handleFilterFechaChange(e)}
+								onChange={e => handleDateFilterChange(e)}
 								placeholder={'Fecha:'}
 								options={optionsFecha}
 								maxMenuHeight={240}
@@ -257,7 +293,7 @@ const MisContratos = () => {
 							/>
 							<Select
 								// value={selectedHoraDesde}
-								onChange={e => handleFilterEstadoChange(e)}
+								onChange={e => handleStatusFilterChange(e)}
 								placeholder={'Estado:'}
 								options={optionsEstado}
 								maxMenuHeight={240}

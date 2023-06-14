@@ -7,6 +7,8 @@ import { useContext } from 'react';
 import { AuthContext } from './AuthContext';
 
 import VerDisponibilidad from './VerDisponibilidad';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 
 const FilterCuidadores = () => {
 	
@@ -41,6 +43,10 @@ const FilterCuidadores = () => {
 		cookies.remove('auth-token');
 		
 		navigate('/');
+	}
+
+	const redirectLanding = () => {
+		navigate('/landing');
 	}
 
 	// const handleShowDisponibilidadModal = (cuidador) => setShowDisponibilidadModal(true);
@@ -105,8 +111,15 @@ const FilterCuidadores = () => {
 	if(isAuthenticated){
 		return (
 			<Fragment>
-				<form className='space-y-5 p-10 my-20 mx-auto flex flex-col justify-start items-center bg-gray-300 min-w-70 w-96 rounded-md bg-slate-200z'>
-					<h1>Buscar cuidadores</h1>
+				<form className='space-y-5 px-10 py-2 mx-auto flex flex-col justify-start min-w-70 w-96 rounded-md bg-slate-200z'>
+					<div className='flex flex-row items-center w-full justify-center relative border-b-2 border-b-gray-200'>
+						<FontAwesomeIcon
+							className='absolute left-0'
+							icon={faChevronLeft}
+							onClick={ redirectLanding }
+						/>
+						<h1 className='flex justify-center font-bold text-lg py-4'>Buscar cuidadores</h1>
+					</div>
 					<label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
 						Por puntaje de los usuarios
 					</label>
@@ -197,11 +210,11 @@ const FilterCuidadores = () => {
 					</button>
 				</form>
 				{ cuidadores.length > 0 && (
-					<div className='flex flex-col space-y-10 mx-auto items-center bg-gray-300 rounded-md justify-start w-96 py-10'>
-						<h1>Cuidadores search result:</h1>
+					<div className='flex flex-col space-y-4 mx-auto items-center rounded-md justify-start w-96 py-2 my-5 border-t-2 border-t-gray-200'>
+						<h1 className='flex justify-center font-bold text-md py-4'>{cuidadores.length} Cuidadores encontrados:</h1>
 						{cuidadores.length > 0 && cuidadores.map(cuidador => (
 							<div 
-								className='bg-gray-200 p-5 rounded-md'
+								className='bg-gray-200 p-4 rounded-md'
 								key={cuidador.id}
 							>
 								<h2>Cuidador: {cuidador.name}</h2>
@@ -220,6 +233,12 @@ const FilterCuidadores = () => {
 								/>
 							</div>
 						))}
+					</div>
+				)}
+				{ cuidadores.length <= 0 && (
+					<div className='flex flex-col space-y-4 mx-auto items-center rounded-md justify-start w-96 py-2 my-5 border-t-2 border-t-gray-200'>
+						<h1 className='flex justify-center font-bold text-md py-4'>{cuidadores.length} Cuidadores encontrados</h1>
+						
 					</div>
 				)}
 			</Fragment>

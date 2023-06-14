@@ -16,6 +16,7 @@ const MisContratos = () => {
 	const { isAuthenticated, userId } = useContext(AuthContext);
     const [contracts, setContracts] = useState([]);
     const [displayedContracts, setDisplayedContracts] = useState([]);
+    const [dateFilter, setDateFilter] = useState('newest');
     const [user, setUser] = useState([]);
 	const navigate = useNavigate();
 	const cookies = new Cookies();
@@ -31,6 +32,7 @@ const MisContratos = () => {
 		{ value: 'inactive', label: 'Inactivos' },
 		{ value: 'cancelled', label: 'Cancelados' },
 		{ value: 'completed', label: 'Completados' },
+		{ value: 'all', label: 'Todos' },
 	];
 
 	console.log("isAuthenticated: ", isAuthenticated);
@@ -63,6 +65,9 @@ const MisContratos = () => {
 		if(e.value === 'cancelled'){
 			sortContractsByCancelled();
 		}
+		if(e.value === 'all'){
+			sortContractsByAll();
+		}
 	}
 
 	const handleFilterFechaChange = (e) => {
@@ -79,7 +84,17 @@ const MisContratos = () => {
 	const sortContractsByActive = () => {
 		console.log('sortContractsByActive');
 
-		let sortedArray = [...contracts];
+		let contractsFiltered = [];
+
+		if(dateFilter === 'newest'){
+			contractsFiltered = sortContractsByNewest();
+		}
+		if(dateFilter === 'oldest'){
+			contractsFiltered = sortContractsByOldest();
+		}
+
+
+		let sortedArray = [...contractsFiltered];
 		sortedArray = sortedArray.filter(contract => contract.status === 'active');
 
 		setDisplayedContracts(sortedArray);
@@ -120,8 +135,16 @@ const MisContratos = () => {
 		console.log('by cancelled contracts: ', sortedArray);
 	}
 
+	const sortContractsByAll = () => {
+		console.log('sortContractsByAll');
+
+		setDisplayedContracts(contracts);
+	}
+
 	const sortContractsByOldest = () => {
 		console.log('sortContractsByOldest');
+
+		setDateFilter('oldest');
 
 		let sortedArray = [...contracts];
 
@@ -134,10 +157,14 @@ const MisContratos = () => {
 		setDisplayedContracts(sortedArray);
 
 		console.log('by oldest contracts: ', sortedArray);
+
+		return sortedArray;
 	}
 	
 	const sortContractsByNewest = () => {
 		console.log('sortContractsByNewest');
+
+		setDateFilter('newest');
 
 		let sortedArray = [...contracts];
 
@@ -150,6 +177,8 @@ const MisContratos = () => {
 		setDisplayedContracts(sortedArray);
 
 		console.log('by newest contracts: ', sortedArray);
+
+		return sortedArray;
 	}
 
     // get all users function

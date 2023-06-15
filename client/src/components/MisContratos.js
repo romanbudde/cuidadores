@@ -55,7 +55,7 @@ const MisContratos = () => {
 
 		setStatusFilter(e.value)
 
-		newSortContracts();
+		newSortContracts('', e.value);
 
 		// console.log("e: ");
 		// console.log(e);
@@ -80,7 +80,7 @@ const MisContratos = () => {
 
 		setDateFilter(e.value);
 
-		newSortContracts();
+		newSortContracts(e.value, '');
 
 		// console.log("e: ");
 		// console.log(e);
@@ -92,68 +92,114 @@ const MisContratos = () => {
 		// }
 	}
 
-	const newSortContracts = () => {
-		
-	}
+	const newSortContracts = (date, status) => {
+		// de todos los contratos (contracts) filtrarlos por fecha, y luego por estado, todo en esta func, y 
+		// hacer un setDisplayedContracts($contractsFiltered)
 
-	const sortContractsByActive = () => {
-		console.log('sortContractsByActive');
+		console.log('dateFilter: ', date);
+		console.log('statusFilter: ', status);
 
 		let contractsFiltered = [];
 
-		if(dateFilter === 'newest'){
-			contractsFiltered = sortContractsByNewest();
+		if(status !== '') {
+			if(dateFilter === 'newest'){
+				contractsFiltered = sortContractsByNewest(contractsFiltered);
+			}
+			if(dateFilter === 'oldest'){
+				contractsFiltered = sortContractsByOldest(contractsFiltered);
+			}
+
+			if(status === 'active'){
+				contractsFiltered = sortContractsByActive(contractsFiltered);
+			}
+			if(status === 'inactive'){
+				contractsFiltered = sortContractsByInactive(contractsFiltered);
+			}
+			if(status === 'completed'){
+				contractsFiltered = sortContractsByCompleted(contractsFiltered);
+			}
+			if(status === 'cancelled'){
+				contractsFiltered = sortContractsByCancelled(contractsFiltered);
+			}
+			if(status === 'all'){
+				contractsFiltered = sortContractsByAll(contractsFiltered);
+			}
 		}
-		if(dateFilter === 'oldest'){
-			contractsFiltered = sortContractsByOldest();
+
+		if(date !== '') {
+			if(date === 'newest'){
+				contractsFiltered = sortContractsByNewest(contractsFiltered);
+			}
+			if(date === 'oldest'){
+				contractsFiltered = sortContractsByOldest(contractsFiltered);
+			}
+
+			if(statusFilter === 'active'){
+				contractsFiltered = sortContractsByActive(contractsFiltered);
+			}
+			if(statusFilter === 'inactive'){
+				contractsFiltered = sortContractsByInactive(contractsFiltered);
+			}
+			if(statusFilter === 'completed'){
+				contractsFiltered = sortContractsByCompleted(contractsFiltered);
+			}
+			if(statusFilter === 'cancelled'){
+				contractsFiltered = sortContractsByCancelled(contractsFiltered);
+			}
+			if(statusFilter === 'all'){
+				contractsFiltered = sortContractsByAll(contractsFiltered);
+			}
 		}
-
-
-		let sortedArray = [...contractsFiltered];
-		sortedArray = sortedArray.filter(contract => contract.status === 'active');
-
-		setDisplayedContracts(sortedArray);
-
-		console.log('by active contracts: ', sortedArray);
+		
+		setDisplayedContracts(contractsFiltered);
 	}
 
-	const sortContractsByInactive = () => {
+	const sortContractsByActive = (contractsFiltered) => {
+		console.log('sortContractsByActive');
+
+		contractsFiltered = contractsFiltered.filter(contract => contract.status === 'active');
+
+		console.log('by active contracts: ', contractsFiltered);
+
+		return contractsFiltered;
+	}
+
+	const sortContractsByInactive = (contractsFiltered) => {
 		console.log('sortContractsByInactive');
 
-		let sortedArray = [...contracts];
-		sortedArray = sortedArray.filter(contract => contract.status === 'inactive');
+		contractsFiltered = contractsFiltered.filter(contract => contract.status === 'inactive');
 
-		setDisplayedContracts(sortedArray);
+		console.log('by inactive contracts: ', contractsFiltered);
 
-		console.log('by inactive contracts: ', sortedArray);
+		return contractsFiltered;
 	}
 
-	const sortContractsByCompleted = () => {
+	const sortContractsByCompleted = (contractsFiltered) => {
 		console.log('sortContractsByCompleted');
 
-		let sortedArray = [...contracts];
-		sortedArray = sortedArray.filter(contract => contract.status === 'completed');
+		contractsFiltered = contractsFiltered.filter(contract => contract.status === 'completed');
 
-		setDisplayedContracts(sortedArray);
+		console.log('by completed contracts: ', contractsFiltered);
 
-		console.log('by completed contracts: ', sortedArray);
+		return contractsFiltered;
 	}
 
-	const sortContractsByCancelled = () => {
+	const sortContractsByCancelled = (contractsFiltered) => {
 		console.log('sortContractsByCancelled');
 
-		let sortedArray = [...contracts];
-		sortedArray = sortedArray.filter(contract => contract.status === 'cancelled');
+		contractsFiltered = contractsFiltered.filter(contract => contract.status === 'cancelled');
 
-		setDisplayedContracts(sortedArray);
+		console.log('by cancelled contracts: ', contractsFiltered);
 
-		console.log('by cancelled contracts: ', sortedArray);
+		return contractsFiltered;
 	}
 
-	const sortContractsByAll = () => {
+	const sortContractsByAll = (contractsFiltered) => {
 		console.log('sortContractsByAll');
 
-		setDisplayedContracts(contracts);
+		console.log('by all contracts: ', contractsFiltered);
+
+		return contractsFiltered;
 	}
 
 	const sortContractsByOldest = () => {
@@ -188,29 +234,6 @@ const MisContratos = () => {
 			const dateB = moment(b.date, 'DD/MM/YYYY');
 			return dateB.diff(dateA);
 		});
-
-		setDisplayedContracts(sortedArray);
-
-		console.log('by newest contracts: ', sortedArray);
-
-		return sortedArray;
-	}
-
-
-	const sortContracts = () => {
-		console.log('sortContractsByNewest');
-
-		setDateFilter('newest');
-
-		let sortedArray = [...contracts];
-
-		sortedArray.sort((a, b) => {
-			const dateA = moment(a.date, 'DD/MM/YYYY');
-			const dateB = moment(b.date, 'DD/MM/YYYY');
-			return dateB.diff(dateA);
-		});
-
-		setDisplayedContracts(sortedArray);
 
 		console.log('by newest contracts: ', sortedArray);
 

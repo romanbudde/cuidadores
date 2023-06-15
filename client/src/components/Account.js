@@ -83,20 +83,20 @@ const Account = () => {
 		return (
 			<Fragment>
 				<div className='space-y-5 flex flex-col justify-center items-center rounded-md bg-slate-200z'>
+					<div className='flex flex-row items-center justify-center relative border-b-2 border-b-gray-200 w-full'>
+						<FontAwesomeIcon
+							className='absolute left-5'
+							icon={faChevronLeft}
+							onClick={ redirectLanding }
+							/>
+						<h1 className='flex justify-center font-bold text-lg py-4'>Mi perfil</h1>
+					</div>
 					{ user.type === 1 && (
 						<CuidadorBottomBar/>
 					)}
 					{ user.type === 1 && (
 						<ClientBottomBar/>
 					)}
-					<div className='flex flex-row items-center justify-center relative border-b-2 border-b-gray-200 w-full'>
-						<FontAwesomeIcon
-							className='absolute left-5'
-							icon={faChevronLeft}
-							onClick={ redirectLanding }
-						/>
-						<h1 className='flex justify-center font-bold text-lg py-4'>Mi perfil</h1>
-					</div>
 					<div className='w-full flex flex-col items-center px-5 space-y-3'>
 						<h1>Hola, {user.name}!</h1>
 						<button 

@@ -7,8 +7,9 @@ import { json, useNavigate } from "react-router-dom";
 import Cookies from 'universal-cookie';
 import { useContext } from 'react';
 import { AuthContext } from './AuthContext';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChevronLeft } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronLeft, faHouse } from '@fortawesome/free-solid-svg-icons';
+import ClientBottomBar from './ClientBottomBar';
 import moment from 'moment';
 import Select from 'react-select';
 
@@ -56,24 +57,6 @@ const MisContratos = () => {
 		setStatusFilter(e.value)
 
 		newSortContracts('', e.value);
-
-		// console.log("e: ");
-		// console.log(e);
-		// if(e.value === 'active'){
-		// 	sortContractsByActive();
-		// }
-		// if(e.value === 'inactive'){
-		// 	sortContractsByInactive();
-		// }
-		// if(e.value === 'completed'){
-		// 	sortContractsByCompleted();
-		// }
-		// if(e.value === 'cancelled'){
-		// 	sortContractsByCancelled();
-		// }
-		// if(e.value === 'all'){
-		// 	sortContractsByAll();
-		// }
 	}
 
 	const handleDateFilterChange = (e) => {
@@ -81,15 +64,6 @@ const MisContratos = () => {
 		setDateFilter(e.value);
 
 		newSortContracts(e.value, '');
-
-		// console.log("e: ");
-		// console.log(e);
-		// if(e.value === 'oldest'){
-		// 	sortContractsByOldest();
-		// }
-		// if(e.value === 'newest'){
-		// 	sortContractsByNewest();
-		// }
 	}
 
 	const newSortContracts = (date, status) => {
@@ -287,6 +261,7 @@ const MisContratos = () => {
 		return (
 			<Fragment>
                 <div className='relative'>
+					<ClientBottomBar />
 					<div className='flex flex-row items-center justify-center relative border-b-2 border-b-gray-200'>
 						<FontAwesomeIcon
 							className='absolute left-5'
@@ -295,7 +270,7 @@ const MisContratos = () => {
 						/>
 						<h1 className='flex justify-center font-bold text-lg py-4'>Mis contratos</h1>
 					</div>
-					<div>
+					<div className='mb-28'>
 						<div className='flex flex-row'>
 							<Select
 								// value={selectedHoraDesde}

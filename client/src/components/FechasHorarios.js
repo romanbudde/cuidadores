@@ -8,6 +8,9 @@ import 'react-calendar/dist/Calendar.css';
 import { useContext } from 'react';
 import { AuthContext } from './AuthContext';
 import Datepicker from "react-tailwindcss-datepicker";
+import CuidadorBottomBar from './CuidadorBottomBar';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronLeft, faHouse } from '@fortawesome/free-solid-svg-icons';
 import dayjs from 'dayjs';
 import moment from 'moment';
 
@@ -89,6 +92,10 @@ const FechasHorarios = () => {
 		cookies.remove('auth-token');
 		
 		navigate('/');
+	}
+
+	const redirectLanding = () => {
+		navigate('/landing-cuidador');
 	}
 
 	const redirectFechasYHorarios = () => {
@@ -352,78 +359,89 @@ const FechasHorarios = () => {
 	if(isAuthenticated){
 		return (
 			<Fragment>
-				<div className='space-y-5 p-10 my-20 mx-auto flex flex-col justify-center items-center bg-blue-100 min-w-70 w-96 rounded-md bg-slate-200z'>
-					<h1>Tus dias y horarios disponibles</h1>
-					<Calendar className={'rounded-md border-transparent'} onChange={onChange} value={date} />
-					<div className='w-full flex flex-row items-center gap-10'>
-						<div className='flex flex-col justify-between w-full'>
-							<p>Puede seleccionar un intervalo de fechas:</p>
-							<Datepicker
-								primaryColor={"emerald"}
-								// dateFormat="MMMM eeee d, yyyy h:mm aa"
-								separator={"a"}
-								displayFormat={"DD/MM/YYYY"} 
-								value={selectedDatesInterval}
-								onChange={handleSelectedDatesIntervalChange}
-							/>
-						</div>
+				<div className='min-w-70 w-96 rounded-md'>
+					<CuidadorBottomBar />
+					<div className='flex flex-row items-center w-full justify-center relative border-b-2 border-b-gray-200'>
+						<FontAwesomeIcon
+							className='absolute left-5'
+							icon={faChevronLeft}
+							onClick={ redirectLanding }
+						/>
+						<h1 className='flex justify-center font-bold text-lg py-4'>Tus dias y horarios disponibles</h1>
 					</div>
-					<div className='w-full flex flex-row items-center gap-10'>
-						<div className='flex flex-col justify-between w-full'>
-							<p className='pl-2'>Desde</p>
-							<Select
-								value={selectedHoraDesde}
-								onChange={e => handleHoraDesdeChange(e)}
-								placeholder={selectedHoraDesde ? selectedHoraDesde : 'Hora'}
-								options={options}
-								maxMenuHeight={240}
-								className='rounded-md'
-								theme={(theme) => ({
-									...theme,
-									borderRadius: 10,
-									colors: {
-									...theme.colors,
-									primary25: '#8FD5FF',
-									primary: 'black',
-									},
-								})}
-							/>
-							
+					<div className='space-y-5 p-10 mx-auto flex flex-col justify-center items-center mb-20'>
+						<Calendar className={'rounded-md border-transparent'} onChange={onChange} value={date} />
+						<div className='w-full flex flex-row items-center gap-10'>
+							<div className='flex flex-col justify-between w-full'>
+								<p>Puede seleccionar un intervalo de fechas:</p>
+								<Datepicker
+									primaryColor={"emerald"}
+									// dateFormat="MMMM eeee d, yyyy h:mm aa"
+									separator={"a"}
+									displayFormat={"DD/MM/YYYY"} 
+									value={selectedDatesInterval}
+									onChange={handleSelectedDatesIntervalChange}
+								/>
+							</div>
 						</div>
-						<div className='flex flex-col justify-between w-full'>
-							<p className='pl-2'>Hasta</p>
-							<Select
-								value={selectedHoraHasta}
-								onChange={e => handleHoraHastaChange(e)}
-								placeholder={selectedHoraHasta ? selectedHoraHasta : 'Hora'}
-								options={options}
-								maxMenuHeight={240}
-								theme={(theme) => ({
-									...theme,
-									borderRadius: 10,
-									colors: {
-									...theme.colors,
-									primary25: '#8FD5FF',
-									primary: 'black',
-									},
-								})}
-							/>
+						<div className='w-full flex flex-row items-center gap-10'>
+							<div className='flex flex-col justify-between w-full'>
+								<p className='pl-2'>Desde</p>
+								<Select
+									value={selectedHoraDesde}
+									onChange={e => handleHoraDesdeChange(e)}
+									placeholder={selectedHoraDesde ? selectedHoraDesde : 'Hora'}
+									options={options}
+									maxMenuHeight={240}
+									className='rounded-md'
+									theme={(theme) => ({
+										...theme,
+										borderRadius: 10,
+										colors: {
+										...theme.colors,
+										primary25: '#8FD5FF',
+										primary: 'black',
+										},
+									})}
+								/>
+								
+							</div>
+							<div className='flex flex-col justify-between w-full'>
+								<p className='pl-2'>Hasta</p>
+								<Select
+									value={selectedHoraHasta}
+									onChange={e => handleHoraHastaChange(e)}
+									placeholder={selectedHoraHasta ? selectedHoraHasta : 'Hora'}
+									options={options}
+									maxMenuHeight={240}
+									theme={(theme) => ({
+										...theme,
+										borderRadius: 10,
+										colors: {
+										...theme.colors,
+										primary25: '#8FD5FF',
+										primary: 'black',
+										},
+									})}
+								/>
+							</div>
 						</div>
+						<button
+							className='w-full text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'
+							onClick = {disponibilizarHorarios}
+						>
+							Disponibilizar horarios
+						</button>
+						<h4>Tus horarios para el día {formattedDate}</h4>
+						{console.log('horariosDisponibles[formattedDate] in return')}
+						{console.log(horariosDisponibles[formattedDate])}
+						<ul className="flex flex-col w-full rounded-md bg-green-300 max-h-60 overflow-auto">
+							{console.log('date: ', date)}
+							{console.log('formatted date: ', formattedDate)}
+							{renderHorarios()}
+						</ul>
 					</div>
-					<button
-						className='w-full text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'
-						onClick = {disponibilizarHorarios}
-					>
-						Disponibilizar horarios
-					</button>
-					<h4>Tus horarios para el día {formattedDate}</h4>
-					{console.log('horariosDisponibles[formattedDate] in return')}
-					{console.log(horariosDisponibles[formattedDate])}
-					<ul className="flex flex-col w-full rounded-md bg-green-300 max-h-60 overflow-auto">
-						{console.log('date: ', date)}
-						{console.log('formatted date: ', formattedDate)}
-						{renderHorarios()}
-					</ul>
+					
 					
 				</div>
 			</Fragment>

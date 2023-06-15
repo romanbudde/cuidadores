@@ -6,6 +6,10 @@ import Cookies from 'universal-cookie';
 import { useContext } from 'react';
 import { AuthContext } from './AuthContext';
 import UserEditData from './UserEditData';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
+import ClientBottomBar from './ClientBottomBar';
+import CuidadorBottomBar from './CuidadorBottomBar';
 
 const Account = () => {
 	const { isAuthenticated } = useContext(AuthContext);
@@ -33,6 +37,15 @@ const Account = () => {
 		cookies.remove('auth-token');
 		
 		navigate('/');
+	}
+
+	const redirectLanding = () => {
+		if(user.type === 1) {
+			navigate('/landing-cuidador');
+		}
+		if(user.type === 0) {
+			navigate('/landing');
+		}
 	}
 
 	const getUserData = async () => {
@@ -69,29 +82,45 @@ const Account = () => {
 	if(isAuthenticated){
 		return (
 			<Fragment>
-				<div className='space-y-5 p-10 my-20 mx-auto flex flex-col justify-center items-center bg-gray-300 min-w-70 w-96 rounded-md bg-slate-200z'>
-					<h1>Account page component!</h1>
-					<h1>Hello, {user.name}!</h1>
-					<button 
-						className='w-full text-white bg-gradient-to-r from-green-500 to-green-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'
-						onClick={handleShow}
-					>
-						Editar datos
-					</button>
-					<UserEditData
-						user={user}
-						setUser={setUser}
-						show={showEditModal}
-						userTypes={userTypes}
-						onClose={handleClose}
-					/>
-					<p>Tu mail actual es {user.mail}</p>
+				<div className='space-y-5 flex flex-col justify-center items-center rounded-md bg-slate-200z'>
 					{ user.type === 1 && (
-						<>
-							<p>Tarifa por media hora: {user.hourly_rate}</p>
-							<p>Puntaje promedio segun las reseñas: {user.average_review_score}</p>
-						</>
+						<CuidadorBottomBar/>
 					)}
+					{ user.type === 1 && (
+						<ClientBottomBar/>
+					)}
+					<div className='flex flex-row items-center justify-center relative border-b-2 border-b-gray-200 w-full'>
+						<FontAwesomeIcon
+							className='absolute left-5'
+							icon={faChevronLeft}
+							onClick={ redirectLanding }
+						/>
+						<h1 className='flex justify-center font-bold text-lg py-4'>Mi perfil</h1>
+					</div>
+					<div className='w-full flex flex-col items-center px-5 space-y-3'>
+						<h1>Hola, {user.name}!</h1>
+						<button 
+							className='w-full text-white bg-gradient-to-r from-green-500 to-green-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'
+							onClick={handleShow}
+						>
+							Editar datos
+						</button>
+						<UserEditData
+							user={user}
+							setUser={setUser}
+							show={showEditModal}
+							userTypes={userTypes}
+							onClose={handleClose}
+						/>
+						<p>Tu mail actual es {user.mail}</p>
+						<p>Tu descripcion es: {user.description}</p>
+						{ user.type === 1 && (
+							<>
+								<p>Tarifa por media hora: {user.hourly_rate}</p>
+								<p>Puntaje promedio segun las reseñas: {user.average_review_score}</p>
+							</>
+						)}
+					</div>
 				</div>
 			</Fragment>
 		);

@@ -311,10 +311,10 @@ const MisContratos = () => {
 						{displayedContracts.length > 0 && (
 							displayedContracts.map(contract => (
 								<div 
-									className={`${contract.status === 'active' ? 'bg-gradient-to-r from-green-500 to-green-400' 
-									: contract.status === 'completed' ? 'bg-blue-500'
+									className={`${contract.status === 'active' ? 'bg-gradient-to-r from-yellow-400 to-yellow-300' 
+									: contract.status === 'completed' ? 'bg-gradient-to-r from-green-500 to-green-400'
 									: contract.status === 'cancelled' ? 'bg-red-500'
-									: 'bg-gray-900'} p-5 m-5 rounded-md flex flex-col items-start text-white font-medium`}
+									: 'bg-gray-700'} p-5 m-5 rounded-md flex flex-col items-start text-white font-medium`}
 									key={contract.id}
 								>
 									<p>Fecha: {contract.date}</p>

@@ -23,7 +23,7 @@ const BottomBar = (userType) => {
 	if(isAuthenticated){
 		return (
 			<Fragment>
-				<div className='fixed z-50 bg-white bottom-0 py-5 w-full flex flex-row justify-center items-center border-t-1 shadow-[0_15px_60px_-9px_rgba(0,0,0,1)]'>
+				<div className='fixed z-50 bg-white bottom-0 py-5 w-full flex flex-row justify-center items-center border-t-1 shadow-[0_30px_50px_-9px_rgba(0,0,0,1)]'>
 					<div
 						className='flex flex-col justify-center items-center'
 						onClick={ redirectLanding }

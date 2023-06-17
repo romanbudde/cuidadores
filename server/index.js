@@ -51,30 +51,31 @@ passport.use(new LocalStrategy(
         const { rows } = await pool.query(
             'SELECT * FROM users WHERE mail = $1',
             [email]
-          );
-          const user = rows[0];
-          if (!user) {
+        );
+        const user = rows[0];
+        if (!user) {
+            console.log('email no registrado');
             return done(null, false, { message: 'Email no registrado.' });
-          }
+        }
 
-          const match = await bcrypt.compare(password, user.password)
-            .then((isMatch) => {
-                if (isMatch) {
-                    console.log('matchhhhheeesss!!');
-                    return done(null, user);
-                    // return res.status(200).json({
-                    //     message: "logged in successfully!",
-                    //     user: {
-                    //         id: user.id,
-                    //         email: user.email
-                    //     }
-                    // });
-                }
-                else {
-                    console.log('DOES NOT MATCH!!');
-                    return done(null, false, { message: 'Contraseña incorrecta.' });
-                }
-            });
+        const match = await bcrypt.compare(password, user.password)
+        .then((isMatch) => {
+            if (isMatch) {
+                console.log('matchhhhheeesss!!');
+                return done(null, user);
+                // return res.status(200).json({
+                //     message: "logged in successfully!",
+                //     user: {
+                //         id: user.id,
+                //         email: user.email
+                //     }
+                // });
+            }
+            else {
+                console.log('DOES NOT MATCH!!');
+                return done(null, false, { message: 'Contraseña incorrecta.' });
+            }
+        });
     }
 ));
 

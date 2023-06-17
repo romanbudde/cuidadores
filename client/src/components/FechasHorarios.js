@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 
+import '../css/datepicker.css';
 import { useNavigate } from "react-router-dom";
 import Cookies from 'universal-cookie';
 import Calendar from 'react-calendar';
@@ -11,6 +12,9 @@ import Datepicker from "react-tailwindcss-datepicker";
 import CuidadorBottomBar from './CuidadorBottomBar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faHouse } from '@fortawesome/free-solid-svg-icons';
+// import { registerLocale, setDefaultLocale } from  "react-tailwindcss-datepicker";
+import es from 'date-fns/locale/es';
+// registerLocale('es', es)
 import dayjs from 'dayjs';
 import moment from 'moment';
 
@@ -32,7 +36,7 @@ const FechasHorarios = () => {
 	let formattedDate = date.toLocaleDateString("en-GB");
 	console.log(formattedDate);
 
-	const options = [
+	const optionsUnfiltered = [
 		{ value: '00:00', label: '00:00' },
 		{ value: '00:30', label: '00:30' },
 		{ value: '01:00', label: '01:00' },
@@ -82,7 +86,12 @@ const FechasHorarios = () => {
 		{ value: '23:00', label: '23:00' },
 		{ value: '23:30', label: '23:30' },
 		{ value: '00:00', label: '00:00' },
-	  ];
+	];
+
+	const options = optionsUnfiltered.filter( time => time.value > moment().format('HH:mm'));
+
+	console.log('options: ', options);
+	console.log('current time: ', moment().format('HH:mm'));
 
 	console.log("isAuthenticated: ", isAuthenticated);
 	console.log("userId: ", userId);
@@ -349,7 +358,9 @@ const FechasHorarios = () => {
 		
 		console.log(formattedDate);
 		return formattedDate;
-	  };
+	};
+
+	console.log('1 day earlier: ', moment().subtract(1, 'day').format('DD/MM/YYYY'));
 
 	// console.log('horariosDisponibles');
 	// console.log(horariosDisponibles);
@@ -370,16 +381,24 @@ const FechasHorarios = () => {
 						<h1 className='flex justify-center font-bold text-lg py-4'>Tus dias y horarios disponibles</h1>
 					</div>
 					<div className='space-y-5 p-10 mx-auto flex flex-col justify-center items-center mb-20'>
-						<Calendar className={'rounded-md border-transparent'} onChange={onChange} value={date} />
+						<Calendar
+							className={'rounded-md border-transparent'}
+							onChange={onChange}
+							value={date}
+							minDate={new Date()} 
+						/>
 						<div className='w-full flex flex-row items-center gap-10'>
 							<div className='flex flex-col justify-between w-full'>
 								<p>Puede seleccionar un intervalo de fechas:</p>
 								<Datepicker
 									primaryColor={"emerald"}
+									i18n={"es"} 
+									minDate={moment().subtract(1, 'day')} 
 									// dateFormat="MMMM eeee d, yyyy h:mm aa"
 									separator={"a"}
 									displayFormat={"DD/MM/YYYY"} 
 									value={selectedDatesInterval}
+									locale="es"
 									onChange={handleSelectedDatesIntervalChange}
 								/>
 							</div>

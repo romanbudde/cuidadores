@@ -202,7 +202,7 @@ app.post('/register', async(req, res) => {
     try {
         console.log('---- backend (register route) ----');
         console.log(req.body);
-        const { email, password, firstname, lastname} = req.body;
+        const { email, password, firstname, lastname, address} = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
         const created_at = new Date();
 
@@ -217,8 +217,8 @@ app.post('/register', async(req, res) => {
         } 
         else {
             const newUser = await pool.query(
-                "INSERT INTO users (mail, password, type, created_at, enabled, name, last_name) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *", 
-                [email, hashedPassword, '0', created_at, 1, firstname, lastname]
+                "INSERT INTO users (mail, password, type, created_at, enabled, name, last_name, address) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *", 
+                [email, hashedPassword, '0', created_at, 1, firstname, lastname, address]
             );
     
             // Generate token

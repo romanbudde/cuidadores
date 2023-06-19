@@ -1,10 +1,13 @@
-import React, { Fragment, useState, useContext } from 'react';
+import React, { Fragment, useState, useContext, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import Cookies from 'universal-cookie';
 import { AuthProvider, AuthContext } from './AuthContext';
 // import { Autocomplete } from '@lob/react-address-autocomplete';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
 import { GeoapifyGeocoderAutocomplete, GeoapifyContext } from '@geoapify/react-geocoder-autocomplete';
 import '@geoapify/geocoder-autocomplete/styles/minimal.css';
+import Autocomplete from "react-google-autocomplete";
 import '../css/autocomplete.css';
 
 
@@ -20,6 +23,23 @@ const Register = () => {
   const [firstname, setFirstname] = useState('');
   const [lastname, setLastname] = useState('');
   const [address, setAddress] = useState('');
+
+  const SignupSchema = Yup.object().shape({
+	firstname: Yup.string()
+	  .min(2, 'Too Short!')
+	  .max(50, 'Too Long!')
+	  .required('Required'),
+	lastname: Yup.string()
+	  .min(2, 'Too Short!')
+	  .max(50, 'Too Long!')
+	  .required('Required'),
+	password: Yup.string()
+	  .min(8, 'La contraseña debe ser mayor a 8 caracteres de largo!')
+	  .max(50, 'La contraseña es demasiado larga')
+	  .matches(/^[a-zA-Z0-9]{8,}$/, 'La contraseña tiene que contener solamente números y/o letras!.')
+	  .required('Required'),
+	email: Yup.string().email('Invalid email').required('Required'),
+  });
 
   function onPlaceSelect() {
     console.log('onPlaceSelect');
@@ -40,12 +60,12 @@ const Register = () => {
 //   const onSuggestionChange = () => {
 // 	console.log('onSuggestionChange');
 //   } 
-  const onSubmitUser = async (e) => {
+  const onSubmitUser = async () => {
     console.log('----------------- on function onSubmitUser -------------- ');
 
 
 
-    e.preventDefault();
+    // e.preventDefault();
     try {
         const body = {email, firstname, lastname, password, address};
 
@@ -102,118 +122,65 @@ const Register = () => {
 
   return (
     <Fragment>
-      <form className="min-w-70 w-96 rounded-md">
-        <div className='flex flex-row items-center w-full justify-center relative border-b-2 border-b-gray-200'>
-          <h1 className='flex justify-center font-bold text-lg py-4'>Cuidar</h1>
-        </div>
-        <div className='gap-2 px-10 py-5 mx-auto flex flex-col justify-center items-center'>
-			<h4 className='w-full text-center font-semibold mb-3 text-gray-500'>Crea tu cuenta</h4>
-			<div className='flex flex-col w-full'>
-				<label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
-					Email
-				</label>
-				<input
-					type="email"
-					name="email"
-					className="bg-gray-50 border text-gray-900 text-sm focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white  bg-transparent rounded-lg border-b border-gray-400 border-solid border-opacity-100 focus:outline-none focus:outline-0"
-					placeholder="youremail@email.com"
-					value={email}
-					onChange={e => setEmail(e.target.value)}
-				/>
-			</div>
-			<div className='flex flex-col w-full'>
-				<label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
-					Contraseña
-				</label>
-				<input
-					type="password"
-					name="password"
-					className="bg-gray-50 border text-gray-900 text-sm focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white  bg-transparent rounded-lg border-b border-gray-400 border-solid border-opacity-100 focus:outline-none focus:outline-0"
-					value={password}
-					placeholder="•••••••••"
-					onChange={e => setPassword(e.target.value)}
-				/>
-			</div>
-			<div className='flex flex-col w-full'>
-				<label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
-					Nombre
-				</label>
-				<input
-					type="text"
-					name="firstname"
-					className="bg-gray-50 border text-gray-900 text-sm focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white  bg-transparent rounded-lg border-b border-gray-400 border-solid border-opacity-100 focus:outline-none focus:outline-0"
-					placeholder="ej: Pedro"
-					value={firstname}
-					onChange={e => setFirstname(e.target.value)}
-				/>
-			</div>
-			<div className='flex flex-col w-full'>
-				<label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
-					Apellido
-				</label>
-				<input
-					type="text"
-					name="lastname"
-					className="bg-gray-50 border text-gray-900 text-sm focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white  bg-transparent rounded-lg border-b border-gray-400 border-solid border-opacity-100 focus:outline-none focus:outline-0"
-					value={lastname}
-					placeholder="ej: Gomez"
-					onChange={e => setLastname(e.target.value)}
-					required
-				/>
-			</div>
-			{/* <Autocomplete apiKey="test_pub_9fd4d84a5e6a3603f999ef25a14e6a5" /> */}
-			<div className='flex flex-col w-full'>
-				<label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
-					Dirección
-				</label>
-				<input
-					type="text"
-					name="address"
-					className="bg-gray-50 border text-gray-900 text-sm focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white  bg-transparent rounded-lg border-b border-gray-400 border-solid border-opacity-100 focus:outline-none focus:outline-0"
-					value={address}
-					placeholder="ej: Mendoza 555, Rosario, Santa Fe"
-					onChange={e => setAddress(e.target.value)}
-					required
-				/>
-			</div>
-			<GeoapifyContext apiKey="d68af4a0d6274d44bb3da5a6d50c40a9">
-				<GeoapifyGeocoderAutocomplete placeholder="Ingrese su dirección"
-					lang={"es"}
-					countryCodes={'ar'}
-					debounceDelay={'1500ms'}
-					// type={"street"}
-					// position={position}
-					// countryCodes={countryCodes}
-					// limit={limit}
-					placeSelect={onPlaceSelect}
-					select={onPlaceSelect}
-					suggestionsChange={onSuggectionChange}
-					onClose={(e) => {console.log('onclose')}}
-					onPlaceSelected={(place) => {
-						console.log("place is: ", place);
-					}}
-					onPlaceSelect={(place) => {
-						console.log("place is: ", place);
-					}}
-					onOpen={(e) => console.log('onOpen')}
-					onClick={(e) => { 
-						onPlaceSelect();
-					}}
-					preprocessingHook={(e) => {console.log('preProcessingHook;')}}
-					// suggestionsChange={onSuggestionChange}
-					onUserInput={() => {console.log('user input')}}
-					// suggestionsChange={onSuggectionChange}
-				/>
-			</GeoapifyContext>
-			<button 
-				type="submit"
-				className="w-full text-white bg-gradient-to-r from-green-400 to-green-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 mt-12"
-				onClick={ (e) => { onSubmitUser(e); }}
-			>
-				Crear cuenta
-			</button>
-        </div>
-      </form>
+      {/* <form className="min-w-70 w-96 rounded-md"> */}
+	  <Formik
+		initialValues={{
+			firstname: '',
+			lastname: '',
+			password: '',
+			address: '',
+			email: '',
+		}}
+		validationSchema={SignupSchema}
+		onSubmit={onSubmitUser}
+      >
+		{({ errors, touched }) => (
+			<Form>
+				<div className='gap-2 px-10 py-5 mx-auto flex flex-col justify-center items-center'>
+					<div className='flex flex-row items-center w-full justify-center relative border-b-2 border-b-gray-200'>
+						<h1 className='flex justify-center font-bold text-lg py-4'>Cuidar</h1>
+					</div>
+					<Field name="firstname" placeholder="Nombre" />
+						{errors.firstname && touched.firstname ? (
+							<div>{errors.firstname}</div>
+						) : null}
+					<Field name="lastname" placeholder="Apellido" />
+						{errors.lastname && touched.lastname ? (
+							<div>{errors.lastname}</div>
+						) : null}
+					<Field name="email" type="email" placeholder="Email" />
+						{errors.email && touched.email ? <div>{errors.email}</div> : null}
+						<button type="submit">Submit</button>
+					<Field name="email" type="email" placeholder="Contraseña" />
+						{errors.email && touched.email ? <div>{errors.email}</div> : null}
+						<button type="submit">Submit</button>
+					<Autocomplete
+						apiKey={'AIzaSyDdEqsnFUhTgQJmNN1t4iyn3VhMLJY6Yk4'}
+						debounce={'3000ms'}
+						className='bg-gray-50 border text-gray-900 text-sm focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5 bg-transparent rounded-lg border-b border-gray-400 border-solid border-opacity-100 focus:outline-none focus:outline-0'
+						style={{ width: "100%" }}
+						onPlaceSelected={(place) => {
+							console.log(place);
+							console.log('formated address: ', place.formatted_address);
+							setAddress(place.formatted_address);
+						}}
+						options={{
+							types: ["address"],
+							componentRestrictions: { country: "ar" },
+						}}
+						defaultValue=""
+					/>
+					<button 
+						type="submit"
+						className="w-full text-white bg-gradient-to-r from-green-400 to-green-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 mt-12"
+						onClick={ (e) => { onSubmitUser(e); }}
+					>
+						Crear cuenta
+					</button>
+				</div>
+			</Form>
+        )}
+	  </Formik>
 
     </Fragment>
     

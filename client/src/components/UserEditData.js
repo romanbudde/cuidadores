@@ -240,11 +240,6 @@ const UserEditData = ({ user, setUser, show, onClose, userTypes }) => {
 									className={`${errors.address && touched.address ?  'bg-gray-50 border text-red-500 placeholder-red-500 text-sm focus:ring-red-500 focus:border-red-500 block w-full p-2.5 bg-transparent rounded-lg border-b border-solid border-opacity-100 focus:outline-none focus:outline-0 border-red-500' : 
 									'bg-gray-50 border text-gray-900 text-sm focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5 bg-transparent rounded-lg border-b border-gray-400 border-solid border-opacity-100 focus:outline-none focus:outline-0'}`}
 									style={{ width: "100%" }}
-									// onPlaceSelected={(place) => {
-									// 	console.log(place);
-									// 	console.log('formated address: ', place.formatted_address);
-									// 	setAddress(place.formatted_address);
-									// }}
 									onChange={(e) => {
 										setFieldValue('address', e.target.value);
 										// setFieldError('address', 'Selecciona una direccion del menu desplegable!');
@@ -259,7 +254,7 @@ const UserEditData = ({ user, setUser, show, onClose, userTypes }) => {
 										types: ["address"],
 										componentRestrictions: { country: "ar" },
 									}}
-									defaultValue=""
+									defaultValue={address}
 								/>
 								{errors.address && touched.address ? (
 									<div className='text-red-500 font-normal w-full text-sm text-left'>

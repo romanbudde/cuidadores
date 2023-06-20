@@ -538,11 +538,11 @@ app.get("/cuidadores/:id", async(req, res) => {
 app.put("/cuidadores/:id", async(req, res) => {
     try {
         const {id} = req.params;
-        const { description, email, firstname, lastname, userType, enabled, hourlyRate } = req.body;
+        const { description, email, firstname, lastname, userType, enabled, hourlyRate, address } = req.body;
         const modified_at = new Date();
         const updateUser = await pool.query(
-            "UPDATE users SET description = $1, mail = $2, name = $3, last_name = $4, type = $5,  modified_at = $6, enabled = $7, hourly_rate = $8 WHERE id = $9 RETURNING *", 
-            [description, email, firstname, lastname, userType, modified_at, enabled, hourlyRate, id]
+            "UPDATE users SET description = $1, mail = $2, name = $3, last_name = $4, type = $5,  modified_at = $6, enabled = $7, hourly_rate = $8, address = $9 WHERE id = $10 RETURNING *", 
+            [description, email, firstname, lastname, userType, modified_at, enabled, hourlyRate, address,	 id]
         );
 
         if(updateUser.rowCount > 0){

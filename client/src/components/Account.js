@@ -112,14 +112,17 @@ const Account = () => {
 							userTypes={userTypes}
 							onClose={handleClose}
 						/>
-						<p>Tu mail actual es {user.mail}</p>
-						<p>Tu descripcion es: {user.description}</p>
-						{ user.type === 1 && (
-							<>
-								<p>Tarifa por media hora: {user.hourly_rate}</p>
-								<p>Puntaje promedio segun las reseñas: {user.average_review_score}</p>
-							</>
-						)}
+						<div className='flex flex-col text-left space-y-4'>
+							<p>Tu mail actual es {user.mail}</p>
+							<p>Tu descripcion es: {user.description}</p>
+							<p>Tu dirección es: {user.address}</p>
+							{ user.type === 1 && (
+								<>
+									<p>Tarifa por media hora: {user.hourly_rate}</p>
+									<p>Puntaje promedio segun las reseñas: {user.average_review_score}</p>
+								</>
+							)}
+						</div>
 					</div>
 				</div>
 			</Fragment>

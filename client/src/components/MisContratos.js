@@ -8,7 +8,7 @@ import Cookies from 'universal-cookie';
 import { useContext } from 'react';
 import { AuthContext } from './AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronLeft, faHouse } from '@fortawesome/free-solid-svg-icons';
+import { faChevronLeft, faHouse, faCheck } from '@fortawesome/free-solid-svg-icons';
 import ClientBottomBar from './ClientBottomBar';
 import moment from 'moment';
 import Select from 'react-select';
@@ -64,6 +64,12 @@ const MisContratos = () => {
 		setDateFilter(e.value);
 
 		newSortContracts(e.value, '');
+	}
+
+	const changeContractStatusToComplete = (contract) => {
+		console.log('change status to complete, contract: ', contract);
+
+		// update contract status by its id (contract.id)
 	}
 
 	const newSortContracts = (date, status) => {
@@ -326,6 +332,17 @@ const MisContratos = () => {
 									: ''}</p>
 									<p>Total amount: ${contract.amount}</p>
 									<p>Horarios: {contract.horarios.join(', ')}</p>
+
+									{/* validar que el ultimo horario del contrato sea mayor a la hora actual (usar moment js) */}
+									{user.type === 1 && contract.status === 'active' && (
+										<div 
+											className='flex flex-row items-center justify-left bg-black p-2 mt-4 rounded-md w-full bg-gradient-to-r from-gray-900 to-gray-700'
+											onClick={ () => changeContractStatusToComplete(contract) }
+										>
+											<FontAwesomeIcon icon={faCheck} size="2xl" className='text-3xl mr-7 ml-2' style={{color: "#fff",}} />
+											<p className=''>Marcar como completado</p>
+										</div>
+									)}
 									{/* <button
 										className='w-full text-white bg-gradient-to-r from-green-500 to-green-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'
 										onClick={handleShowDisponibilidadModal(contract)}

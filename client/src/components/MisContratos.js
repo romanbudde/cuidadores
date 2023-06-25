@@ -66,10 +66,37 @@ const MisContratos = () => {
 		newSortContracts(e.value, '');
 	}
 
-	const changeContractStatusToComplete = (contract) => {
+	const changeContractStatusToComplete = async (contract) => {
 		console.log('change status to complete, contract: ', contract);
 
+		let bodyJSON = { "status": "completed" };
+
 		// update contract status by its id (contract.id)
+		const contract_update = await fetch(
+			`http://localhost:5000/contract/${contract.id}`,
+			{
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify(bodyJSON)
+			}
+		)
+			.then(response => response.json())
+			.then(result => {
+				console.log('result: ', result);
+				console.log('contracts: ', contracts)
+				console.log('displayed contracts: ', displayedContracts)
+
+				if(result.id > 0) {
+					setContracts(contracts.map((contract) => contract.id === result.id ? { ...contract, status: 'completed' } : contract));
+					setDisplayedContracts(displayedContracts.map((contract) => contract.id === result.id ? { ...contract, status: 'completed' } : contract));
+				}
+			})
+
+		// updatear contracts y displayed contracts.
+
+
 	}
 
 	const newSortContracts = (date, status) => {
@@ -334,8 +361,16 @@ const MisContratos = () => {
 									<p>Horarios: {contract.horarios.join(', ')}</p>
 
 									{/* validar que el ultimo horario del contrato sea mayor a la hora actual (usar moment js) */}
-									{user.type === 1 && contract.status === 'active' && (
-										<div 
+									{
+										// console.log('ultimo horario del contrato: ', contract.horarios[contract.horarios.length - 1])
+										console.log('user type: ', user.type)
+										// console.log('comparacion horario entre contract: ', moment(contract.horarios[contract.horarios.length - 1], 'HH:mm').format('HH:mm') < moment().format('HH:mm'))
+									}
+									{user.type === 1 && 
+									contract.status === 'active' && 
+									moment(contract.date, 'DD/MM/YYYY').isSameOrBefore(moment()) &&
+									moment(contract.horarios[contract.horarios.length - 1], 'HH:mm').format('HH:mm') < moment().format('HH:mm') && (
+										<div
 											className='flex flex-row items-center justify-left bg-black p-2 mt-4 rounded-md w-full bg-gradient-to-r from-gray-900 to-gray-700'
 											onClick={ () => changeContractStatusToComplete(contract) }
 										>

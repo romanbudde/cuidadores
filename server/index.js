@@ -375,6 +375,29 @@ app.get("/contract", async(req, res) => {
     }
 });
 
+// update a contract by its id
+app.put("/contract/:id", async(req, res) => {
+    try {
+        const {id} = req.params;
+        const { status } = req.body;
+        const modified_at = new Date();
+        const update_contract = await pool.query(
+            "UPDATE contract SET status = $1 WHERE id = $2 RETURNING *", 
+            [status, id]
+        );
+
+        if(update_contract.rowCount > 0){
+            res.status(200).json(update_contract.rows[0]);
+        }
+        else {
+            res.json('Oops! No contract with given ID (' + id + ') has been found.');
+        }
+    }
+    catch (error) {
+        console.error(error.message);
+    }
+});
+
 // create a contract
 app.post("/contract", async(req, res) => {
     try {

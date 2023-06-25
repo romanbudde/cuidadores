@@ -120,23 +120,23 @@ const Register = () => {
     <Fragment>
       {/* <form className="min-w-70 w-96 rounded-md"> */}
 	  <Formik
-	  	// innerRef={formik} // Add a ref to the formik object
-		initialValues={{
-			firstname: '',
-			lastname: '',
-			password: '',
-			address: '',
-			email: '',
-		}}
-		validationSchema={SignupSchema}
-		// onSubmit={onSubmitUser}
-		onSubmit={(values) => {
-			// same shape as initial values
-			// setFieldValue('address', address);
-			console.log(values);
-			onSubmitUser(values);
-		}}
-      >
+        // innerRef={formik} // Add a ref to the formik object
+      initialValues={{
+        firstname: '',
+        lastname: '',
+        password: '',
+        address: '',
+        email: '',
+      }}
+      validationSchema={SignupSchema}
+      // onSubmit={onSubmitUser}
+      onSubmit={(values) => {
+        // same shape as initial values
+        // setFieldValue('address', address);
+        console.log(values);
+        onSubmitUser(values);
+      }}
+    >
 		{({ errors, touched, setFieldValue, setFieldError }) => (
 			<Form>
 				<div className='gap-2 px-10 py-5 mx-auto flex flex-col justify-center items-center'>

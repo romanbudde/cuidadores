@@ -503,6 +503,59 @@ app.post("/caregiver_update_available_dates", async (req, res) => {
     }
 });
 
+// caregiver: "delete" a single time (half hour period) from a caregiver's availability on a certain day. 
+app.post("/caregiver_delete_single_time", async (req, res) => {
+    try {
+		const { date, timeToDelete, caregiver_id } = req.body;
+		console.log('date');
+		console.log(date);
+		console.log('time');
+		console.log(timeToDelete);
+
+		const previousAvailabilities = await pool.query("SELECT * FROM caregiver_availability WHERE caregiver_id = $1", [caregiver_id]);
+
+		console.log('previousAvailabilities: ');
+		console.log(previousAvailabilities.rows[0]);
+
+        // check that the caregiver does not have an active contract at the time being deleted.
+        const caregiverExistingContracts = await pool.query("SELECT * FROM contract WHERE caregiver_id = $1 AND status = 'active' AND date = $2",
+        [caregiver_id, date]);
+        console.log('caregiverExistingContracts: ');
+        console.log(caregiverExistingContracts.rows);
+        if(caregiverExistingContracts.rows.length > 0) {
+            for (let i = 0; i < caregiverExistingContracts.rows.length; i++) {
+                const contract = caregiverExistingContracts.rows[i];
+                if (contract.horarios.length > 0){
+                    
+                    let existingContractHorarios = contract.horarios;
+                    console.log("existingContractHorarios:");
+                    console.log(existingContractHorarios);
+    
+                    if (existingContractHorarios.some(time => time === timeToDelete)){
+                        // then, the client already has a contract for that date in one or more of the selected times.
+                        return res.status(401).json({ error: 'Error al eliminar disponibilidad: existe un contrato activo para ese horario.' });
+                    }
+                }
+            }
+        }
+
+        console.log('previous availabilities en el dia a eliminar el time: ', previousAvailabilities.rows[0].dates[date]);
+
+        let newAvailabilities = previousAvailabilities.rows[0].dates;
+        newAvailabilities[date] = newAvailabilities[date].filter(time => time !== timeToDelete);
+        console.log("availabilities filtradas sin el horario a eliminar: ", newAvailabilities[date]);
+
+		newAvailabilitiesResponse = await pool.query("UPDATE caregiver_availability SET dates = $1 WHERE caregiver_id = $2 RETURNING *", [newAvailabilities, caregiver_id]);
+
+		res.status(200).json({
+			"newAvailabilities": newAvailabilitiesResponse.rows[0]
+		});
+    }
+    catch (error) {
+        console.error(error.message);
+    }
+});
+
 // get available dates json for a specific caregiver
 app.get("/caregiver_get_available_dates", async (req, res) => {
     try {

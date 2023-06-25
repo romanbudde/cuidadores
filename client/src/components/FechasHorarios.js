@@ -11,7 +11,7 @@ import { AuthContext } from './AuthContext';
 import Datepicker from "react-tailwindcss-datepicker";
 import CuidadorBottomBar from './CuidadorBottomBar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronLeft, faHouse } from '@fortawesome/free-solid-svg-icons';
+import { faChevronLeft, faHouse, faXmark, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 // import { registerLocale, setDefaultLocale } from  "react-tailwindcss-datepicker";
 import es from 'date-fns/locale/es';
 // registerLocale('es', es)
@@ -30,6 +30,9 @@ const FechasHorarios = () => {
 	});
 	const [horariosDisponibles, setHorariosDisponibles] = useState([]);
 	const [datesArrayToAdd, setDatesArrayToAdd] = useState([]);
+	const [optionsFiltered, setOptionsFiltered] = useState([]);
+	const [displayEliminarDisponibilidadError, setDisplayEliminarDisponibilidadError] = useState(false);
+	const [eliminarDisponibilidadError, setEliminarDisponibilidadError] = useState('');
 	const navigate = useNavigate();
 	const cookies = new Cookies();
 
@@ -166,6 +169,56 @@ const FechasHorarios = () => {
 
 	}
 
+	const closeDisponibilidadErrorMessage = () => {
+		setDisplayEliminarDisponibilidadError(false);
+	}
+
+	// delete horario function
+    const deleteHorario = async (horario) => {
+        try {
+            let disabledUser = {};
+			console.log('delete horario: ', horario);
+			console.log('horarios disponibles en formatted date: ', horariosDisponibles[formattedDate]);
+
+			const body = {
+				"caregiver_id": userId,
+				"date": formattedDate,
+				"timeToDelete": horario
+			};
+
+            const deleteTime = await fetch(`http://localhost:5000/caregiver_delete_single_time`, {
+                method: "POST",
+				headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(body)
+            })
+                .then(response => response.json())
+				.then(result => {
+					console.log('result: ', result);
+					
+					if(result.error){
+						setDisplayEliminarDisponibilidadError(true);
+						setEliminarDisponibilidadError(result.error);
+					}
+					if(result.newAvailabilities){
+						// si el borrado en la DB es exitoso, ahi updateamos el front
+						let newHorariosDisponibles = {...horariosDisponibles};
+			
+						console.log('newHorariosDisponibles: ', newHorariosDisponibles);
+						newHorariosDisponibles[formattedDate] = newHorariosDisponibles[formattedDate].filter(time => time !== horario);
+						console.log('newHorariosDisponibles pero ahora filtrados: ', newHorariosDisponibles);
+			
+						setHorariosDisponibles(newHorariosDisponibles);
+					}
+				});
+
+
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
 	function createDatesArray(startDate, endDate) {
 		const dates = [];
 		const startDateParts = startDate.split('/');
@@ -207,7 +260,15 @@ const FechasHorarios = () => {
 			console.log('---- inside getHorarios ----');
 			console.log(jsonData);
 
-            setHorariosDisponibles(jsonData.availabilities.dates);
+			console.log('Longitud de claves del objecto jsonData dentro de getHorarios:', Object.keys(jsonData).length);
+			if(Object.keys(jsonData).length === 0) {
+				// entonces el cuidador no tiene ningun horario disponible
+				setHorariosDisponibles([]);
+			}
+			else {
+				// el cuidador ya ha disponibilizado horarios en algun otro momento
+				setHorariosDisponibles(jsonData.availabilities.dates);
+			}
         } catch (error) {
             console.error(error.message);
         }
@@ -329,8 +390,15 @@ const FechasHorarios = () => {
 		// console.log(horariosDisponibles['25/05/2023']);
 		if (horariosDisponibles && horariosDisponibles[formattedDate] && horariosDisponibles[formattedDate].length > 0) {
 			return horariosDisponibles[formattedDate].map((horario) => (
-				<li className="p-2 pl-5">
-				<p>{horario}</p>
+				<li className="p-2 pl-5 flex flex-row justify-between pr-5">
+					<p>{horario}</p>
+					<FontAwesomeIcon
+						icon={faCircleXmark}
+						size="md"
+						className='text-2xl'
+						style={{color: "#000",}} 
+						onClick={ () => deleteHorario(horario) }
+					/>
 				</li>
 			));
 		}
@@ -381,11 +449,13 @@ const FechasHorarios = () => {
 						<h1 className='flex justify-center font-bold text-lg py-4'>Tus dias y horarios disponibles</h1>
 					</div>
 					<div className='space-y-5 p-10 mx-auto flex flex-col justify-center items-center mb-20'>
+						<p>Elija un día y vea sus horarios disponibles</p>
 						<Calendar
 							className={'rounded-md border-transparent'}
 							onChange={onChange}
 							value={date}
 							minDate={new Date()} 
+							locale={'es-ES'}
 						/>
 						<div className='w-full flex flex-row items-center gap-10'>
 							<div className='flex flex-col justify-between w-full'>
@@ -411,7 +481,7 @@ const FechasHorarios = () => {
 									onChange={e => handleHoraDesdeChange(e)}
 									placeholder={selectedHoraDesde ? selectedHoraDesde : 'Hora'}
 									options={options}
-									maxMenuHeight={240}
+									maxMenuHeight={160}
 									className='rounded-md'
 									theme={(theme) => ({
 										...theme,
@@ -432,7 +502,7 @@ const FechasHorarios = () => {
 									onChange={e => handleHoraHastaChange(e)}
 									placeholder={selectedHoraHasta ? selectedHoraHasta : 'Hora'}
 									options={options}
-									maxMenuHeight={240}
+									maxMenuHeight={160}
 									theme={(theme) => ({
 										...theme,
 										borderRadius: 10,
@@ -463,6 +533,25 @@ const FechasHorarios = () => {
 					
 					
 				</div>
+				{ displayEliminarDisponibilidadError && (
+					<div className='fixed inset-0 bg-gray-900 bg-opacity-40 z-50 flex justify-center items-center'>
+						<div className='bg-red-500 p-5 rounded w-9/12 flex flex-col gap-5 items-center justify-center relative'>
+							<button onClick={ closeDisponibilidadErrorMessage } type="button" className="absolute top-2 right-2 text-gray-100 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="defaultModal">
+								<svg aria-hidden="true" className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"></path></svg>
+								<span className="sr-only">Close modal</span>
+							</button>
+							<p className='font-bold text-2xl text-white'>Error!</p>
+							<p className='text-white text-center font-medium'>{ eliminarDisponibilidadError }</p>
+							<FontAwesomeIcon icon={faCircleXmark} size="2xl" className='text-8xl' style={{color: "#fff",}} />
+							<button
+								className='bg-red-800 mt-10 hover:bg-blue-700 text-white font-bold py-2 px-16 rounded-full'
+								onClick={ closeDisponibilidadErrorMessage }
+							>
+								Continuar
+							</button>
+						</div>
+					</div>
+				)}
 			</Fragment>
 		);
 	}

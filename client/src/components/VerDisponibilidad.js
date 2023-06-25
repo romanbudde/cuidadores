@@ -10,10 +10,9 @@ import Select from 'react-select';
 import Datepicker from "react-tailwindcss-datepicker";
 import { useContext } from 'react';
 import { AuthContext } from './AuthContext';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCircleXmark, faCircleCheck } from '@fortawesome/free-solid-svg-icons'
-
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleXmark, faCircleCheck } from '@fortawesome/free-solid-svg-icons';
+import '../css/calendar.css';
 
 const VerDisponibilidad = ({ cuidador, show, onClose }) => {
 
@@ -43,7 +42,30 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
 			console.log('---- inside getHorarios ----');
 			console.log(jsonData);
 
-            setHorariosDisponibles(jsonData.availabilities.dates);
+            console.log('jsonData.availabilities.dates: ', jsonData.availabilities.dates);
+
+            // Get the current date and time using Moment.js
+            const today = moment().format("DD/MM/YYYY");
+
+            console.log('jsonData.availabilities.dates.today: ', jsonData.availabilities.dates[today]);
+
+            // for the current day, just leave those times that are higher than the current time.
+            const currentTime = moment().format('HH:mm');
+            const timesFilteredForToday = jsonData.availabilities.dates[today].filter(time => {
+                const timeValue = moment(time, 'HH:mm').format('HH:mm');
+                return timeValue > currentTime;
+              });
+            console.log('------------times filtered for today --------------');
+            console.log(timesFilteredForToday);
+            jsonData.availabilities.dates[today] = timesFilteredForToday;
+
+            // Filter the dates that are greater than the current time
+            const filteredDates = jsonData.availabilities.dates;
+
+            console.log('filtered Dates: ', filteredDates);
+            setHorariosDisponibles(filteredDates);
+
+            // setHorariosDisponibles(jsonData.availabilities.dates);
         } catch (error) {
             console.error(error.message);
         }
@@ -196,7 +218,13 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
                                 Fechas disponibles para el cuidador {cuidador.name} {cuidador.last_name}:
                             </h3>
                         </div>
-                        <Calendar locale={'es-ES'} className={'rounded-md border-transparent'} onChange={onChange} value={date} />
+                        <Calendar
+                            locale={'es-ES'}
+                            className={'rounded-md border-transparent'}
+                            onChange={onChange}
+                            value={date}
+                            minDate={new Date()}
+                        />
 						<p>Tafira por hora: ${cuidador.hourly_rate}</p>
 						<p>Horarios disponibles para el dia {date.toLocaleDateString("en-GB")}</p>
 						<ul className="flex flex-col w-full rounded-md max-h-44 overflow-scroll">

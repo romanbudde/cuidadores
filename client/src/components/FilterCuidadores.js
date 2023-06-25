@@ -214,6 +214,9 @@ const FilterCuidadores = () => {
 
 					</div>
 				</form>
+				{
+					console.log('cuidadores length: ', cuidadores.length)
+				}
 				{ cuidadores.length > 0 && (
 					<div className='flex flex-col space-y-4 mx-auto items-center rounded-md justify-start w-96 py-2 my-5 border-t-2 border-t-gray-200 mb-28'>
 						<h1 className='flex justify-center font-bold text-md py-4'>{cuidadores.length} Cuidadores encontrados:</h1>

@@ -10,6 +10,7 @@ import { AuthContext } from './AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faHouse, faCheck } from '@fortawesome/free-solid-svg-icons';
 import ClientBottomBar from './ClientBottomBar';
+import Paginate from './Paginate';
 import moment from 'moment';
 import Select from 'react-select';
 
@@ -20,6 +21,19 @@ const MisContratos = () => {
     const [dateFilter, setDateFilter] = useState('newest');
     const [statusFilter, setStatusFilter] = useState('all');
     const [user, setUser] = useState([]);
+	
+	// -- Pagination
+    // const [displayedContracts, setDisplayedContracts] = useState([]);
+	const [currentPage, setCurrentPage] = useState(1);
+	const [postsPerPage] = useState(3);
+
+	const indexOfLastPost = currentPage * postsPerPage;
+	const indexOfFirstPost = indexOfLastPost - postsPerPage;
+	const currentPosts = displayedContracts.slice(indexOfFirstPost, indexOfLastPost);
+
+	console.log('currentPosts: ', currentPosts);
+
+
 	const navigate = useNavigate();
 	const cookies = new Cookies();
 	const moment = require('moment');
@@ -36,6 +50,10 @@ const MisContratos = () => {
 		{ value: 'completed', label: 'Completados' },
 		{ value: 'all', label: 'Todos' },
 	];
+
+	const paginate = (pageNumber) => {
+		setCurrentPage(pageNumber);
+	};
 
 	console.log("isAuthenticated: ", isAuthenticated);
 	console.log("userId: ", userId);
@@ -341,9 +359,15 @@ const MisContratos = () => {
 								})}
 							/>
 						</div>
+						<Paginate
+							postsPerPage={postsPerPage}
+							totalPosts={displayedContracts.length}
+							paginate={paginate}
+							currentPage={currentPage}
+						/>
 						{/* <p className='m-5'>Más nuevos</p> */}
-						{displayedContracts.length > 0 && (
-							displayedContracts.map(contract => (
+						{currentPosts.length > 0 && (
+							currentPosts.map(contract => (
 								<div 
 									className={`${contract.status === 'active' ? 'bg-gradient-to-r from-yellow-400 to-yellow-300' 
 									: contract.status === 'completed' ? 'bg-gradient-to-r from-green-500 to-green-400'

@@ -42,30 +42,38 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
 			console.log('---- inside getHorarios ----');
 			console.log(jsonData);
 
-            console.log('jsonData.availabilities.dates: ', jsonData.availabilities.dates);
+            console.log('jsonData: ', jsonData);
+            // console.log('jsonData.availabilities.dates: ', jsonData.availabilities.dates);
 
             // Get the current date and time using Moment.js
             const today = moment().format("DD/MM/YYYY");
 
-            console.log('jsonData.availabilities.dates.today: ', jsonData.availabilities.dates[today]);
+            // console.log('jsonData.availabilities.dates.today: ', jsonData.availabilities.dates[today]);
 
-            // for the current day, just leave those times that are higher than the current time.
-            const currentTime = moment().format('HH:mm');
-            const timesFilteredForToday = jsonData.availabilities.dates[today].filter(time => {
-                const timeValue = moment(time, 'HH:mm').format('HH:mm');
-                return timeValue > currentTime;
-              });
-            console.log('------------times filtered for today --------------');
-            console.log(timesFilteredForToday);
-            jsonData.availabilities.dates[today] = timesFilteredForToday;
+            if(Object.keys(jsonData) > 0) {
+                // for the current day, just leave those times that are higher than the current time.
+                const currentTime = moment().format('HH:mm');
 
-            // Filter the dates that are greater than the current time
-            const filteredDates = jsonData.availabilities.dates;
+                // if there are times available for the caregiver today, then we filter those basing on current clock time
+                if(jsonData.availabilities.dates[today] !== undefined && 
+                jsonData.availabilities.dates[today].length > 0) {
+                    const timesFilteredForToday = jsonData.availabilities.dates[today].filter(time => {
+                        const timeValue = moment(time, 'HH:mm').format('HH:mm');
+                        return timeValue > currentTime;
+                      });
+                    console.log('------------times filtered for today --------------');
+                    console.log(timesFilteredForToday);
+                    jsonData.availabilities.dates[today] = timesFilteredForToday;
+        
+                    // Filter the dates that are greater than the current time
+                    const filteredDates = jsonData.availabilities.dates;
+        
+                    console.log('filtered Dates: ', filteredDates);
+                    setHorariosDisponibles(filteredDates);
+                }
+                setHorariosDisponibles(jsonData.availabilities.dates);
+            }
 
-            console.log('filtered Dates: ', filteredDates);
-            setHorariosDisponibles(filteredDates);
-
-            // setHorariosDisponibles(jsonData.availabilities.dates);
         } catch (error) {
             console.error(error.message);
         }

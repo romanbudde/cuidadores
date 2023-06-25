@@ -363,13 +363,21 @@ const MisContratos = () => {
 									{/* validar que el ultimo horario del contrato sea mayor a la hora actual (usar moment js) */}
 									{
 										// console.log('ultimo horario del contrato: ', contract.horarios[contract.horarios.length - 1])
-										console.log('user type: ', user.type)
-										// console.log('comparacion horario entre contract: ', moment(contract.horarios[contract.horarios.length - 1], 'HH:mm').format('HH:mm') < moment().format('HH:mm'))
+										// console.log('user type: ', user.type)
+										console.log('comparacion horario entre contract: ', moment(contract.date, 'DD/MM/YYYY').isSame(moment(), 'day') && moment(contract.horarios[contract.horarios.length - 1], 'HH:mm').format('HH:mm') < moment().format('HH:mm'))
+
+										
+										// moment(contract.horarios[contract.horarios.length - 1], 'HH:mm').format('HH:mm') < moment().format('HH:mm')
 									}
 									{user.type === 1 && 
 									contract.status === 'active' && 
-									moment(contract.date, 'DD/MM/YYYY').isSameOrBefore(moment()) &&
-									moment(contract.horarios[contract.horarios.length - 1], 'HH:mm').format('HH:mm') < moment().format('HH:mm') && (
+									(
+										moment(contract.date, 'DD/MM/YYYY').isBefore(moment().startOf('day')) || 
+										(
+											moment(contract.date, 'DD/MM/YYYY').isSame(moment(), 'day') && 
+											moment(contract.horarios[contract.horarios.length - 1], 'HH:mm').add(30,'minutes').format('HH:mm') < moment().format('HH:mm')
+										) 
+									) && (
 										<div
 											className='flex flex-row items-center justify-left bg-black p-2 mt-4 rounded-md w-full bg-gradient-to-r from-gray-900 to-gray-700'
 											onClick={ () => changeContractStatusToComplete(contract) }

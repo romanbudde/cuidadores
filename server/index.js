@@ -361,8 +361,13 @@ app.post("/caregiver_review", async(req, res) => {
 // get a contract by user id
 app.get("/contract", async(req, res) => {
     try {
-        const { customer_id } = req.query;
-        const contracts = await pool.query("SELECT * from contract WHERE customer_id = $1", [customer_id]);
+        const { user_id } = req.query;
+
+        let contracts;
+
+        contracts = await pool.query("SELECT * from contract WHERE caregiver_id = $1 OR customer_id = $1", [user_id]);
+
+        console.log('contracts: ', contracts);
         res.json(contracts.rows);
     }
     catch (error) {

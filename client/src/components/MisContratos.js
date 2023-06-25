@@ -217,8 +217,9 @@ const MisContratos = () => {
     // get all users function
     const getContracts = async () => {
         try {
-            console.log(`http://localhost:5000/contract?customer_id=${userId}`)
-            const response = await fetch(`http://localhost:5000/contract?customer_id=${userId}`);
+            console.log(`http://localhost:5000/contract?user_id=${userId}`)
+
+            const response = await fetch(`http://localhost:5000/contract?user_id=${userId}`);
             const jsonData = await response.json();
 
 			jsonData.sort((a, b) => {

@@ -88,7 +88,7 @@ const Account = () => {
 							className='absolute left-5'
 							icon={faChevronLeft}
 							onClick={ redirectLanding }
-							/>
+						/>
 						<h1 className='flex justify-center font-bold text-lg py-4'>Mi perfil</h1>
 					</div>
 					{ user.type === 1 && (

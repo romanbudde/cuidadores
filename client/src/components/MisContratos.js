@@ -71,17 +71,15 @@ const MisContratos = () => {
 	}
 
 	const handleStatusFilterChange = (e) => {
-
 		setStatusFilter(e.value)
-
 		newSortContracts('', e.value);
+		setCurrentPage(1);
 	}
-
+	
 	const handleDateFilterChange = (e) => {
-
 		setDateFilter(e.value);
-
 		newSortContracts(e.value, '');
+		setCurrentPage(1);
 	}
 
 	const changeContractStatusToComplete = async (contract) => {

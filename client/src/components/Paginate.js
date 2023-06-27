@@ -1,6 +1,8 @@
 import React, { Fragment } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronLeft, faChevronRight, faHouse, faCheck } from '@fortawesome/free-solid-svg-icons';
  
-const Paginate = ({ postsPerPage, totalPosts, paginate, currentPage }) => {
+const Paginate = ({ postsPerPage, totalPosts, paginate, currentPage, setCurrentPage }) => {
     const pageNumbers = [];
     const amountOfPages = Math.ceil(totalPosts / postsPerPage);
     const lastPage = Math.ceil(totalPosts / postsPerPage);
@@ -39,48 +41,74 @@ const Paginate = ({ postsPerPage, totalPosts, paginate, currentPage }) => {
         }
     }
 
+    const handlePreviousPage = () => {
+        if(currentPage > 1){
+            setCurrentPage(currentPage - 1);
+        }
+    }
+
+    const handleNextPage = () => {
+        if(currentPage < lastPage){
+            setCurrentPage(currentPage + 1);
+        }
+    }
+
     return (
         <Fragment>
             { amountOfPages > 1 && (
                 <div className="pagination-container">
-                    <ul className="pagination flex flex-row justify-evenly">
-                        { amountOfPages > 3 && currentPage > 2 && (
-                            <>
-                                <div className='flex flex-row'>
-                                    <li
-                                        key={1}
-                                        onClick={() => paginate(1)}
-                                        className={`page-number px-3 py-1 rounded-md ${1 === currentPage ? 'bg-blue-200' : ''}`}
-                                    >
-                                        1
-                                    </li> 
-                                </div>
-                                <p className='mt-auto'>...</p>
-                            </>
-                        )}
-                        {pageNumbers.map((number) => (
-                            <li
+                    <ul className="pagination flex flex-row justify-evenly items-center">
+                        <FontAwesomeIcon
+							className={`${currentPage === 1 ? 'absolute left-5 text-lg opacity-25' : 'absolute left-5 text-lg'}`}
+							icon={faChevronLeft}
+							onClick={ handlePreviousPage }
+						/>
+                        <div className='flex flex-row w-1/4 justify-end'>
+                            { amountOfPages > 3 && currentPage > 2 && (
+                                <>
+                                        <li
+                                            key={1}
+                                            onClick={() => paginate(1)}
+                                            className={`page-number px-3 py-1 rounded-md ${1 === currentPage ? 'bg-blue-200' : ''}`}
+                                        >
+                                            1
+                                        </li> 
+                                        <p className='mt-auto'>...</p>
+                                </>
+                            )}
+                        </div>
+                        <div className='flex flex-row justify-evenly w-2/4'>
+                            {pageNumbers.map((number) => (
+                                <li
                                 key={number}
                                 onClick={() => paginate(number)}
                                 className={`page-number px-3 py-1 rounded-md ${number === currentPage ? 'bg-blue-200' : ''}`}
-                            >
-                                {number}
-                            </li>
-                        ))}
-                        { amountOfPages > 3 && currentPage < amountOfPages - 1 && (
-                            <>
-                                <p className='mt-auto'>...</p>
-                                <div className='flex flex-row'>
-                                    <li
-                                        key={lastPage}
-                                        onClick={() => paginate(lastPage)}
-                                        className={`page-number px-3 py-1 rounded-md ${lastPage === currentPage ? 'bg-blue-200' : ''}`}
-                                    >
-                                        6
-                                    </li> 
-                                </div>
-                            </>
-                        )}
+                                >
+                                    {number}
+                                </li>
+                            ))}
+                        </div>
+                        <div className='flex flex-row w-1/4'>
+                            { amountOfPages > 3 && currentPage < amountOfPages - 1 && (
+                                <>
+                                    <p className='mt-auto'>...</p>
+                                    <div className='flex flex-row'>
+                                        <li
+                                            key={lastPage}
+                                            onClick={() => paginate(lastPage)}
+                                            className={`page-number px-3 py-1 rounded-md ${lastPage === currentPage ? 'bg-blue-200' : ''}`}
+                                            >
+                                            {lastPage}
+                                        </li> 
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                        <FontAwesomeIcon
+							className={`${currentPage === lastPage ? 'absolute right-5 text-lg opacity-25' : 'absolute right-5 text-lg'}`}
+							icon={faChevronRight}
+							onClick={ handleNextPage }
+						/>
                     </ul>
                 </div>
             )}

@@ -40,6 +40,9 @@ const Account = () => {
 	}
 
 	const redirectLanding = () => {
+		if(user.type === 2) {
+			navigate('/landing-admin');
+		}
 		if(user.type === 1) {
 			navigate('/landing-cuidador');
 		}

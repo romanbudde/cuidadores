@@ -6,9 +6,11 @@ import UserLandingPage from './routes/UserLandingPage';
 import RegisterPage from './routes/RegisterPage';
 import FilterCuidadoresPage from './routes/FilterCuidadoresPage';
 import LandingCuidadorPage from './routes/LandingCuidadorPage';
+import LandingAdminPage from './routes/LandingAdminPage';
 import FechasHorariosPage from './routes/FechasHorariosPage';
 import MisContratosPage from './routes/MisContratosPage';
 import AccountPage from './routes/AccountPage';
+import ContractsPage from './routes/ContractsPage';
 import { AuthProvider, AuthContext } from './components/AuthContext';
 
 import './App.css';
@@ -81,6 +83,22 @@ const App = () => {
 				element={
 					<>
 					{ <LandingCuidadorPage /> }
+					</>
+				} 
+				/>
+				<Route 
+				path="/landing-admin"
+				element={
+					<>
+					{ <LandingAdminPage /> }
+					</>
+				} 
+				/>
+				<Route 
+				path="/contracts"
+				element={
+					<>
+					{ <ContractsPage /> }
 					</>
 				} 
 				/>

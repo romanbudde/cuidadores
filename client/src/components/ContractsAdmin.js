@@ -14,7 +14,7 @@ import Paginate from './Paginate';
 import moment from 'moment';
 import Select from 'react-select';
 
-const MisContratos = () => {
+const ContractsAdmin = () => {
 	const { isAuthenticated, userId } = useContext(AuthContext);
     const [contracts, setContracts] = useState([]);
     const [displayedContracts, setDisplayedContracts] = useState([]);
@@ -326,7 +326,7 @@ const MisContratos = () => {
 							icon={faChevronLeft}
 							onClick={ redirectLanding }
 						/>
-						<h1 className='flex justify-center font-bold text-lg py-4'>Mis contratos</h1>
+						<h1 className='flex justify-center font-bold text-lg py-4'>Contratos</h1>
 					</div>
 					<div className='mb-28'>
 						<div className='flex flex-row'>
@@ -442,4 +442,4 @@ const MisContratos = () => {
 	}
 }
 
-export default MisContratos;
+export default ContractsAdmin;

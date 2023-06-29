@@ -335,6 +335,7 @@ const MisContratos = () => {
 								onChange={e => handleDateFilterChange(e)}
 								placeholder={'Fecha:'}
 								options={optionsFecha}
+								isSearchable={false}
 								maxMenuHeight={240}
 								className='rounded-md m-5 w-1/2'
 								theme={(theme) => ({
@@ -351,6 +352,7 @@ const MisContratos = () => {
 								// value={selectedHoraDesde}
 								onChange={e => handleStatusFilterChange(e)}
 								placeholder={'Estado:'}
+								isSearchable={false}
 								options={optionsEstado}
 								maxMenuHeight={240}
 								className='rounded-md m-5 w-1/2'

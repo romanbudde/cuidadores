@@ -375,6 +375,105 @@ app.get("/contract", async(req, res) => {
     }
 });
 
+// get contracts by different parametres
+app.get("/contracts", async(req, res) => {
+    try {
+        let { client_email, caregiver_email, start_date, end_date, status } = req.query;
+
+        // bring from users table those that have similarities with client email or caregiver email
+        let users;
+		// users = await pool.query("SELECT * FROM users WHERE mail LIKE $1 OR mail LIKE $2", [client_email, caregiver_email]);
+
+        if(client_email === '' && caregiver_email === '') {
+            users = await pool.query
+                ("SELECT * FROM users WHERE (type = '0' OR 'type' = '1')"
+            );
+        }
+
+        if(client_email !== '' && caregiver_email !== '') {
+            users = await pool.query
+                ("SELECT * FROM users WHERE (mail LIKE '%' || $1 || '%' OR mail LIKE '%' || $2 || '%') AND (type = '0' OR 'type' = '1')", 
+                [client_email, caregiver_email]
+            );
+        }
+        else {
+            if(client_email !== '') {
+                users = await pool.query
+                    ("SELECT * FROM users WHERE (mail LIKE '%' || $1 || '%') AND (type = '0')", 
+                    [client_email]
+                );
+            }
+            if(caregiver_email !== ''){
+                users = await pool.query
+                    ("SELECT * FROM users WHERE (mail LIKE '%' || $1 || '%') AND (type = '1')", 
+                    [caregiver_email]
+                );
+            }
+        }
+
+
+        console.log('client_email:', client_email.trim());
+        console.log('caregiver email:', caregiver_email);
+        console.log('matching users: ');
+        console.log(users.rows);
+
+        // res.json(users.rows);
+
+        let userIdsArray = users.rows.map(user => user.id);
+
+        let contracts;
+
+        let query = "SELECT * FROM contract";
+        // Array to store the conditions
+        let conditions = [];
+        let values = [];
+
+        // Check if client_email is provided
+        if (client_email || caregiver_email) {
+            conditions.push(`( customer_id = ANY($${values.length + 1}) OR caregiver_id = ANY($${values.length + 1}) )`);
+            values.push(userIdsArray);
+        }
+
+        // Check if start_date is provided
+        if (start_date) {
+            conditions.push(`(date >= $${values.length + 1})`);
+            values.push(start_date);
+        }
+
+        // Check if end_date is provided
+        if (end_date) {
+            conditions.push(`(date <= $${values.length + 1})`);
+            values.push(end_date);
+        }
+
+        // Check if status is provided
+        if (status && status !== 'all') {
+            conditions.push(`(status = $${values.length + 1})`);
+            values.push(status);
+        }
+
+        // Join the conditions with AND
+        if (conditions.length > 0) {
+            query += " WHERE " + conditions.join(" AND ");
+        }
+        
+        console.log('query: ', query);
+        console.log('values: ', values);
+        contracts = await pool.query(query, values);
+        
+        // console.log('contracts: ', contracts.rows);
+        
+        console.log('client email: ', client_email);
+        console.log('caregiver email: ', caregiver_email);
+        console.log('startDate: ', start_date);
+        console.log('endDate: ', end_date);
+        res.json(contracts.rows);
+    }
+    catch (error) {
+        console.error(error.message);
+    }
+});
+
 // update a contract by its id
 app.put("/contract/:id", async(req, res) => {
     try {

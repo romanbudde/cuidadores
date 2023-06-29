@@ -7,8 +7,8 @@ const Paginate = ({ postsPerPage, totalPosts, paginate, currentPage, setCurrentP
     const amountOfPages = Math.ceil(totalPosts / postsPerPage);
     const lastPage = Math.ceil(totalPosts / postsPerPage);
     
-    console.log('------ current page: ', currentPage);
-    console.log('------ amount of pages calculation: ', Math.ceil(totalPosts / postsPerPage));
+    // console.log('------ current page: ', currentPage);
+    // console.log('------ amount of pages calculation: ', Math.ceil(totalPosts / postsPerPage));
     
     for (let i = currentPage - 1; i <= currentPage + 1; i++) {
         if(i <= 0){
@@ -22,9 +22,9 @@ const Paginate = ({ postsPerPage, totalPosts, paginate, currentPage, setCurrentP
         }
     }
  
-   console.log('-------pageNumbers[0]: ', pageNumbers[0]);
-   console.log('-------pageNumbers[al final]: ', pageNumbers[pageNumbers.length - 1]);
-   console.log('-------amount of pages: ', amountOfPages);
+//    console.log('-------pageNumbers[0]: ', pageNumbers[0]);
+//    console.log('-------pageNumbers[al final]: ', pageNumbers[pageNumbers.length - 1]);
+//    console.log('-------amount of pages: ', amountOfPages);
 
     // estamos en la primer pagina
 
@@ -37,7 +37,7 @@ const Paginate = ({ postsPerPage, totalPosts, paginate, currentPage, setCurrentP
         // estamos en la ultima pagina
         if(lastPage === currentPage) {
             pageNumbers.unshift(lastPage - 2);
-            console.log('AT LAST PAGEEEEEEEEEEEEEEEEEE')
+            // console.log('AT LAST PAGEEEEEEEEEEEEEEEEEE')
         }
     }
 

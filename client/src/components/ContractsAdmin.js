@@ -9,17 +9,28 @@ import { useContext } from 'react';
 import { AuthContext } from './AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faHouse, faCheck } from '@fortawesome/free-solid-svg-icons';
+import Datepicker from "react-tailwindcss-datepicker";
+import '../css/datepicker.css';
+import dayjs from 'dayjs';
+import moment from 'moment';
 import ClientBottomBar from './ClientBottomBar';
 import Paginate from './Paginate';
-import moment from 'moment';
 import Select from 'react-select';
 
 const ContractsAdmin = () => {
+	const navigate = useNavigate();
+	const cookies = new Cookies();
+	const moment = require('moment');
+
 	const { isAuthenticated, userId } = useContext(AuthContext);
     const [contracts, setContracts] = useState([]);
     const [displayedContracts, setDisplayedContracts] = useState([]);
     const [dateFilter, setDateFilter] = useState('newest');
     const [statusFilter, setStatusFilter] = useState('all');
+    const [userEmail, setUserEmail] = useState('');
+    const [statusSearch, setStatusSearch] = useState('');
+    const [caregiverEmail, setCaregiverEmail] = useState('');
+	const [selectedDatesInterval, setSelectedDatesInterval] = useState({});
     const [user, setUser] = useState([]);
 	
 	// -- Pagination
@@ -31,12 +42,8 @@ const ContractsAdmin = () => {
 	const indexOfFirstPost = indexOfLastPost - postsPerPage;
 	const currentPosts = displayedContracts.slice(indexOfFirstPost, indexOfLastPost);
 
-	console.log('currentPosts: ', currentPosts);
+	// console.log('currentPosts: ', currentPosts);
 
-
-	const navigate = useNavigate();
-	const cookies = new Cookies();
-	const moment = require('moment');
 
 	const optionsFecha = [
 		{ value: 'newest', label: 'Más nuevos' },
@@ -78,6 +85,38 @@ const ContractsAdmin = () => {
 		}
 	}
 
+	// Convert a date from the format "yyyy-mm-dd" to "dd/mm/yyyy".
+	const formatDate = (dateString) => {
+		console.log('dateString to format: ', dateString);
+		const date = dayjs(dateString);
+		const formattedDate = date.format('DD/MM/YYYY');
+		
+		console.log(formattedDate);
+		return formattedDate;
+	};
+
+	const handleSelectedDatesIntervalChange = (newInterval) => {
+		console.log("Dates interval new value:", newInterval);
+		let startDate = formatDate(newInterval.startDate);
+		let endDate = formatDate(newInterval.endDate);
+
+		console.log(`startDate at Interval Change: ${startDate}`);
+		console.log(`endDate at Interval Change: ${endDate}`);
+
+		// console.log("Formatted dates interval new value:", newInterval);
+		if(newInterval.startDate && newInterval.endDate) {
+			setSelectedDatesInterval(newInterval);
+		}
+		else {
+			setSelectedDatesInterval({});
+		}
+
+		console.log('start date: ', startDate);
+		console.log('end date: ', endDate);
+	}
+
+	console.log('selected dates interval: ', selectedDatesInterval);
+
 	const handleStatusFilterChange = (e) => {
 		setStatusFilter(e.value)
 		newSortContracts('', e.value);
@@ -88,6 +127,50 @@ const ContractsAdmin = () => {
 		setDateFilter(e.value);
 		newSortContracts(e.value, '');
 		setCurrentPage(1);
+	}
+
+	const searchContracts = async () => {
+		console.log('search contracts');
+
+		console.log('selected dates: ', selectedDatesInterval);
+
+		let dateStart = '';
+		let dateEnd = '';
+		if(Object.keys(selectedDatesInterval).length > 0) {
+			console.log('selected dates (start): ', moment(selectedDatesInterval.startDate).format('DD/MM/YYYY'));
+			console.log('selected dates (end): ', moment(selectedDatesInterval.endDate).format('DD/MM/YYYY'));
+			dateStart = moment(selectedDatesInterval.startDate).format('DD/MM/YYYY');
+			dateEnd = moment(selectedDatesInterval.endDate).format('DD/MM/YYYY');
+		}
+
+		// search contracts by client email and or caregiver email and or a range of dates and or status
+		try {
+			console.log('statusSearch: ', statusSearch);
+            console.log(`http://localhost:5000/contracts?client_email=${userEmail}&caregiver_email=${caregiverEmail}&start_date=${dateStart}&end_date=${dateEnd}&status=${statusSearch}`);
+			
+			// get coinciding user IDS from user table first, then get contracts
+
+            const response = await fetch(`http://localhost:5000/contracts?client_email=${userEmail}&caregiver_email=${caregiverEmail}&start_date=${dateStart}&end_date=${dateEnd}&status=${statusSearch}`);
+            const jsonData = await response.json();
+
+			console.log('contracts: ', jsonData);
+
+			jsonData.sort((a, b) => {
+				const dateA = moment(a.date, 'DD/MM/YYYY');
+				const dateB = moment(b.date, 'DD/MM/YYYY');
+				return dateB.diff(dateA);
+			});
+
+			// console.log('jsonData: ');
+			// console.log(jsonData);
+
+            setContracts(jsonData);
+			setDisplayedContracts(jsonData);
+
+        } catch (error) {
+            console.error(error.message);
+        }
+
 	}
 
 	const changeContractStatusToComplete = async (contract) => {
@@ -307,13 +390,13 @@ const ContractsAdmin = () => {
 	}
 
     // when page loads, get all Users
-    useEffect(() => {
-        getContracts();
-        getUserData();
-    }, []);
+    // useEffect(() => {
+    //     getContracts();
+    //     getUserData();
+    // }, []);
 
-    // console.log('contracts');
-    // console.log(contracts);
+    console.log('contracts');
+    console.log(contracts);
 
 	if(isAuthenticated){
 		return (
@@ -329,42 +412,81 @@ const ContractsAdmin = () => {
 						<h1 className='flex justify-center font-bold text-lg py-4'>Contratos</h1>
 					</div>
 					<div className='mb-28'>
-						<div className='flex flex-row'>
-							<Select
-								// value={selectedHoraDesde}
-								onChange={e => handleDateFilterChange(e)}
-								placeholder={'Fecha:'}
-								options={optionsFecha}
-								maxMenuHeight={240}
-								className='rounded-md m-5 w-1/2'
-								theme={(theme) => ({
-									...theme,
-									borderRadius: 10,
-									colors: {
-									...theme.colors,
-									primary25: '#8FD5FF',
-									primary: 'black',
-									},
-								})}
-							/>
-							<Select
-								// value={selectedHoraDesde}
-								onChange={e => handleStatusFilterChange(e)}
-								placeholder={'Estado:'}
-								options={optionsEstado}
-								maxMenuHeight={240}
-								className='rounded-md m-5 w-1/2'
-								theme={(theme) => ({
-									...theme,
-									borderRadius: 10,
-									colors: {
-									...theme.colors,
-									primary25: '#8FD5FF',
-									primary: 'black',
-									},
-								})}
-							/>
+						<div className='flex flex-col mx-5 mt-2 gap-3'>
+							<div className='flex flex-col'>
+								<label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
+									Email del cuidador
+								</label>
+								<input
+									type="text"
+									name="user_id"
+									className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+									value={caregiverEmail}
+									onChange={e => setCaregiverEmail(e.target.value)}
+									required
+								/>
+							</div>
+							<div className='flex flex-col'>
+								<label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
+									Email del cliente
+								</label>
+								<input
+									type="text"
+									name="user_id"
+									className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+									value={userEmail}
+									onChange={e => setUserEmail(e.target.value)}
+									required
+								/>
+							</div>
 						</div>
+
+						<div className='mx-5 mt-3 flex flex-row items-center gap-10'>
+							<div className='flex flex-col justify-between w-full'>
+								<p>Puede seleccionar un intervalo de fechas:</p>
+								<Datepicker
+									primaryColor={"emerald"}
+									i18n={"es"} 
+									// minDate={moment().subtract(1, 'day')} 
+									// dateFormat="MMMM eeee d, yyyy h:mm aa"
+									separator={"a"}
+									displayFormat={"DD/MM/YYYY"} 
+									value={selectedDatesInterval}
+									locale="es"
+									onChange={handleSelectedDatesIntervalChange}
+								/>
+							</div>
+							
+						</div>
+
+						<Select
+							// value={selectedHoraDesde}
+							onChange={e => setStatusSearch(e.value)}
+							placeholder={'Estado:'}
+							options={optionsEstado}
+							maxMenuHeight={240}
+							className='rounded-md m-5 w-1/2'
+							isSearchable={false}
+							theme={(theme) => ({
+								...theme,
+								borderRadius: 10,
+								colors: {
+								...theme.colors,
+								primary25: '#8FD5FF',
+								primary: 'black',
+								},
+							})}
+						/>	
+
+						<div className='flex flex-row justify-center'>
+							<button
+								className='text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-2/3 py-2.5 mb-7 text-center'
+								onClick = {searchContracts}
+							>
+								Buscar contratos
+							</button>
+						</div>
+
 						<Paginate
 							postsPerPage={postsPerPage}
 							totalPosts={displayedContracts.length}
@@ -373,6 +495,46 @@ const ContractsAdmin = () => {
 							setCurrentPage={setCurrentPage}
 						/>
 						{/* <p className='m-5'>Más nuevos</p> */}
+						{currentPosts.length > 0 && (
+							<div className='flex flex-row'>
+								<Select
+									// value={selectedHoraDesde}
+									onChange={e => handleDateFilterChange(e)}
+									placeholder={'Fecha:'}
+									options={optionsFecha}
+									maxMenuHeight={240}
+									isSearchable={false}
+									className='rounded-md m-5 w-1/2'
+									theme={(theme) => ({
+										...theme,
+										borderRadius: 10,
+										colors: {
+										...theme.colors,
+										primary25: '#8FD5FF',
+										primary: 'black',
+										},
+									})}
+								/>
+								<Select
+									// value={selectedHoraDesde}
+									onChange={e => handleStatusFilterChange(e)}
+									placeholder={'Estado:'}
+									options={optionsEstado}
+									maxMenuHeight={240}
+									className='rounded-md m-5 w-1/2'
+									isSearchable={false}
+									theme={(theme) => ({
+										...theme,
+										borderRadius: 10,
+										colors: {
+										...theme.colors,
+										primary25: '#8FD5FF',
+										primary: 'black',
+										},
+									})}
+								/>
+							</div>
+						)}
 						{currentPosts.length > 0 && (
 							currentPosts.map(contract => (
 								<div 
@@ -417,17 +579,6 @@ const ContractsAdmin = () => {
 											<p className=''>Marcar como completado</p>
 										</div>
 									)}
-									{/* <button
-										className='w-full text-white bg-gradient-to-r from-green-500 to-green-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'
-										onClick={handleShowDisponibilidadModal(contract)}
-									>
-										Ver disponibilidad
-									</button> */}
-									{/* <VerDisponibilidad
-										contract={contract}
-										show={showDisponibilidadModal === contract}
-										onClose={handleClose}
-									/> */}
 								</div>
 							))
 						)}

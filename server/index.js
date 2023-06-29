@@ -436,13 +436,14 @@ app.get("/contracts", async(req, res) => {
 
         // Check if start_date is provided
         if (start_date) {
-            conditions.push(`(date >= $${values.length + 1})`);
+            // conditions.push(`(date >= $${values.length + 1})`);
+            conditions.push(`( TO_DATE(date, 'DD/MM/YYYY') >= TO_DATE($${values.length + 1}, 'DD/MM/YYYY') )`);
             values.push(start_date);
         }
 
         // Check if end_date is provided
         if (end_date) {
-            conditions.push(`(date <= $${values.length + 1})`);
+            conditions.push(`( TO_DATE(date, 'DD/MM/YYYY') <= TO_DATE($${values.length + 1}, 'DD/MM/YYYY') )`);
             values.push(end_date);
         }
 

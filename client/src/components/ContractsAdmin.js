@@ -25,11 +25,13 @@ const ContractsAdmin = () => {
 	const { isAuthenticated, userId } = useContext(AuthContext);
     const [contracts, setContracts] = useState([]);
     const [displayedContracts, setDisplayedContracts] = useState([]);
+    const [searchButtonClicked, setSearchButtonClicked] = useState(false);
     const [dateFilter, setDateFilter] = useState('newest');
     const [statusFilter, setStatusFilter] = useState('all');
     const [userEmail, setUserEmail] = useState('');
     const [statusSearch, setStatusSearch] = useState('');
     const [caregiverEmail, setCaregiverEmail] = useState('');
+    const [noContractsWithThatStatusMessage, setNoContractsWithThatStatusMessage] = useState('');
 	const [selectedDatesInterval, setSelectedDatesInterval] = useState({});
     const [user, setUser] = useState([]);
 	
@@ -85,6 +87,11 @@ const ContractsAdmin = () => {
 		}
 	}
 
+	const handleSearchStatusFilterChange = (e) => {
+		// console.log(e.value)
+		setStatusSearch(e.value);
+	}
+
 	// Convert a date from the format "yyyy-mm-dd" to "dd/mm/yyyy".
 	const formatDate = (dateString) => {
 		console.log('dateString to format: ', dateString);
@@ -133,6 +140,10 @@ const ContractsAdmin = () => {
 		console.log('search contracts');
 
 		console.log('selected dates: ', selectedDatesInterval);
+
+		setSearchButtonClicked(true);
+		setStatusFilter('');
+		setDateFilter('newest');
 
 		let dateStart = '';
 		let dateEnd = '';
@@ -263,6 +274,12 @@ const ContractsAdmin = () => {
 			if(statusFilter === 'all'){
 				contractsFiltered = sortContractsByAll(contractsFiltered);
 			}
+		}
+
+		// console.log(' ---- contracts filtered: ', contractsFiltered);
+
+		if(contractsFiltered.length === 0) {
+			setNoContractsWithThatStatusMessage(status);
 		}
 		
 		setDisplayedContracts(contractsFiltered);
@@ -395,8 +412,11 @@ const ContractsAdmin = () => {
     //     getUserData();
     // }, []);
 
-    console.log('contracts');
-    console.log(contracts);
+    // console.log('contracts');
+	
+	console.log('estado find cancelled: ', [optionsEstado.find((option) => option.value === statusSearch)]);
+	console.log('optionsEstado: ', optionsEstado);
+	
 
 	if(isAuthenticated){
 		return (
@@ -459,24 +479,29 @@ const ContractsAdmin = () => {
 							
 						</div>
 
-						<Select
-							// value={selectedHoraDesde}
-							onChange={e => setStatusSearch(e.value)}
-							placeholder={'Estado:'}
-							options={optionsEstado}
-							maxMenuHeight={240}
-							className='rounded-md m-5 w-1/2'
-							isSearchable={false}
-							theme={(theme) => ({
-								...theme,
-								borderRadius: 10,
-								colors: {
-								...theme.colors,
-								primary25: '#8FD5FF',
-								primary: 'black',
-								},
-							})}
-						/>	
+						<div className='mx-5 mt-3 mb-6 flex flex-col items-start'>
+							<label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
+								Estado del contrato
+							</label>
+							<Select
+								// value={selectedHoraDesde}
+								onChange={ handleSearchStatusFilterChange }
+								placeholder={'Estado:'}
+								options={optionsEstado}
+								maxMenuHeight={240}
+								className='rounded-md w-full'
+								isSearchable={false}
+								theme={(theme) => ({
+									...theme,
+									borderRadius: 10,
+									colors: {
+									...theme.colors,
+									primary25: '#8FD5FF',
+									primary: 'black',
+									},
+								})}
+							/>
+						</div>
 
 						<div className='flex flex-row justify-center'>
 							<button
@@ -495,7 +520,8 @@ const ContractsAdmin = () => {
 							setCurrentPage={setCurrentPage}
 						/>
 						{/* <p className='m-5'>Más nuevos</p> */}
-						{currentPosts.length > 0 && (
+						{searchButtonClicked && (
+							<>
 							<div className='flex flex-row'>
 								<Select
 									// value={selectedHoraDesde}
@@ -516,10 +542,15 @@ const ContractsAdmin = () => {
 									})}
 								/>
 								<Select
-									// value={selectedHoraDesde}
+									value={statusSearch === 'all' ? statusFilter : optionsEstado.find( option => {
+										if(option.value === statusSearch){
+											return option.label;
+										}
+									})}
+									// { statusSearch !== 'all' ? 'disabled' : '' }
 									onChange={e => handleStatusFilterChange(e)}
 									placeholder={'Estado:'}
-									options={optionsEstado}
+									options={statusSearch === 'all' ? optionsEstado : [optionsEstado.find((option) => option.value === statusSearch)]}
 									maxMenuHeight={240}
 									className='rounded-md m-5 w-1/2'
 									isSearchable={false}
@@ -534,7 +565,23 @@ const ContractsAdmin = () => {
 									})}
 								/>
 							</div>
+							{currentPosts.length < 1 && noContractsWithThatStatusMessage !== '' && (
+								<div className='flex flex-row mx-5'>
+									<p className='text-md font-normal text-center'>No se han encontrado contratos en estado <span className='font-bold'>{noContractsWithThatStatusMessage}!</span></p>
+								</div>
+							)}
+
+							{currentPosts.length < 1 && noContractsWithThatStatusMessage === '' && (
+								<div className='flex flex-row w-full justify-center'>
+									<p className='text-md font-normal text-center'>No se han encontrado contratos!</p>
+								</div>
+							)}
+
+							</>
 						)}
+						{/* {currentPosts.length > 0 && (
+							
+						)} */}
 						{currentPosts.length > 0 && (
 							currentPosts.map(contract => (
 								<div 

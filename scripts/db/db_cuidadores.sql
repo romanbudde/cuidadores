@@ -327,6 +327,11 @@ COPY public.contract (id, status, date, customer_id, created_at, modified_at, am
 6	cancelled	15/06/2023	50	2023-06-13 13:07:13.505	2023-06-13 13:07:13.505	21	48	["05:00"]
 7	completed	16/06/2023	50	2023-06-13 13:30:48.454	2023-06-13 13:30:48.454	21	48	["04:30"]
 14	active	26/06/2023	50	2023-06-13 12:14:41.018	2023-06-13 12:14:41.018	21	48	["19:30", "20:00", "20:30", "21:00"]
+15	active	30/07/2023	50	2023-06-13 12:14:41.018	2023-06-13 12:14:41.018	21	48	["19:30", "20:00", "20:30", "21:00"]
+16	active	08/08/2023	998	2023-06-13 12:14:41.018	2023-06-13 12:14:41.018	21	755	["19:30", "20:00", "20:30", "21:00"]
+17	inactive	15/08/2023	998	2023-06-13 12:14:41.018	2023-06-13 12:14:41.018	21	755	["19:30", "20:00", "20:30", "21:00"]
+18	inactive	19/08/2023	998	2023-06-13 12:14:41.018	2023-06-13 12:14:41.018	21	755	["19:30", "20:00", "20:30", "21:00"]
+19	completed	15/05/2023	998	2023-06-13 12:14:41.018	2023-06-13 12:14:41.018	21	755	["19:30", "20:00", "20:30", "21:00"]
 \.
 
 
@@ -357,6 +362,8 @@ COPY public.users (id, description, name, last_name, password, mail, type, creat
 52	\N	nombre	apellido	$2b$10$iQHsqBx9LB7xNtmAxM5tmOBrMAzFC5iJFbErpTwPLldwAGL5XV1Hy	newuserrr@hotmail.com	0	2023-06-18 23:37:21.661	\N	t	\N	\N	\N
 53	\N	name	lastname	$2b$10$kkKaP6YOO.P/xgn1mpUFjOXf/IXXKnZm4FuDqVC237vQCGW5R.DGW	newwwuser@hotmail.com	0	2023-06-18 23:38:16.92	\N	t	\N	\N	direcc
 50	descriptionnnn	firstname	asdasdsda	$2b$10$FKEeFnI1rC6cwkaLD2ncJO1CvEX/58WKfUqNIfrW5fxhiOWE4h3NO	client	0	2023-06-03 12:53:35.977	2023-06-24 18:14:50.48	t	\N	\N	Avenida 9 de Julio 5, Buenos Aires, Argentina
+998	descriptionnnn	firstname	asdasdsda	$2b$10$FKEeFnI1rC6cwkaLD2ncJO1CvEX/58WKfUqNIfrW5fxhiOWE4h3NO	client998	0	2023-06-03 12:53:35.977	2023-06-24 18:14:50.48	t	\N	\N	Avenida 9 de Julio 5, Buenos Aires, Argentina
+755	descriptionnnn	firstname	asdasdsda	$2b$10$FKEeFnI1rC6cwkaLD2ncJO1CvEX/58WKfUqNIfrW5fxhiOWE4h3NO	cuidador755	0	2023-06-03 12:53:35.977	2023-06-24 18:14:50.48	t	\N	\N	Avenida 9 de Julio 5, Buenos Aires, Argentina
 \.
 
 
@@ -378,7 +385,7 @@ SELECT pg_catalog.setval('public.caregiver_score_id_seq', 70, true);
 -- Name: contract_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.contract_id_seq', 14, true);
+SELECT pg_catalog.setval('public.contract_id_seq', 19, true);
 
 
 --

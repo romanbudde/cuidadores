@@ -29,6 +29,7 @@ const ContractsAdmin = () => {
     const [dateFilter, setDateFilter] = useState('newest');
     const [statusFilter, setStatusFilter] = useState('all');
     const [updateStatusFilter, setUpdateStatusFilter] = useState('all');
+    const [updateStatusSearch, setUpdateStatusSearch] = useState('all');
     const [userEmail, setUserEmail] = useState('');
     const [statusSearch, setStatusSearch] = useState('all');
     const [caregiverEmail, setCaregiverEmail] = useState('');
@@ -145,6 +146,7 @@ const ContractsAdmin = () => {
 
 		setSearchButtonClicked(true);
 		// console.log('statusSearch when searching contracts: ', statusSearch)
+		setUpdateStatusSearch(statusSearch);
 		setUpdateStatusFilter(statusSearch);
 		setDateFilter('newest');
 
@@ -409,11 +411,10 @@ const ContractsAdmin = () => {
 		setUser(jsonData);
 	}
 
-    // when page loads, get all Users
-    // useEffect(() => {
-    //     getContracts();
-    //     getUserData();
-    // }, []);
+    // when page loads, get user data
+    useEffect(() => {
+        getUserData();
+    }, []);
 
     // console.log('contracts');
 	
@@ -544,24 +545,26 @@ const ContractsAdmin = () => {
 										},
 									})}
 								/>
-								<Select
-									value={optionsEstado.find((option) => option.value === updateStatusFilter)}
-									onChange={e => handleStatusFilterChange(e)}
-									placeholder={'Estado:'}
-									options={statusSearch === 'all' ? optionsEstado : [optionsEstado.find((option) => option.value === updateStatusFilter)]}
-									maxMenuHeight={240}
-									className='rounded-md m-5 w-1/2'
-									isSearchable={false}
-									theme={(theme) => ({
-										...theme,
-										borderRadius: 10,
-										colors: {
-										...theme.colors,
-										primary25: '#8FD5FF',
-										primary: 'black',
-										},
-									})}
-								/>
+								{searchButtonClicked && updateStatusSearch === 'all' && (
+									<Select
+										value={optionsEstado.find((option) => option.value === updateStatusFilter)}
+										onChange={e => handleStatusFilterChange(e)}
+										placeholder={'Estado:'}
+										options={statusSearch === 'all' ? optionsEstado : [optionsEstado.find((option) => option.value === updateStatusFilter)]}
+										maxMenuHeight={240}
+										className='rounded-md m-5 w-1/2'
+										isSearchable={false}
+										theme={(theme) => ({
+											...theme,
+											borderRadius: 10,
+											colors: {
+											...theme.colors,
+											primary25: '#8FD5FF',
+											primary: 'black',
+											},
+										})}
+									/>
+								)}
 							</div>
 							{currentPosts.length < 1 && noContractsWithThatStatusMessage !== '' && (
 								<div className='flex flex-row mx-5'>

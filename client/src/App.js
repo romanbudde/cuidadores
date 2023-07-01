@@ -19,6 +19,7 @@ import './App.css';
 import AddUser from './components/AddUser';
 import ListUsers from './components/ListUsers';
 import User from "./components/User";
+import NewUsersListPage from "./routes/NewUsersListPage";
 
 const App = () => {
   // return (
@@ -47,10 +48,18 @@ const App = () => {
 				} 
 				/>
 				<Route 
-				path="/users"
+				path="/users_old"
 				element={
 					<>
 					{ <UsersListPage /> }
+					</>
+				} 
+				/>
+				<Route 
+				path="/users"
+				element={
+					<>
+					{ <NewUsersListPage /> }
 					</>
 				} 
 				/>

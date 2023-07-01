@@ -128,38 +128,18 @@ const ListUsers = () => {
 				>
 					Logout
 				</button>
-				<table className='w-full text-sm text-gray-500 dark:text-gray-400 mt-10 text-center'>
-					<thead className='text-md text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400'>
-						<tr>
-							<th>User ID</th>
-							<th>Description</th>
-							<th>Name</th>
-							<th>Lastname</th>
-							<th>Email</th>
-							<th>User Type</th>
-							<th>Created at</th>
-							<th>Modified at</th>
-							<th>Status</th>
-							<th>Edit</th>
-							<th>Change Status</th>
-						</tr>
-					</thead>
-					<tbody>
-						{/* Use a white background for odd rows, and slate-50 for even rows */}
-						{users.map( user => (
-	
-							<User 
-								user={user}
-								users={users}
-								setUsers={setUsers}
-								disableUser = {disableUser}
-								enableUser = {enableUser}
-								key={user.id}
-							/>
-							
-						))}
-					</tbody>
-				</table>
+                {users.map( user => (
+
+                    <User 
+                        user={user}
+                        users={users}
+                        setUsers={setUsers}
+                        disableUser = {disableUser}
+                        enableUser = {enableUser}
+                        key={user.id}
+                    />
+                    
+                ))}
 			</Fragment>
 		);
 	}

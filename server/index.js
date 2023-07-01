@@ -358,6 +358,72 @@ app.post("/caregiver_review", async(req, res) => {
     }
 });
 
+// get users by different parametres
+app.get("/users", async(req, res) => {
+    try {
+        let { user_email, user_firstname, user_lastname, status } = req.query;
+
+        // bring from users table those that have similarities with client email or caregiver email
+        let users;
+
+        let query = "SELECT * FROM users";
+        // Array to store the conditions
+        let conditions = [];
+        let values = [];
+
+        // Check if client_email is provided
+        if (user_email ) {
+            // conditions.push(`( customer_id = ANY($${values.length + 1}) OR caregiver_id = ANY($${values.length + 1}) )`);
+            conditions.push(`(mail LIKE '%' || $1 || '%')`);
+            values.push(user_email);
+        }
+
+        // Check if status is provided
+        if (status && status !== 'all') {
+            if(status === 'enabled') {
+                conditions.push(`(enabled = $${values.length + 1})`);
+                values.push(true);
+            }
+            if(status === 'disabled'){
+                conditions.push(`(enabled = $${values.length + 1})`);
+                values.push(false);
+            }
+        }
+
+        if (user_firstname) {
+            // conditions.push(`( customer_id = ANY($${values.length + 1}) OR caregiver_id = ANY($${values.length + 1}) )`);
+            conditions.push(`(name LIKE '%' || $${values.length + 1} || '%')`);
+            values.push(user_firstname);
+        }
+
+        if (user_lastname) {
+            // conditions.push(`( customer_id = ANY($${values.length + 1}) OR caregiver_id = ANY($${values.length + 1}) )`);
+            conditions.push(`(last_name LIKE '%' || $${values.length + 1} || '%')`);
+            values.push(user_lastname);
+        }
+
+        // Join the conditions with AND
+        if (conditions.length > 0) {
+            query += " WHERE " + conditions.join(" AND ");
+        }
+        
+        console.log('query: ', query);
+        console.log('values: ', values);
+        users = await pool.query(query, values);
+        
+        // console.log('contracts: ', contracts.rows);
+        
+        console.log('user email: ', user_email);
+        console.log('user firstname: ', user_firstname);
+        console.log('user lastname: ', user_lastname);
+        console.log('status: ', status);
+        res.json(users.rows);
+    }
+    catch (error) {
+        console.error(error.message);
+    }
+});
+
 // get a contract by user id
 app.get("/contract", async(req, res) => {
     try {
@@ -412,7 +478,7 @@ app.get("/contracts", async(req, res) => {
         }
 
 
-        console.log('client_email:', client_email.trim());
+        // console.log('client_email:', client_email.trim());
         console.log('caregiver email:', caregiver_email);
         console.log('matching users: ');
         console.log(users.rows);

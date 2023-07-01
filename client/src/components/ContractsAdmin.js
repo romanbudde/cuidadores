@@ -28,8 +28,9 @@ const ContractsAdmin = () => {
     const [searchButtonClicked, setSearchButtonClicked] = useState(false);
     const [dateFilter, setDateFilter] = useState('newest');
     const [statusFilter, setStatusFilter] = useState('all');
+    const [updateStatusFilter, setUpdateStatusFilter] = useState('all');
     const [userEmail, setUserEmail] = useState('');
-    const [statusSearch, setStatusSearch] = useState('');
+    const [statusSearch, setStatusSearch] = useState('all');
     const [caregiverEmail, setCaregiverEmail] = useState('');
     const [noContractsWithThatStatusMessage, setNoContractsWithThatStatusMessage] = useState('');
 	const [selectedDatesInterval, setSelectedDatesInterval] = useState({});
@@ -125,7 +126,8 @@ const ContractsAdmin = () => {
 	console.log('selected dates interval: ', selectedDatesInterval);
 
 	const handleStatusFilterChange = (e) => {
-		setStatusFilter(e.value)
+		console.log('-------------------- setStatusFilter cambia a: ', e.value);
+		setUpdateStatusFilter(e.value)
 		newSortContracts('', e.value);
 		setCurrentPage(1);
 	}
@@ -137,26 +139,27 @@ const ContractsAdmin = () => {
 	}
 
 	const searchContracts = async () => {
-		console.log('search contracts');
+		// console.log('search contracts');
 
-		console.log('selected dates: ', selectedDatesInterval);
+		// console.log('selected dates: ', selectedDatesInterval);
 
 		setSearchButtonClicked(true);
-		setStatusFilter('');
+		// console.log('statusSearch when searching contracts: ', statusSearch)
+		setUpdateStatusFilter(statusSearch);
 		setDateFilter('newest');
 
 		let dateStart = '';
 		let dateEnd = '';
 		if(Object.keys(selectedDatesInterval).length > 0) {
-			console.log('selected dates (start): ', moment(selectedDatesInterval.startDate).format('DD/MM/YYYY'));
-			console.log('selected dates (end): ', moment(selectedDatesInterval.endDate).format('DD/MM/YYYY'));
+			// console.log('selected dates (start): ', moment(selectedDatesInterval.startDate).format('DD/MM/YYYY'));
+			// console.log('selected dates (end): ', moment(selectedDatesInterval.endDate).format('DD/MM/YYYY'));
 			dateStart = moment(selectedDatesInterval.startDate).format('DD/MM/YYYY');
 			dateEnd = moment(selectedDatesInterval.endDate).format('DD/MM/YYYY');
 		}
 
 		// search contracts by client email and or caregiver email and or a range of dates and or status
 		try {
-			console.log('statusSearch: ', statusSearch);
+			// console.log('statusSearch: ', statusSearch);
             console.log(`http://localhost:5000/contracts?client_email=${userEmail}&caregiver_email=${caregiverEmail}&start_date=${dateStart}&end_date=${dateEnd}&status=${statusSearch}`);
 			
 			// get coinciding user IDS from user table first, then get contracts
@@ -185,7 +188,7 @@ const ContractsAdmin = () => {
 	}
 
 	const changeContractStatusToComplete = async (contract) => {
-		console.log('change status to complete, contract: ', contract);
+		// console.log('change status to complete, contract: ', contract);
 
 		let bodyJSON = { "status": "completed" };
 
@@ -202,9 +205,9 @@ const ContractsAdmin = () => {
 		)
 			.then(response => response.json())
 			.then(result => {
-				console.log('result: ', result);
-				console.log('contracts: ', contracts)
-				console.log('displayed contracts: ', displayedContracts)
+				// console.log('result: ', result);
+				// console.log('contracts: ', contracts)
+				// console.log('displayed contracts: ', displayedContracts)
 
 				if(result.id > 0) {
 					setContracts(contracts.map((contract) => contract.id === result.id ? { ...contract, status: 'completed' } : contract));
@@ -221,8 +224,8 @@ const ContractsAdmin = () => {
 		// de todos los contratos (contracts) filtrarlos por fecha, y luego por estado, todo en esta func, y 
 		// hacer un setDisplayedContracts($contractsFiltered)
 
-		console.log('dateFilter: ', date);
-		console.log('statusFilter: ', status);
+		// console.log('dateFilter: ', date);
+		// console.log('statusFilter: ', status);
 
 		let contractsFiltered = [];
 
@@ -286,55 +289,55 @@ const ContractsAdmin = () => {
 	}
 
 	const sortContractsByActive = (contractsFiltered) => {
-		console.log('sortContractsByActive');
+		// console.log('sortContractsByActive');
 
 		contractsFiltered = contractsFiltered.filter(contract => contract.status === 'active');
 
-		console.log('by active contracts: ', contractsFiltered);
+		// console.log('by active contracts: ', contractsFiltered);
 
 		return contractsFiltered;
 	}
 
 	const sortContractsByInactive = (contractsFiltered) => {
-		console.log('sortContractsByInactive');
+		// console.log('sortContractsByInactive');
 
 		contractsFiltered = contractsFiltered.filter(contract => contract.status === 'inactive');
 
-		console.log('by inactive contracts: ', contractsFiltered);
+		// console.log('by inactive contracts: ', contractsFiltered);
 
 		return contractsFiltered;
 	}
 
 	const sortContractsByCompleted = (contractsFiltered) => {
-		console.log('sortContractsByCompleted');
+		// console.log('sortContractsByCompleted');
 
 		contractsFiltered = contractsFiltered.filter(contract => contract.status === 'completed');
 
-		console.log('by completed contracts: ', contractsFiltered);
+		// console.log('by completed contracts: ', contractsFiltered);
 
 		return contractsFiltered;
 	}
 
 	const sortContractsByCancelled = (contractsFiltered) => {
-		console.log('sortContractsByCancelled');
+		// console.log('sortContractsByCancelled');
 
 		contractsFiltered = contractsFiltered.filter(contract => contract.status === 'cancelled');
 
-		console.log('by cancelled contracts: ', contractsFiltered);
+		// console.log('by cancelled contracts: ', contractsFiltered);
 
 		return contractsFiltered;
 	}
 
 	const sortContractsByAll = (contractsFiltered) => {
-		console.log('sortContractsByAll');
+		// console.log('sortContractsByAll');
 
-		console.log('by all contracts: ', contractsFiltered);
+		// console.log('by all contracts: ', contractsFiltered);
 
 		return contractsFiltered;
 	}
 
 	const sortContractsByOldest = () => {
-		console.log('sortContractsByOldest');
+		// console.log('sortContractsByOldest');
 
 		setDateFilter('oldest');
 
@@ -348,13 +351,13 @@ const ContractsAdmin = () => {
 
 		setDisplayedContracts(sortedArray);
 
-		console.log('by oldest contracts: ', sortedArray);
+		// console.log('by oldest contracts: ', sortedArray);
 
 		return sortedArray;
 	}
 	
 	const sortContractsByNewest = () => {
-		console.log('sortContractsByNewest');
+		// console.log('sortContractsByNewest');
 
 		setDateFilter('newest');
 
@@ -366,7 +369,7 @@ const ContractsAdmin = () => {
 			return dateB.diff(dateA);
 		});
 
-		console.log('by newest contracts: ', sortedArray);
+		// console.log('by newest contracts: ', sortedArray);
 
 		return sortedArray;
 	}
@@ -484,7 +487,7 @@ const ContractsAdmin = () => {
 								Estado del contrato
 							</label>
 							<Select
-								// value={selectedHoraDesde}
+								defaultValue={optionsEstado.find(option => option.value === 'all')}
 								onChange={ handleSearchStatusFilterChange }
 								placeholder={'Estado:'}
 								options={optionsEstado}
@@ -542,15 +545,10 @@ const ContractsAdmin = () => {
 									})}
 								/>
 								<Select
-									value={statusSearch === 'all' ? statusFilter : optionsEstado.find( option => {
-										if(option.value === statusSearch){
-											return option.label;
-										}
-									})}
-									// { statusSearch !== 'all' ? 'disabled' : '' }
+									value={optionsEstado.find((option) => option.value === updateStatusFilter)}
 									onChange={e => handleStatusFilterChange(e)}
 									placeholder={'Estado:'}
-									options={statusSearch === 'all' ? optionsEstado : [optionsEstado.find((option) => option.value === statusSearch)]}
+									options={statusSearch === 'all' ? optionsEstado : [optionsEstado.find((option) => option.value === updateStatusFilter)]}
 									maxMenuHeight={240}
 									className='rounded-md m-5 w-1/2'
 									isSearchable={false}

@@ -8,7 +8,7 @@ import Cookies from 'universal-cookie';
 import { useContext } from 'react';
 import { AuthContext } from './AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronLeft, faHouse, faCheck, faPenToSquare } from '@fortawesome/free-solid-svg-icons';
+import { faChevronLeft, faHouse, faCheck, faCircleXmark, faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import Datepicker from "react-tailwindcss-datepicker";
 import '../css/datepicker.css';
 import dayjs from 'dayjs';
@@ -33,6 +33,7 @@ const NewUsersAdmin = () => {
     const [updateStatusFilter, setUpdateStatusFilter] = useState('all');
     const [updateStatusSearch, setUpdateStatusSearch] = useState('all');
     const [statusSearch, setStatusSearch] = useState('all');
+	const [showAddUserModal, setShowAddUserModal] = useState(false);
     const [userEmail, setUserEmail] = useState('');
     const [noUsersWithThatStatusMessage, setNoUsersWithThatStatusMessage] = useState('');
 	const [selectedDatesInterval, setSelectedDatesInterval] = useState({});
@@ -46,9 +47,6 @@ const NewUsersAdmin = () => {
 	const indexOfLastPost = currentPage * postsPerPage;
 	const indexOfFirstPost = indexOfLastPost - postsPerPage;
 	const currentPosts = displayedUsers.slice(indexOfFirstPost, indexOfLastPost);
-
-	// console.log('currentPosts: ', currentPosts);
-
 
 	const optionsFecha = [
 		{ value: 'newest', label: 'Más nuevos' },
@@ -64,6 +62,13 @@ const NewUsersAdmin = () => {
 	const paginate = (pageNumber) => {
 		setCurrentPage(pageNumber);
 	};
+
+	const handleAddUserModalOpen = () => {
+        setShowAddUserModal(true);
+    }
+    const handleAddUserModalClose = () => {
+        setShowAddUserModal(false); 
+    }
 
 	console.log("isAuthenticated: ", isAuthenticated);
 	console.log("userId: ", userId);
@@ -88,6 +93,62 @@ const NewUsersAdmin = () => {
 		}
 	}
 
+	// delete user function
+    const disableUser = async (id) => {
+        try {
+            let disabledUser = {};
+            const disableUser = await fetch(`http://localhost:5000/cuidadores/${id}`, {
+                method: "DELETE"
+            })
+                .then(response => response.json());
+
+            console.log('disableUser: ');
+            console.log(disableUser.rowCount);
+
+            if(disableUser.rowCount > 0) {
+                setUsers(users.map((user) => user.id === id ? { ...user, enabled:false } : user));
+            }
+
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    // enable user function
+    const enableUser = async (id, user) => {
+        try {
+            let bodyJSON = { 
+                description: user.description, 
+                email: user.mail, 
+                firstname: user.name, 
+                lastname: user.last_name, 
+                userType: user.type, 
+                enabled: true 
+            };
+            const enabledUser = await fetch(
+                `http://localhost:5000/cuidadores/${id}`,
+                {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(bodyJSON)
+                }
+            )
+                .then(response => response.json());
+
+            console.log('enabledUser: ');
+            console.log(enabledUser.id);
+
+            if(enabledUser.id) {
+                setUsers(users.map((user) => user.id === id ? { ...user, enabled:true } : user));
+            }
+
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
 	const handleSearchStatusFilterChange = (e) => {
 		// console.log(e.value)
 		setStatusSearch(e.value);
@@ -96,7 +157,7 @@ const NewUsersAdmin = () => {
 	// console.log('selected dates interval: ', selectedDatesInterval);
 
 	const handleStatusFilterChange = (e) => {
-		console.log('-------------------- setStatusFilter cambia a: ', e.value);
+		// console.log('-------------------- setStatusFilter cambia a: ', e.value);
 		setUpdateStatusFilter(e.value)
 		newSortUsers('', e.value);
 		setCurrentPage(1);
@@ -272,11 +333,15 @@ const NewUsersAdmin = () => {
 
 		let sortedArray = [...users];
 
+		console.log('----------- array of users to be sorted: ', sortedArray);
+		
 		sortedArray.sort((a, b) => {
-			const dateA = moment(a.date, 'DD/MM/YYYY');
-			const dateB = moment(b.date, 'DD/MM/YYYY');
+			const dateA = moment(a.date);
+			const dateB = moment(b.date);
 			return dateA.diff(dateB);
 		});
+		
+		console.log('----------- Sorted array of users: ', sortedArray);
 
 		setDisplayedUsers(sortedArray);
 
@@ -293,8 +358,8 @@ const NewUsersAdmin = () => {
 		let sortedArray = [...users];
 
 		sortedArray.sort((a, b) => {
-			const dateA = moment(a.date, 'DD/MM/YYYY');
-			const dateB = moment(b.date, 'DD/MM/YYYY');
+			const dateA = moment(a.created_at);
+			const dateB = moment(b.created_at);
 			return dateB.diff(dateA);
 		});
 
@@ -437,11 +502,26 @@ const NewUsersAdmin = () => {
 
 						<div className='flex flex-row justify-center'>
 							<button
-								className='text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-2/3 py-2.5 mb-7 text-center'
+								className='text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-2/3 py-2.5 text-center shadow-lg'
 								onClick = {searchUsers}
 							>
 								Buscar usuarios
 							</button>
+						</div>
+
+						<div className='flex flex-row justify-center w-full'>
+							<button
+								className='bg-transparent text-green-500 font-semibold py-2 px-4 border border-green-600 rounded-lg w-2/3 my-5'
+								onClick={handleAddUserModalOpen}
+							>
+								Crear usuario
+							</button>
+							{/* <button
+								className='text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-2/3 py-2.5 text-center shadow-lg'
+								onClick = {searchUsers}
+							>
+								Buscar usuarios
+							</button> */}
 						</div>
 
 						<Paginate
@@ -450,6 +530,12 @@ const NewUsersAdmin = () => {
 							paginate={paginate}
 							currentPage={currentPage}
 							setCurrentPage={setCurrentPage}
+						/>
+						<AddUser 
+							users={users}
+							setUsers={setUsers}
+							show={showAddUserModal}
+							onClose={handleAddUserModalClose}
 						/>
 						{/* <p className='m-5'>Más nuevos</p> */}
 						{searchButtonClicked && (
@@ -513,19 +599,16 @@ const NewUsersAdmin = () => {
 						)} */}
 						{currentPosts.length > 0 && (
 							currentPosts.map(user => (
-								<div
-									className={`${user.enabled ? 'bg-gradient-to-r from-green-500 to-green-400' 
-									: 'bg-gradient-to-r from-red-500 to-red-400'} p-5 m-5 rounded-md flex flex-col items-start text-white font-medium`}
+								<User 
+									user={user}
+									users={users}
+									setUsers={setUsers}
+									displayedUsers={displayedUsers}
+									setDisplayedUsers={setDisplayedUsers}
+									disableUser = {disableUser}
+									enableUser = {enableUser}
 									key={user.id}
-								>
-									<FontAwesomeIcon icon={faPenToSquare} className=''/>
-									<p>Editar datos</p>
-									<p>ID: {user.id}</p>
-									<p>Email: {user.mail}</p>
-									<p>Nombre: {user.name}</p>
-									<p>Apellido: {user.last_name}</p>
-									<p>Estado: {user.enabled ? 'Activado' : 'Desactivado'}</p>
-								</div>
+								/>
 							))
 						)}
 					</div>

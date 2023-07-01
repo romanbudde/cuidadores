@@ -3,7 +3,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import Cookies from 'universal-cookie';
 
-const EditUser = ({ user, show, onClose, users, setUsers }) => {
+const EditUser = ({ user, show, onClose, users, setUsers, displayedUsers, setDisplayedUsers }) => {
 
     const [description, setDescription] = useState(user.description);
     const [email, setEmail] = useState(user.mail);
@@ -14,8 +14,6 @@ const EditUser = ({ user, show, onClose, users, setUsers }) => {
 	const cookies = new Cookies();
 
     if(!show) return null;
-
-	
 
     const updateUser = async (e) => {
         // console.log(description);
@@ -70,6 +68,7 @@ const EditUser = ({ user, show, onClose, users, setUsers }) => {
 
 
             setUsers(users.map((user) => user.id === id ? updatedUser : user));
+            setDisplayedUsers(users.map((user) => user.id === id ? updatedUser : user));
         } catch (error) {
             console.error(error.message);
         }

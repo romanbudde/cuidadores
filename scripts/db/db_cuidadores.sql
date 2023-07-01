@@ -351,19 +351,22 @@ COPY public.user_type (user_type_number, user_type, id) FROM stdin;
 --
 
 COPY public.users (id, description, name, last_name, password, mail, type, created_at, modified_at, enabled, hourly_rate, average_review_score, address) FROM stdin;
-4	1111111111	11111111	111111111111	\N	111111111	1	\N	2023-05-11 16:49:46.464	t	27	9.25	\N
+755	descriptionnnn	firstname	asdasdsda	$2b$10$FKEeFnI1rC6cwkaLD2ncJO1CvEX/58WKfUqNIfrW5fxhiOWE4h3NO	cuidador755	1	2023-06-03 12:53:35.977	2023-06-24 18:14:50.48	t	\N	\N	Avenida 9 de Julio 5, Buenos Aires, Argentina
 31	qweeqw	123	123	\N	adsasd	0	2023-04-09 18:04:41.672	2023-05-11 15:47:46.231	t	\N	\N	\N
-2	2222222	22222	222222	\N	222222	0	\N	2023-05-11 15:47:46.231	t	\N	\N	\N
-1	desccc	111111111111	111111111	\N	11111111111	1	\N	2023-05-11 15:47:46.231	f	45	\N	\N
-30	dasdsadsa	zxczcxczx	wqwqrweqr	\N	wqeeqw	1	2023-04-09 18:04:41.672	2023-05-11 15:47:46.231	t	15	\N	\N
-6	The description	Josh	Peck	$2y$10$iKJBVKYUMF6u967o8KWBae8rcBYfyugYgO38WeBWSdXXQV56PQ6Z2	email@hotmail.com	1	\N	2023-05-11 15:58:45.628	t	75	7.55	\N
-48	newwdescccc	updatedAgain	lastname	$2a$10$N0IU4mQeWMBBx0JacWifdOgSXsiKg3AejjuaWQ4RIJ9CUbsJTPOIi	asd	1	\N	2023-06-02 14:30:02.391	t	21	9.42	\N
-51	descccccc	firstname	lastname	$2b$10$1SBtjnQPPuCXZIyuUErEMOctccTOXxl0lQzfUuBe5XYlTkATfPMpG	cuidador	1	2023-06-03 12:53:51.226	\N	t	\N	\N	\N
-52	\N	nombre	apellido	$2b$10$iQHsqBx9LB7xNtmAxM5tmOBrMAzFC5iJFbErpTwPLldwAGL5XV1Hy	newuserrr@hotmail.com	0	2023-06-18 23:37:21.661	\N	t	\N	\N	\N
+1	desccc	111111111111	111111111	\N	11111111111	1	2023-04-09 18:04:41.672	2023-05-11 15:47:46.231	f	45	\N	\N
 53	\N	name	lastname	$2b$10$kkKaP6YOO.P/xgn1mpUFjOXf/IXXKnZm4FuDqVC237vQCGW5R.DGW	newwwuser@hotmail.com	0	2023-06-18 23:38:16.92	\N	t	\N	\N	direcc
-50	descriptionnnn	firstname	asdasdsda	$2b$10$FKEeFnI1rC6cwkaLD2ncJO1CvEX/58WKfUqNIfrW5fxhiOWE4h3NO	client	0	2023-06-03 12:53:35.977	2023-06-24 18:14:50.48	t	\N	\N	Avenida 9 de Julio 5, Buenos Aires, Argentina
-998	descriptionnnn	firstname	asdasdsda	$2b$10$FKEeFnI1rC6cwkaLD2ncJO1CvEX/58WKfUqNIfrW5fxhiOWE4h3NO	client998	0	2023-06-03 12:53:35.977	2023-06-24 18:14:50.48	t	\N	\N	Avenida 9 de Julio 5, Buenos Aires, Argentina
-755	descriptionnnn	firstname	asdasdsda	$2b$10$FKEeFnI1rC6cwkaLD2ncJO1CvEX/58WKfUqNIfrW5fxhiOWE4h3NO	cuidador755	0	2023-06-03 12:53:35.977	2023-06-24 18:14:50.48	t	\N	\N	Avenida 9 de Julio 5, Buenos Aires, Argentina
+51	descccccc	firstname	lastname	$2b$10$1SBtjnQPPuCXZIyuUErEMOctccTOXxl0lQzfUuBe5XYlTkATfPMpG	cuidador	1	2023-04-09 18:04:41.672	\N	t	\N	\N	\N
+48	newwdescccc	updatedAgain	lastname	$2a$10$N0IU4mQeWMBBx0JacWifdOgSXsiKg3AejjuaWQ4RIJ9CUbsJTPOIi	asd	1	2023-04-09 18:04:41.672	2023-06-02 14:30:02.391	t	21	9.42	\N
+6	The description	Josh	Peck	$2y$10$iKJBVKYUMF6u967o8KWBae8rcBYfyugYgO38WeBWSdXXQV56PQ6Z2	email@hotmail.com	1	2023-04-09 18:04:41.672	2023-05-11 15:58:45.628	t	75	7.55	\N
+2	2222222	22222	222222	\N	222222	0	2023-04-09 18:04:41.672	2023-05-11 15:47:46.231	t	\N	\N	\N
+4	1111111111	11111111	111111111111	\N	111111111	1	2023-04-09 18:04:41.672	2023-05-11 16:49:46.464	t	27	9.25	\N
+998	descriptionnnn	998firstname	asdasdsda	$2b$10$FKEeFnI1rC6cwkaLD2ncJO1CvEX/58WKfUqNIfrW5fxhiOWE4h3NO	client998	0	2023-06-03 12:53:35.977	2023-06-24 18:14:50.48	t	\N	\N	Avenida 9 de Julio 5, Buenos Aires, Argentina
+52	descc	nombreUpdated20.03	apellido	$2b$10$iQHsqBx9LB7xNtmAxM5tmOBrMAzFC5iJFbErpTwPLldwAGL5XV1Hy	newuserrr@hotmail.com	0	2023-06-18 23:37:21.661	2023-07-01 20:03:56.631	t	\N	\N	\N
+30	dasdsadsa	nombre20.04	wqwqrweqr	\N	wqeeqw	1	2023-04-09 18:04:41.672	2023-07-01 20:04:16.729	t	\N	\N	\N
+50	descriptionnnn	50updatedat20.05	asdasdsda	$2b$10$FKEeFnI1rC6cwkaLD2ncJO1CvEX/58WKfUqNIfrW5fxhiOWE4h3NO	clienteeee20.08	0	2023-06-03 12:53:35.977	2023-07-01 20:09:01.517	t	\N	\N	\N
+54	admin_descriptionnnn	admin_firstnamee	admin_lastnameat20.15	$2b$10$FKEeFnI1rC6cwkaLD2ncJO1CvEX/58WKfUqNIfrW5fxhiOWE4h3NO	admin	2	2023-06-03 12:53:35.977	2023-07-01 20:15:12.732	t	\N	\N	\N
+55	asdasd	firstname	lastname	$2b$10$P1czp6ry81PQinRtjjCQoOoaUWGIy1BV3bSlkisZ4rAcDwm1M0B26	testing_create	1	2023-07-01 20:24:51.472	\N	t	\N	\N	\N
+56	asdasddesc	firstname	lastname	$2b$10$aOBLXMe1eY/B.uzSLvT1wOrHtc8lWz9/e2iC9XBbJhjUPB/0DlK3e	testing_create2	0	2023-07-01 20:25:56.981	\N	t	\N	\N	\N
 \.
 
 
@@ -399,7 +402,7 @@ SELECT pg_catalog.setval('public.user_type_id_seq', 3, true);
 -- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.users_id_seq', 53, true);
+SELECT pg_catalog.setval('public.users_id_seq', 56, true);
 
 
 --

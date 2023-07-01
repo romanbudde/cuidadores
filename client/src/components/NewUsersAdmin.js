@@ -534,6 +534,8 @@ const NewUsersAdmin = () => {
 						<AddUser 
 							users={users}
 							setUsers={setUsers}
+							displayedUsers={displayedUsers}
+							setDisplayedUsers={setDisplayedUsers}
 							show={showAddUserModal}
 							onClose={handleAddUserModalClose}
 						/>

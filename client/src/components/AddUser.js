@@ -5,7 +5,7 @@ import { AuthContext } from './AuthContext';
 import { useNavigate } from "react-router-dom";
 import Cookies from 'universal-cookie';
 
-const AddUser = ( {users, setUsers, show, onClose} ) => {
+const AddUser = ( {users, setUsers, show, onClose, displayedUsers, setDisplayedUsers} ) => {
 	const { isAuthenticated } = useContext(AuthContext);
     const [description, setDescription] = useState('');
     const [email, setEmail] = useState('');
@@ -49,6 +49,7 @@ const AddUser = ( {users, setUsers, show, onClose} ) => {
             // console.log(response.json();
 
             setUsers(newUser.id ? [...users, newUser] : users);
+            setDisplayedUsers(newUser.id ? [...users, newUser] : users);
             // window.location = '/';
         }
         catch (error) {

@@ -11,7 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleXmark, faCircleCheck } from '@fortawesome/free-solid-svg-icons';
 import '../css/autocomplete.css';
 
-const UserEditData = ({ user, setUser, show, onClose, userTypes }) => {
+const UserEditData = ({ user, setUser, show, onClose }) => {
 
 	console.log('user passed: ', user);
 

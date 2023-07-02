@@ -4,6 +4,7 @@ import { faChevronLeft, faHouse, faCheck, faCircleXmark, faPenToSquare } from '@
 import dayjs from 'dayjs';
 import moment from 'moment';
 import EditUser from './EditUser';
+import UserEditData from './UserEditData';
 
 const User = ({ user, users, setUsers, displayedUsers, setDisplayedUsers, disableUser, enableUser }) => {
 
@@ -54,6 +55,15 @@ const User = ({ user, users, setUsers, displayedUsers, setDisplayedUsers, disabl
                         show={showEditModal}
                         onClose={handleClose}
                     />
+                    {/* <UserEditData
+                        user={user}
+                        users={users}
+                        setUsers={setUsers}
+                        displayedUsers={displayedUsers}
+                        setDisplayedUsers={setDisplayedUsers}
+                        show={showEditModal}
+                        onClose={handleClose}
+                    /> */}
                 </div>
                 <p>ID: {user.id}</p>
                 <p>Email: {user.mail}</p>

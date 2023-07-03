@@ -7,6 +7,7 @@ const router = express.Router();
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 const mercadopago = require('mercadopago');
+const ngrok = require('ngrok');
 
 require('dotenv').config();
 
@@ -20,6 +21,7 @@ const flash = require('express-flash')
 const session = require('express-session')
 
 const MERCADOPAGO_TEST_TOKEN = process.env.MERCADOPAGO_TEST_TOKEN; 
+const port = process.env.PORT; 
 
 // setting GMT -3 Timezone.
 process.env.TZ = 'America/Sao_Paulo';
@@ -96,6 +98,19 @@ passport.deserializeUser(async function(id, done) {
         done (err)
     }
 });
+
+// Initialize ngrok (for mercadopago's webhook, which requires a https url, meaning it can't be localhost)
+
+(async function() {
+    const ngrok_url = await ngrok.connect({
+        proto: 'http',
+        addr: port
+    });
+
+    global.ngrok_url = ngrok_url;
+    console.log('ngrok url: ', ngrok_url);
+})();
+
 
 // Routes
 
@@ -609,11 +624,26 @@ app.get("/webhook-mercadopago", async(req, res) => {
     }
 });
 
-app.get("/create-contract", async(req, res) => {
+// listening for mercadopagos webhook
+app.post("/webhook", async(req, res) => {
+    console.log(req.query);
+})
+
+// mercado pago initializing payment
+
+app.post("/create-contract", async(req, res) => {
     try{
+        // console.log('ngrok url at create-contract: ', ngrok_url);
+        // const ngrok_url = await ngrok.connect({
+        //     proto: 'http',
+        //     addr: port
+        // });
+        console.log('ngrok url at create-contract endpoint: ', ngrok_url);
+
         mercadopago.configure({
             access_token: "TEST-7220763375120855-070317-7787f00a27af66b3d944c092fc617d44-1414155674"
         });
+
     
         const result = await mercadopago.preferences.create({
             items: [
@@ -623,7 +653,8 @@ app.get("/create-contract", async(req, res) => {
                     currency_id: 'ARS',
                     quantity: 1
                 }
-            ]
+            ],
+            notification_url: ngrok_url
         })
     
         console.log('result: ', result);
@@ -893,8 +924,6 @@ app.delete("/cuidadores/:id", async(req, res) => {
         console.error(error.message);
     }
 });
-
-const port = process.env.PORT; 
 
 app.listen(port, () => {
     console.log('server started on port 5000.');

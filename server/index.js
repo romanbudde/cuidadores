@@ -6,6 +6,7 @@ const bcrypt = require('bcrypt');
 const router = express.Router();
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
+const mercadopago = require('mercadopago');
 
 require('dotenv').config();
 
@@ -17,6 +18,8 @@ const LocalStrategy = require('passport-local');
 
 const flash = require('express-flash')
 const session = require('express-session')
+
+const MERCADOPAGO_TEST_TOKEN = process.env.MERCADOPAGO_TEST_TOKEN; 
 
 // setting GMT -3 Timezone.
 process.env.TZ = 'America/Sao_Paulo';
@@ -441,6 +444,23 @@ app.get("/contract", async(req, res) => {
     }
 });
 
+// get a contract by user id
+app.get("/payment_methods", async(req, res) => {
+    try {
+        let payment_methods;
+
+        payment_methods = await pool.query("SELECT * from payment_methods");
+
+        console.log('payment_methods: ', payment_methods);
+        res.json({
+            "payment_methods": payment_methods.rows
+        });
+    }
+    catch (error) {
+        console.error(error.message);
+    }
+});
+
 // get contracts by different parametres
 app.get("/contracts", async(req, res) => {
     try {
@@ -564,10 +584,59 @@ app.put("/contract/:id", async(req, res) => {
     }
 });
 
+app.get("/webhook-mercadopago", async(req, res) => {
+    try{
+        mercadopago.configure({
+            access_token: MERCADOPAGO_TEST_TOKEN
+        });
+    
+        const result = await mercadopago.preferences.create({
+            items: [
+                { 
+                    title: "Contrato 000001",
+                    unit_price: 29,
+                    currency_id: 'ARS',
+                    quantity: 1
+                }
+            ],
+            notification_url: "",
+        })
+    
+        console.log('result: ', result);
+    }
+    catch(error){
+        console.log('error: ', error);
+    }
+});
+
+app.get("/create-contract", async(req, res) => {
+    try{
+        mercadopago.configure({
+            access_token: "TEST-7220763375120855-070317-7787f00a27af66b3d944c092fc617d44-1414155674"
+        });
+    
+        const result = await mercadopago.preferences.create({
+            items: [
+                { 
+                    title: "Contrato 000001",
+                    unit_price: 29,
+                    currency_id: 'ARS',
+                    quantity: 1
+                }
+            ]
+        })
+    
+        console.log('result: ', result);
+    }
+    catch(error){
+        console.log('error: ', error);
+    }
+});
+
 // create a contract
 app.post("/contract", async(req, res) => {
     try {
-		const { caregiver_id, customer_id, date, horarios } = req.body;
+		const { caregiver_id, customer_id, date, horarios, payment_method } = req.body;
 		console.log('customer_id: ', customer_id);
 		console.log('caregiver_id: ', caregiver_id);
 		console.log('date: ', date);
@@ -579,8 +648,6 @@ app.post("/contract", async(req, res) => {
         const created_at = new Date();
         const modified_at = new Date();
 
-        
-        
 		if(caregiverQuery.rows[0].id > 0 && clientQuery.rows[0].id > 0) {
             
             const caregiver = caregiverQuery.rows[0];
@@ -643,14 +710,14 @@ app.post("/contract", async(req, res) => {
             // create contract now that we have the caregiver availabilities updated, and we've checked that the client does NOT have a contract
             // for any of those times already.
 
-			let query = "INSERT INTO contract (customer_id, caregiver_id, created_at, modified_at, amount, horarios, date, status) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *";
+			let query = "INSERT INTO contract (customer_id, caregiver_id, created_at, modified_at, amount, horarios, date, status, payment_method_id, payment_status) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *";
 
             console.log('horarios json encoded: ');
             console.log(JSON.stringify(horarios));
 
             let horarios_json = JSON.stringify(horarios);
 	
-			const newContract = await pool.query(query, [customer_id, caregiver_id, created_at, modified_at, amount, horarios_json, date, 'active' ]);
+			const newContract = await pool.query(query, [customer_id, caregiver_id, created_at, modified_at, amount, horarios_json, date, 'active', payment_method, 'pending' ]);
 			// console.log(allCuidadores);
 			res.json(newContract.rows[0]);
 

@@ -11,7 +11,7 @@ import Datepicker from "react-tailwindcss-datepicker";
 import { useContext } from 'react';
 import { AuthContext } from './AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleXmark, faCircleCheck } from '@fortawesome/free-solid-svg-icons';
+import { faCircleXmark, faCircleCheck, faMoneyBillWave, faHandshake } from '@fortawesome/free-solid-svg-icons';
 import '../css/calendar.css';
 
 const VerDisponibilidad = ({ cuidador, show, onClose }) => {
@@ -27,11 +27,42 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
 	const [displayCreateContractMessage, setDisplayCreateContractMessage] = useState(false);
 	const [createContractMessage, setCreateContractMessage] = useState('');
 	const [contractResponseError, setContractResponseError] = useState(false);
+	const [chosenPaymentMethod, setChosenPaymentMethod] = useState('');
+	const [chosenPaymentMethodId, setChosenPaymentMethodId] = useState('');
+	const [displayPaymentMethodModal, setDisplayPaymentMethodModal] = useState(false);
+	const [paymentMethods, setPaymentMethods] = useState([]);
 
 	let formattedDate = date.toLocaleDateString("en-GB");
 
-	console.log('---- passed cuidador: ----');
-	console.log(cuidador);
+	// console.log('---- passed cuidador: ----');
+	// console.log(cuidador);
+	console.log('---- chosen payment method: ----');
+	console.log(chosenPaymentMethod);
+
+
+
+    const getPaymentMethods = async () => {
+        try {
+            const response = await fetch("http://localhost:5000/payment_methods");
+            const jsonData = await response.json();
+
+			console.log('---- inside getPaymentMethods ----');
+
+            console.log('jsonData: ', jsonData);
+
+            // Get the current date and time using Moment.js
+            const today = moment().format("DD/MM/YYYY");
+
+            if(Object.keys(jsonData).length > 0) {
+                // for the current day, just leave those times that are higher than the current time.
+               
+                setPaymentMethods(jsonData.payment_methods);
+            }
+
+        } catch (error) {
+            console.error(error.message);
+        }
+    }
     
 	// get all users function
     const getHorarios = async () => {
@@ -49,8 +80,9 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
             const today = moment().format("DD/MM/YYYY");
 
             // console.log('jsonData.availabilities.dates.today: ', jsonData.availabilities.dates[today]);
+            // console.log('object keys de json data es mayor q 0?????', Object.keys(jsonData).length > 0);
 
-            if(Object.keys(jsonData) > 0) {
+            if(Object.keys(jsonData).length > 0) {
                 // for the current day, just leave those times that are higher than the current time.
                 const currentTime = moment().format('HH:mm');
 
@@ -82,7 +114,7 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
     // when page loads, get all Users
     useEffect(() => {
         getHorarios();
-
+        getPaymentMethods();
 		// const today = moment().format('DD/MM/YYYY');
     }, []);
 
@@ -90,8 +122,20 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
     //     console.log('clicked an horario: ', horario);
     // }
     
-    console.log('checkedHorarios: ', checkedHorarios);
-    console.log(checkedHorarios);
+    // console.log('checkedHorarios: ', checkedHorarios);
+    // console.log(checkedHorarios);
+
+    const handleChosenPaymentMethod = (payment_method_name) => {
+        console.log('------- at handleChosenPaymentMethod, method passed: ', payment_method_name);
+        console.log('------- payment Methods: ', paymentMethods);
+        paymentMethods.forEach(method => {
+            if(method.name === payment_method_name){
+                // guardo el ID del payment_method, que eso es lo que debo guardar en la DB.
+                setChosenPaymentMethodId(method.id);
+                setChosenPaymentMethod(method.name);
+            }
+        });
+    }
     
     const handleCheckboxChange = (horario) => {
         console.log('clicked an horario: ', horario);
@@ -108,6 +152,10 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
 		console.log("selected date: ", selectedDate);
         setCheckedHorarios([]);
 	};
+
+    const closePaymentMethodModal = () => {
+        setDisplayPaymentMethodModal(false);
+    }
 
     const closeContractResponseModal = () => {
         setDisplayCreateContractMessage(false);
@@ -135,7 +183,8 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
             caregiver_id: cuidador_id, 
             customer_id: userId, 
             date: contractDate, 
-            horarios: checkedHorarios
+            horarios: checkedHorarios,
+            payment_method: chosenPaymentMethodId
         };
 
         const response = await fetch("http://localhost:5000/contract/", {
@@ -149,6 +198,7 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
             .then(result => {
                 console.log('111111111');
                 console.log(result);
+                setDisplayPaymentMethodModal(false);
                 setDisplayCreateContractMessage(true);
                 if(result.error){
                     setContractResponseError(true);
@@ -165,12 +215,12 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
     }
 
 	const renderHorarios = () => {
-		// console.log('-------formattedDate---------');
-		// console.log(formattedDate.toString());
-		// console.log('-------horariosDisponibles---------');
-		// console.log(horariosDisponibles);
-		// console.log('-------horariosDisponibles[formattedDate]---------');
-		// console.log(horariosDisponibles['25/05/2023']);
+		console.log('-------formattedDate---------');
+		console.log(formattedDate.toString());
+		console.log('-------horariosDisponibles---------');
+		console.log(horariosDisponibles);
+		console.log('-------horariosDisponibles[formattedDate]---------');
+		console.log(horariosDisponibles['25/05/2023']);
 		if (horariosDisponibles && horariosDisponibles[formattedDate] && horariosDisponibles[formattedDate].length > 0) {
             return horariosDisponibles[formattedDate].map((horario, index) => {
                 // console.log('checkedHorarios: ', checkedHorarios);
@@ -234,7 +284,7 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
                             minDate={new Date()}
                         />
 						<p>Tafira por hora: ${cuidador.hourly_rate}</p>
-						<p>Horarios disponibles para el dia {date.toLocaleDateString("en-GB")}</p>
+						<p className='text-center'>Horarios disponibles para el dia {date.toLocaleDateString("en-GB")}</p>
 						<ul className="flex flex-col w-full rounded-md max-h-44 overflow-scroll">
 							{console.log('date: ', date)}
 							{/* {console.log('formatted date: ', formattedDate)} */}
@@ -243,7 +293,7 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
                         {horariosDisponibles && horariosDisponibles[formattedDate] && horariosDisponibles[formattedDate].length > 0 && (
                             <button 
                                 className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
-                                onClick={ createContract }
+                                onClick={ () => setDisplayPaymentMethodModal(true) }
                             >
                                 Crear contrato para este día
                             </button>
@@ -263,7 +313,50 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
                         <FontAwesomeIcon icon={faCircleXmark} size="2xl" className='text-8xl' style={{color: "#fff",}} />
                         <button
                             className='bg-red-800 mt-10 hover:bg-blue-700 text-white font-bold py-2 px-16 rounded-full'
-                            onClick={ closeContractResponseModal }
+                            onClick={ createContract }
+                        >
+                            Continuar
+                        </button>
+                    </div>
+                </div>
+            )}
+            {  displayPaymentMethodModal === true && (
+                <div className='fixed inset-0 bg-gray-900 bg-opacity-40 z-50 flex justify-center items-center'>
+                    <div className='bg-gray-700 px-5 py-8 rounded w-9/12 flex flex-col gap-5 items-center justify-center relative'>
+                        <button onClick={ closePaymentMethodModal } type="button" className="absolute top-2 right-2 text-gray-100 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="defaultModal">
+                            <svg aria-hidden="true" className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"></path></svg>
+                            <span className="sr-only">Close modal</span>
+                        </button>
+                        <p className='font-bold text-xl text-white text-center mb-3'>Elija el metodo de pago</p>
+                        { paymentMethods.map(payment_method => payment_method.enabled ? (
+                            <div
+                                className={`w-full p-3 rounded-lg flex flex-row items-center gap-5 ${chosenPaymentMethod === payment_method.name ?  'bg-green-700' : 'bg-gray-800'}`}
+                                onClick = { () => handleChosenPaymentMethod(payment_method.name) }
+                            >
+                                {payment_method.name === 'Mercado Pago' ? (
+                                    <>
+                                        {/* <input type="radio" name="mercado_pago" value="mercado_pago"></input> */}
+                                        <FontAwesomeIcon icon={faHandshake} size="xl" className='text-xl' style={{color: "#fff",}} />
+                                    </>
+
+                                ): ''}
+                                {payment_method.name === 'Efectivo' ? (
+                                    <>
+                                        {/* <input type="radio" name="efectivo" value="efectivo"></input> */}
+                                        <FontAwesomeIcon icon={faMoneyBillWave} size="xl" className='text-xl' style={{color: "#fff",}} />
+                                    </>
+
+                                ): ''}
+                                <p className='text-white font-semibold'>{payment_method.name}</p>
+                            </div>
+                        ): '')
+
+                        }
+                        <p className='text-white text-center font-medium'>{ createContractMessage }</p>
+                        <button
+                            disabled={chosenPaymentMethod === ''}
+                            className='bg-gray-500 mt-2 hover:bg-blue-700 text-white font-bold py-2 px-16 rounded-full'
+                            onClick={ createContract }
                         >
                             Continuar
                         </button>

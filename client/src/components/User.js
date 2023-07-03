@@ -25,7 +25,7 @@ const User = ({ user, users, setUsers, displayedUsers, setDisplayedUsers, disabl
             <div
                 className={`${user.enabled ? 'bg-gradient-to-r from-green-500 to-green-400' 
                 : 'bg-gradient-to-r from-red-500 to-red-400'} p-5 m-5 rounded-md flex flex-col items-start text-white font-medium relative`}
-                key={user.id}
+                // key={user.id}
             >
                 <div className='flex flex-row w-full justify-between'>
                     <div className={`${user.enabled ? 'bg-green-700 ' : 'bg-red-700'} flex flex-row items-center gap-3 p-2 mb-3 rounded-lg shadow-md`}>

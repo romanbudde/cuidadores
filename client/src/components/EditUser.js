@@ -14,6 +14,7 @@ import '../css/autocomplete.css';
 const UserEditData = ({ user, users, setUsers, displayedUsers, setDisplayedUsers, show, onClose }) => {
 
 	console.log('user passed: ', user);
+	console.log('--------------- displayed users passed: ', displayedUsers);
 
     const [description, setDescription] = useState('');
     const [email, setEmail] = useState('');
@@ -126,8 +127,13 @@ const UserEditData = ({ user, users, setUsers, displayedUsers, setDisplayedUsers
                 id: id
             }
 
-            setUsers(users.map((user) => user.id === userUpdate.id ? userUpdate : user));
-            setDisplayedUsers(users.map((user) => userUpdate.id === id ? userUpdate : user));
+			console.log('user updated: ', userUpdate);
+
+			console.log('------------ users', users);
+			console.log('------------ displayed Users', displayedUsers);
+
+            setUsers(users.map((usuario) => usuario.id === userUpdate.id ? userUpdate : usuario));
+            setDisplayedUsers(displayedUsers.map((usuario) => usuario.id === userUpdate.id ? userUpdate : usuario));
 
 			if (userUpdate.id){
 				setEditDataMessageError(false);

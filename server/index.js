@@ -22,6 +22,7 @@ const session = require('express-session')
 
 const MERCADOPAGO_TEST_TOKEN = process.env.MERCADOPAGO_TEST_TOKEN; 
 const port = process.env.PORT; 
+const ngrok_auth_token = process.env.NGROK_TOKEN; 
 
 // setting GMT -3 Timezone.
 process.env.TZ = 'America/Sao_Paulo';
@@ -104,7 +105,8 @@ passport.deserializeUser(async function(id, done) {
 (async function() {
     const ngrok_url = await ngrok.connect({
         proto: 'http',
-        addr: port
+        addr: port,
+        authtoken: ngrok_auth_token
     });
 
     global.ngrok_url = ngrok_url;
@@ -599,34 +601,54 @@ app.put("/contract/:id", async(req, res) => {
     }
 });
 
-app.get("/webhook-mercadopago", async(req, res) => {
-    try{
-        mercadopago.configure({
-            access_token: MERCADOPAGO_TEST_TOKEN
-        });
+// app.get("/webhook-mercadopago", async(req, res) => {
+//     try{
+//         mercadopago.configure({
+//             access_token: MERCADOPAGO_TEST_TOKEN
+//         });
     
-        const result = await mercadopago.preferences.create({
-            items: [
-                { 
-                    title: "Contrato 000001",
-                    unit_price: 29,
-                    currency_id: 'ARS',
-                    quantity: 1
-                }
-            ],
-            notification_url: "",
-        })
+//         const result = await mercadopago.preferences.create({
+//             items: [
+//                 { 
+//                     title: "Contrato 000001",
+//                     unit_price: 29,
+//                     currency_id: 'ARS',
+//                     quantity: 1
+//                 }
+//             ],
+//             notification_url: "",
+//         })
     
-        console.log('result: ', result);
-    }
-    catch(error){
-        console.log('error: ', error);
-    }
-});
+//         console.log('result: ', result);
+//     }
+//     catch(error){
+//         console.log('error: ', error);
+//     }
+// });
 
 // listening for mercadopagos webhook
-app.post("/webhook", async(req, res) => {
+app.post("/webhook", async (req, res) => {
+    console.log('----------------------------------------------------------------------------------------------------------------')
+    console.log('----------------------------------------------------------------------------------------------------------------')
+    console.log('----------------------------------------------------------------------------------------------------------------')
+    console.log('----------------------------------------------------------------------------------------------------------------')
+    console.log('at /webhook start.')
+    
+    const payment = req.query;
     console.log(req.query);
+
+    if (payment.type === "payment") {
+        const data = await mercadopago.payment.findById(payment["data.id"]);
+        console.log('payment[data.id]: ', data);
+        // I can store in the DB whatever data in need from this payment data.
+        if(data.status === 'approved'){
+            console.log('El pago ha sido aprobado con exito!');
+        }
+    }
+
+    res.status(200).json({
+        "webhook": 'at webhook endpoint'
+    });
 })
 
 // mercado pago initializing payment
@@ -638,9 +660,11 @@ app.post("/create-contract", async(req, res) => {
         //     proto: 'http',
         //     addr: port
         // });
-        console.log('ngrok url at create-contract endpoint: ', ngrok_url);
+        console.log('ngrok url at create-contract endpoint asd: ', ngrok_url);
+        console.log('ngrok url at create-contract endpoint + /webhook: ', ngrok_url + '/webhook');
 
         mercadopago.configure({
+            // cuenta testing - vendedor
             access_token: "TEST-7220763375120855-070317-7787f00a27af66b3d944c092fc617d44-1414155674"
         });
 
@@ -654,10 +678,16 @@ app.post("/create-contract", async(req, res) => {
                     quantity: 1
                 }
             ],
-            notification_url: ngrok_url
+            back_urls: {
+                success: 'http://localhost:3000/success',
+                failure: 'http://localhost:3000/failure',
+                pending: 'http://localhost:3000/pending'
+            },
+            notification_url: ngrok_url + '/webhook'
         })
-    
+
         console.log('result: ', result);
+        res.status(200).json(result)
     }
     catch(error){
         console.log('error: ', error);

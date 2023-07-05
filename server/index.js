@@ -106,6 +106,7 @@ passport.deserializeUser(async function(id, done) {
     const ngrok_url = await ngrok.connect({
         proto: 'http',
         addr: port,
+        port: port,
         authtoken: ngrok_auth_token
     });
 
@@ -683,6 +684,7 @@ app.post("/create-contract", async(req, res) => {
                 failure: 'http://localhost:3000/failure',
                 pending: 'http://localhost:3000/pending'
             },
+            external_reference: 'MP0000001',
             notification_url: ngrok_url + '/webhook'
         })
 

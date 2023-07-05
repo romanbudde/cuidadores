@@ -179,39 +179,59 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
 
         let cuidador_id = cuidador.id;
 
-        const body = {
-            caregiver_id: cuidador_id, 
-            customer_id: userId, 
-            date: contractDate, 
-            horarios: checkedHorarios,
-            payment_method: chosenPaymentMethodId
-        };
-
-        const response = await fetch("http://localhost:5000/contract/", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(body)
-        })
+        if(chosenPaymentMethod === 'Mercado Pago'){
+            console.log('----------payment method es: mercado pago:');
+            const response = await fetch("http://localhost:5000/create-contract", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
             .then(response => response.json())
             .then(result => {
-                console.log('111111111');
+                console.log('------- result de creacion de payment (mercado pago)');
                 console.log(result);
-                setDisplayPaymentMethodModal(false);
-                setDisplayCreateContractMessage(true);
-                if(result.error){
-                    setContractResponseError(true);
-                    console.log('Display error: ', result.error);
-                    setCreateContractMessage(result.error);
-                }
-                else {
-                    setContractResponseError(false);
-                    setDisplayCreateContractMessage(true);
-                    setCreateContractMessage(`Contrato creado con éxito para el día ${date.toLocaleDateString("en-GB")}.`);
-                }
-                console.log('222222222');
+                // direcciono a mercado pago!
+                window.location.replace(result.response.init_point);
+                // guardo result.response.external_reference en el estado del component (o capaz como cookie?)
+                // porque con este numero identifico unicamente al pago.
             });
+        }
+        
+
+        // const body = {
+        //     caregiver_id: cuidador_id, 
+        //     customer_id: userId, 
+        //     date: contractDate, 
+        //     horarios: checkedHorarios,
+        //     payment_method: chosenPaymentMethodId
+        // };
+
+        // const response = await fetch("http://localhost:5000/contract/", {
+        //     method: "POST",
+        //     headers: {
+        //         "Content-Type": "application/json"
+        //     },
+        //     body: JSON.stringify(body)
+        // })
+        //     .then(response => response.json())
+        //     .then(result => {
+        //         console.log('111111111');
+        //         console.log(result);
+        //         setDisplayPaymentMethodModal(false);
+        //         setDisplayCreateContractMessage(true);
+        //         if(result.error){
+        //             setContractResponseError(true);
+        //             console.log('Display error: ', result.error);
+        //             setCreateContractMessage(result.error);
+        //         }
+        //         else {
+        //             setContractResponseError(false);
+        //             setDisplayCreateContractMessage(true);
+        //             setCreateContractMessage(`Contrato creado con éxito para el día ${date.toLocaleDateString("en-GB")}.`);
+        //         }
+        //         console.log('222222222');
+        //     });
     }
 
 	const renderHorarios = () => {

@@ -10,6 +10,8 @@ import LandingAdminPage from './routes/LandingAdminPage';
 import FechasHorariosPage from './routes/FechasHorariosPage';
 import MisContratosPage from './routes/MisContratosPage';
 import AccountPage from './routes/AccountPage';
+import SuccessPage from './routes/SuccessPage';
+import FailurePage from './routes/FailurePage';
 import ContractsPage from './routes/ContractsPage';
 import { AuthProvider, AuthContext } from './components/AuthContext';
 
@@ -124,6 +126,22 @@ const App = () => {
 				element={
 					<>
 					{ <AccountPage /> }
+					</>
+				} 
+				/>
+				<Route 
+				path="/success"
+				element={
+					<>
+					{ <SuccessPage /> }
+					</>
+				} 
+				/>
+				<Route 
+				path="/failure"
+				element={
+					<>
+					{ <FailurePage /> }
 					</>
 				} 
 				/>

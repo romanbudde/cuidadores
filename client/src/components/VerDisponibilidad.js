@@ -36,8 +36,8 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
 
 	// console.log('---- passed cuidador: ----');
 	// console.log(cuidador);
-	console.log('---- chosen payment method: ----');
-	console.log(chosenPaymentMethod);
+	// console.log('---- chosen payment method: ----');
+	// console.log(chosenPaymentMethod);
 
 
 
@@ -46,9 +46,9 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
             const response = await fetch("http://localhost:5000/payment_methods");
             const jsonData = await response.json();
 
-			console.log('---- inside getPaymentMethods ----');
+			// console.log('---- inside getPaymentMethods ----');
 
-            console.log('jsonData: ', jsonData);
+            // console.log('jsonData: ', jsonData);
 
             // Get the current date and time using Moment.js
             const today = moment().format("DD/MM/YYYY");
@@ -70,10 +70,10 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
             const response = await fetch("http://localhost:5000/caregiver_get_available_dates?caregiver_id=" + cuidador.id);
             const jsonData = await response.json();
 
-			console.log('---- inside getHorarios ----');
-			console.log(jsonData);
+			// console.log('---- inside getHorarios ----');
+			// console.log(jsonData);
 
-            console.log('jsonData: ', jsonData);
+            // console.log('jsonData: ', jsonData);
             // console.log('jsonData.availabilities.dates: ', jsonData.availabilities.dates);
 
             // Get the current date and time using Moment.js
@@ -126,8 +126,8 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
     // console.log(checkedHorarios);
 
     const handleChosenPaymentMethod = (payment_method_name) => {
-        console.log('------- at handleChosenPaymentMethod, method passed: ', payment_method_name);
-        console.log('------- payment Methods: ', paymentMethods);
+        // console.log('------- at handleChosenPaymentMethod, method passed: ', payment_method_name);
+        // console.log('------- payment Methods: ', paymentMethods);
         paymentMethods.forEach(method => {
             if(method.name === payment_method_name){
                 // guardo el ID del payment_method, que eso es lo que debo guardar en la DB.
@@ -179,68 +179,68 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
 
         let cuidador_id = cuidador.id;
 
-        if(chosenPaymentMethod === 'Mercado Pago'){
-            console.log('----------payment method es: mercado pago:');
-            const response = await fetch("http://localhost:5000/create-contract", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            })
-            .then(response => response.json())
-            .then(result => {
-                console.log('------- result de creacion de payment (mercado pago)');
-                console.log(result);
-                // direcciono a mercado pago!
-                window.location.replace(result.response.init_point);
-                // guardo result.response.external_reference en el estado del component (o capaz como cookie?)
-                // porque con este numero identifico unicamente al pago.
-            });
-        }
+        const body = {
+            caregiver_id: cuidador_id, 
+            customer_id: userId, 
+            date: contractDate, 
+            horarios: checkedHorarios,
+            payment_method: chosenPaymentMethodId
+        };
+
+        const response = await fetch("http://localhost:5000/contract/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(body)
+        })
         
+        const result = await response.json();
 
-        // const body = {
-        //     caregiver_id: cuidador_id, 
-        //     customer_id: userId, 
-        //     date: contractDate, 
-        //     horarios: checkedHorarios,
-        //     payment_method: chosenPaymentMethodId
-        // };
-
-        // const response = await fetch("http://localhost:5000/contract/", {
-        //     method: "POST",
-        //     headers: {
-        //         "Content-Type": "application/json"
-        //     },
-        //     body: JSON.stringify(body)
-        // })
-        //     .then(response => response.json())
-        //     .then(result => {
-        //         console.log('111111111');
-        //         console.log(result);
-        //         setDisplayPaymentMethodModal(false);
-        //         setDisplayCreateContractMessage(true);
-        //         if(result.error){
-        //             setContractResponseError(true);
-        //             console.log('Display error: ', result.error);
-        //             setCreateContractMessage(result.error);
-        //         }
-        //         else {
-        //             setContractResponseError(false);
-        //             setDisplayCreateContractMessage(true);
-        //             setCreateContractMessage(`Contrato creado con éxito para el día ${date.toLocaleDateString("en-GB")}.`);
-        //         }
-        //         console.log('222222222');
-        //     });
+        console.log('111111111');
+        console.log(result);
+        setDisplayPaymentMethodModal(false);
+        if(result.error){
+            setContractResponseError(true);
+            // setDisplayCreateContractMessage(true);
+            console.log('Display error: ', result.error);
+            setCreateContractMessage(result.error);
+        }
+        else {
+            if(chosenPaymentMethod === 'Mercado Pago'){
+                console.log('----------payment method es: mercado pago:');
+                const response = await fetch("http://localhost:5000/create-contract", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                })
+                .then(response => response.json())
+                .then(result => {
+                    console.log('------- result de creacion de payment (mercado pago)');
+                    console.log(result);
+                    // direcciono a mercado pago!
+                    window.location.replace(result.response.init_point);
+                    // guardo result.response.external_reference en el estado del component (o capaz como cookie?)
+                    // porque con este numero identifico unicamente al pago.
+                });
+            }
+            if(chosenPaymentMethod === 'Efectivo'){
+                setContractResponseError(false);
+                setDisplayCreateContractMessage(true);
+                setCreateContractMessage(`Contrato creado con éxito para el día ${date.toLocaleDateString("en-GB")}.`);
+            }
+        }
+        console.log('222222222');
     }
 
 	const renderHorarios = () => {
-		console.log('-------formattedDate---------');
-		console.log(formattedDate.toString());
-		console.log('-------horariosDisponibles---------');
-		console.log(horariosDisponibles);
-		console.log('-------horariosDisponibles[formattedDate]---------');
-		console.log(horariosDisponibles['25/05/2023']);
+		// console.log('-------formattedDate---------');
+		// console.log(formattedDate.toString());
+		// console.log('-------horariosDisponibles---------');
+		// console.log(horariosDisponibles);
+		// console.log('-------horariosDisponibles[formattedDate]---------');
+		// console.log(horariosDisponibles['25/05/2023']);
 		if (horariosDisponibles && horariosDisponibles[formattedDate] && horariosDisponibles[formattedDate].length > 0) {
             return horariosDisponibles[formattedDate].map((horario, index) => {
                 // console.log('checkedHorarios: ', checkedHorarios);

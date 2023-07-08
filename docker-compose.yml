@@ -9,6 +9,7 @@ services:
       volumes:
         - ./server:/app
       command: npm run startdev
+      # command: npm start
     client:
       build: ./client
       container_name: client_container

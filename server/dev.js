@@ -22,6 +22,7 @@ const ngrok_auth_token = process.env.NGROK_TOKEN;
     ngrok.connect({
       proto: "http",
       addr: "5000",
+      port: "5000",
       authtoken: ngrok_auth_token
     })
       .then((url) => {

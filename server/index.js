@@ -11,9 +11,6 @@ const ngrok = require('ngrok');
 
 const ngrok_url = process.env.NGROK_URL;
 
-const { WebSocketServer } = require('ws');
-const wsServer = new WebSocketServer({ server: app });
-
 require('dotenv').config();
 
 const { Client } = require('pg');
@@ -117,6 +114,17 @@ passport.deserializeUser(async function(id, done) {
 //     global.ngrok_url = ngrok_url;
 //     console.log('At index.js, ngrok url: ', ngrok_url);
 // })();
+
+// const { WebSocketServer } = require('ws');
+// const wsServer = new WebSocketServer({ server: app });
+
+var expressWs = require('express-ws')(app);
+
+app.ws('/echo-ws', function(ws, req) {
+    ws.on('message', function(msg) {
+      ws.send(msg);
+    });
+});
 
 console.log('At index.js, NGROK_URL is: ', ngrok_url);
 
@@ -681,20 +689,21 @@ app.post("/create-contract", async(req, res) => {
         const result = await mercadopago.preferences.create({
             items: [
                 { 
-                    title: "la puta q me pario",
-                    unit_price: 200,
+                    title: "Contrato-0001111",
+                    unit_price: unit_price,
                     currency_id: "ARS",
                     quantity: 1
                 },
-            ],
+            ]
             // auto_return: "all",
             // back_urls: {
             //     success: "http://localhost:3000/success",
             //     failure: "http://localhost:3000/failure",
             //     pending: "http://localhost:3000/pending"
             // },
-            // external_reference: "MP0000002",
-            notification_url: ngrok_url + "/webhook"
+            // expires: false, 
+            // // external_reference: "MP0000002",
+            // notification_url: ngrok_url + "/webhook"
         });
 
         console.log('result: ', result);

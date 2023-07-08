@@ -202,18 +202,27 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
         setDisplayPaymentMethodModal(false);
         if(result.error){
             setContractResponseError(true);
-            // setDisplayCreateContractMessage(true);
+            setDisplayCreateContractMessage(true);
             console.log('Display error: ', result.error);
             setCreateContractMessage(result.error);
         }
         else {
             if(chosenPaymentMethod === 'Mercado Pago'){
                 console.log('----------payment method es: mercado pago:');
+
+                let title = 'Contrato cuidador';
+                // unit_price lo saco de la respuesta de la creacion del contrato en la DB, ya que el amount es calculado por el backend.
+                let unit_price = Math.round(result.amount);
+                let quantity = 1;
+
+                const body_mercadopago = { title, unit_price, quantity };
+
                 const response = await fetch("http://localhost:5000/create-contract", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
-                    }
+                    },
+                    body: JSON.stringify(body_mercadopago)
                 })
                 .then(response => response.json())
                 .then(result => {
@@ -333,7 +342,7 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
                         <FontAwesomeIcon icon={faCircleXmark} size="2xl" className='text-8xl' style={{color: "#fff",}} />
                         <button
                             className='bg-red-800 mt-10 hover:bg-blue-700 text-white font-bold py-2 px-16 rounded-full'
-                            onClick={ createContract }
+                            onClick={ closeContractResponseModal }
                         >
                             Continuar
                         </button>

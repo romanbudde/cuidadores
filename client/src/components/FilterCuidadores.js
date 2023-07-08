@@ -6,13 +6,23 @@ import Cookies from 'universal-cookie';
 import { useContext } from 'react';
 import { AuthContext } from './AuthContext';
 
+import useWebSocket from 'react-use-websocket';
+
 import VerDisponibilidad from './VerDisponibilidad';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import ClientBottomBar from './ClientBottomBar';
 
 const FilterCuidadores = () => {
+
+	const WS_URL = 'ws://localhost:5000';
 	
+	const testingWebsocket = useWebSocket(WS_URL, {
+		onOpen: () => {
+		  console.log('WebSocket connection established.');
+		}
+	});
+
 	const { isAuthenticated } = useContext(AuthContext);
 	const [search, setSearch] = useState('');
 	const [tarifaMinima, setTarifaMinima] = useState('');

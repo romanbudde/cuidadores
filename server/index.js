@@ -9,6 +9,11 @@ const jwt = require('jsonwebtoken');
 const mercadopago = require('mercadopago');
 const ngrok = require('ngrok');
 
+const ngrok_url = process.env.NGROK_URL;
+
+const { WebSocketServer } = require('ws');
+const wsServer = new WebSocketServer({ server: app });
+
 require('dotenv').config();
 
 const { Client } = require('pg');
@@ -102,17 +107,18 @@ passport.deserializeUser(async function(id, done) {
 
 // Initialize ngrok (for mercadopago's webhook, which requires a https url, meaning it can't be localhost)
 
-(async function() {
-    const ngrok_url = await ngrok.connect({
-        proto: 'http',
-        addr: port,
-        port: port,
-        authtoken: ngrok_auth_token
-    });
+// (async function() {
+//     const url = await ngrok.connect({ authtoken: ngrok_auth_token });
+//     const api = ngrok.getApi();
+    
+//     const tunnels = await api.listTunnels();
+//     console.log('At index.js, tunnels: ', tunnels);
 
-    global.ngrok_url = ngrok_url;
-    console.log('ngrok url: ', ngrok_url);
-})();
+//     global.ngrok_url = ngrok_url;
+//     console.log('At index.js, ngrok url: ', ngrok_url);
+// })();
+
+console.log('At index.js, NGROK_URL is: ', ngrok_url);
 
 
 // Routes
@@ -664,29 +670,32 @@ app.post("/create-contract", async(req, res) => {
         console.log('ngrok url at create-contract endpoint asd: ', ngrok_url);
         console.log('ngrok url at create-contract endpoint + /webhook: ', ngrok_url + '/webhook');
 
+        const { title, unit_price, quantity } = req.body;
+
         mercadopago.configure({
             // cuenta testing - vendedor
-            access_token: "TEST-7220763375120855-070317-7787f00a27af66b3d944c092fc617d44-1414155674"
+            access_token: MERCADOPAGO_TEST_TOKEN
         });
 
     
         const result = await mercadopago.preferences.create({
             items: [
                 { 
-                    title: "Contrato 000001",
-                    unit_price: 29,
-                    currency_id: 'ARS',
+                    title: "la puta q me pario",
+                    unit_price: 200,
+                    currency_id: "ARS",
                     quantity: 1
-                }
+                },
             ],
-            back_urls: {
-                success: 'http://localhost:3000/success',
-                failure: 'http://localhost:3000/failure',
-                pending: 'http://localhost:3000/pending'
-            },
-            external_reference: 'MP0000001',
-            notification_url: ngrok_url + '/webhook'
-        })
+            // auto_return: "all",
+            // back_urls: {
+            //     success: "http://localhost:3000/success",
+            //     failure: "http://localhost:3000/failure",
+            //     pending: "http://localhost:3000/pending"
+            // },
+            // external_reference: "MP0000002",
+            notification_url: ngrok_url + "/webhook"
+        });
 
         console.log('result: ', result);
         res.status(200).json(result)

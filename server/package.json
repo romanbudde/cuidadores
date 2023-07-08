@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon index.js",
-    "dev": "node dev.js"
+    "startdev": "node dev.js"
   },
   "author": "Alvarez Facco Santiago & Budde Roman",
   "license": "ISC",
@@ -24,6 +24,7 @@
     "nodemon": "^2.0.21",
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",
-    "pg": "^8.10.0"
+    "pg": "^8.10.0",
+    "ws": "^8.13.0"
   }
 }

@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon index.js",
-    "startdev": "node dev.js"
+    "startdev": "node new-dev.js",
+    "startdevlt": "node new-dev-localtunnel.js"
   },
   "author": "Alvarez Facco Santiago & Budde Roman",
   "license": "ISC",
@@ -20,6 +21,7 @@
     "express-session": "^1.17.3",
     "express-ws": "^5.0.2",
     "jsonwebtoken": "^9.0.0",
+    "localtunnel": "^2.0.2",
     "mercadopago": "^1.5.16",
     "ngrok": "^5.0.0-beta.2",
     "nodemon": "^2.0.21",

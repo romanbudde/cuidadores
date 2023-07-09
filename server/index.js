@@ -9,7 +9,9 @@ const jwt = require('jsonwebtoken');
 const mercadopago = require('mercadopago');
 const ngrok = require('ngrok');
 
+// const { ngrok_url } = require('./new-dev-im-testing.js')
 const ngrok_url = process.env.NGROK_URL;
+const localtunnel_url = process.env.LOCALTUNNEL_URL;
 
 require('dotenv').config();
 
@@ -19,8 +21,9 @@ const client = new Client();
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 
-const flash = require('express-flash')
-const session = require('express-session')
+const flash = require('express-flash');
+const session = require('express-session');
+const { lt_url } = require('./new-dev-localtunnel');
 
 const MERCADOPAGO_TEST_TOKEN = process.env.MERCADOPAGO_TEST_TOKEN; 
 const port = process.env.PORT; 
@@ -115,18 +118,8 @@ passport.deserializeUser(async function(id, done) {
 //     console.log('At index.js, ngrok url: ', ngrok_url);
 // })();
 
-// const { WebSocketServer } = require('ws');
-// const wsServer = new WebSocketServer({ server: app });
-
-var expressWs = require('express-ws')(app);
-
-app.ws('/echo-ws', function(ws, req) {
-    ws.on('message', function(msg) {
-      ws.send(msg);
-    });
-});
-
 console.log('At index.js, NGROK_URL is: ', ngrok_url);
+console.log('At index.js, LT_URL is: ', localtunnel_url);
 
 
 // Routes
@@ -148,7 +141,6 @@ app.post('/login', passport.authenticate('local'), (req, res) => {
 		"auth_token": token,
 		"user_id": req.user.id,
 		"user_type": req.user.type
-
 	});
 
 
@@ -656,14 +648,23 @@ app.post("/webhook", async (req, res) => {
         const data = await mercadopago.payment.findById(payment["data.id"]);
         console.log('payment[data.id]: ', data);
         // I can store in the DB whatever data in need from this payment data.
-        if(data.status === 'approved'){
+        const payment_data = data.body;
+        if(payment_data.status === 'approved'){
             console.log('El pago ha sido aprobado con exito!');
+        }
+        const update_contract = await pool.query(
+            "UPDATE contract SET payment_status = $1 WHERE id = $2 RETURNING *", 
+            [payment_data.status, payment_data.external_reference]
+        );
+
+        if(update_contract.rowCount > 0){
+            res.status(200).json(update_contract.rows[0]);
         }
     }
 
-    res.status(200).json({
-        "webhook": 'at webhook endpoint'
-    });
+    // res.status(200).json({
+    //     "webhook": 'at webhook endpoint'
+    // });
 })
 
 // mercado pago initializing payment
@@ -677,12 +678,14 @@ app.post("/create-contract", async(req, res) => {
         // });
         console.log('ngrok url at create-contract endpoint asd: ', ngrok_url);
         console.log('ngrok url at create-contract endpoint + /webhook: ', ngrok_url + '/webhook');
+        console.log('localtunnel url at create-contract endpoint asd: ', localtunnel_url);
+        console.log('localtunnel url at create-contract endpoint + /webhook: ', localtunnel_url + '/webhook');
 
-        const { title, unit_price, quantity } = req.body;
+        const { title, unit_price, quantity, external_reference } = req.body;
 
         mercadopago.configure({
             // cuenta testing - vendedor
-            access_token: MERCADOPAGO_TEST_TOKEN
+            access_token: 'APP_USR-7129350085452910-070912-90070389d55a42626319cd0f07f166e0-1414155674'
         });
 
     
@@ -694,16 +697,17 @@ app.post("/create-contract", async(req, res) => {
                     currency_id: "ARS",
                     quantity: 1
                 },
-            ]
-            // auto_return: "all",
-            // back_urls: {
-            //     success: "http://localhost:3000/success",
-            //     failure: "http://localhost:3000/failure",
-            //     pending: "http://localhost:3000/pending"
-            // },
+            ],
+            auto_return: "all",
+            external_reference: external_reference.toString(),
+            back_urls: {
+                success: "http://localhost:3000/success",
+                failure: "http://localhost:3000/failure",
+                pending: "http://localhost:3000/pending"
+            },
             // expires: false, 
-            // // external_reference: "MP0000002",
-            // notification_url: ngrok_url + "/webhook"
+            // external_reference: "MPNew_0002",
+            notification_url: localtunnel_url + "/webhook"
         });
 
         console.log('result: ', result);
@@ -976,5 +980,54 @@ app.delete("/cuidadores/:id", async(req, res) => {
 });
 
 app.listen(port, () => {
-    console.log('server started on port 5000.');
+    console.log('server started on port: ', port);
+    // startNgrokTunnel();
 });
+
+// const startNgrokTunnel = async () => {
+//     try {
+//         console.log('At beginning of startNgrokTunnel');
+//         ngrok.authtoken(ngrok_auth_token);
+//         await ngrok.kill();
+//         await ngrok.disconnect();
+//         console.log('After ngrok.kill()');
+
+        
+//         const url = await ngrok.connect({
+//             addr: port,
+//             authtoken: ngrok_auth_token,
+//             proto: "http"
+//         });
+//         console.log('new url: ', url);
+
+        
+//         // const url = await ngrok.connect({ authtoken: ngrok_auth_token });
+//         // const api = ngrok.getApi();
+//         // const tunnels = await api.listTunnels();
+//         // console.log('tunnels after deleting existing tunnel: ', tunnels);
+        
+        
+//         // if (tunnels.tunnels.length > 0) {
+//         //     // There is already an active ngrok tunnel
+//         //     const tunnel = tunnels.tunnels[0];
+//         //     console.log(`Existing ngrok tunnel found: ${tunnel.public_url}`);
+//         //     console.log("Open the ngrok dashboard at: https://localhost:4040\n");
+            
+//         //     await api.stopTunnel(tunnel.name);
+//         //     const tunnels_updated = await api.listTunnels();
+//         //     console.log('tunnels after deleting existing tunnel: ', tunnels_updated);
+
+//         //     const url = await ngrok.connect({
+//         //         addr: port,
+//         //         authtoken: ngrok_auth_token,
+//         //         proto: "http"
+//         //     });
+//         //     console.log(`Ngrok tunnel created: ${url}`);
+//         //     global.ngrok_url = url;
+//         // }
+
+//     } catch (error) {
+//         console.error('Error creating ngrok tunnel:', error);
+//         process.exit(1);
+//     }
+// }

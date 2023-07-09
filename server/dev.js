@@ -3,8 +3,10 @@ const nodemon = require("nodemon");
 
 require('dotenv').config();
 const ngrok_auth_token = process.env.NGROK_TOKEN;
+const port = process.env.PORT || 5000;
 
 (async function () {
+  ngrok.authtoken('1ucZrCcrZRCZEWqbSdvwki8SGdq_7M3eyJ1UDrFUTZEHzLsHm')
   const url = await ngrok.connect({ authtoken: ngrok_auth_token });
   const api = ngrok.getApi();
   const tunnels = await api.listTunnels();
@@ -16,14 +18,16 @@ const ngrok_auth_token = process.env.NGROK_TOKEN;
     console.log(`Existing ngrok tunnel found: ${tunnel.public_url}`);
     console.log("Open the ngrok dashboard at: https://localhost:4040\n");
 
+    // await api.stopTunnel(tunnel.name);
     startNodemon(tunnel.public_url);
   } else {
     // No active ngrok tunnel, create a new one
     ngrok.connect({
       proto: "http",
-      addr: "5000",
-      port: "5000",
-      authtoken: ngrok_auth_token
+      addr: port,
+      port: port,
+      subdomain: 'cuidadores',
+      authtoken: '1ucZrCcrZRCZEWqbSdvwki8SGdq_7M3eyJ1UDrFUTZEHzLsHm'
     })
       .then((url) => {
         console.log(`New ngrok tunnel opened at: ${url}`);
@@ -51,8 +55,8 @@ function startNodemon(ngrokUrl) {
       // files.forEach(file => console.log(file));
       console.groupEnd();
     })
-    .on("quit", () => {
+    .on("quit", async () => {
       console.log("The application has quit, closing ngrok tunnel");
-      ngrok.kill().then(() => process.exit(0));
+      await ngrok.kill().then(() => process.exit(0));
     });
 }

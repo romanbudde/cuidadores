@@ -9,4 +9,4 @@ COPY . /app
 
 RUN npm install
 
-CMD ["npm", "startdev"]
+CMD ["npm", "startdevlt"]

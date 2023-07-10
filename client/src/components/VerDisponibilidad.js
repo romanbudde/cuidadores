@@ -214,8 +214,9 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
                 // unit_price lo saco de la respuesta de la creacion del contrato en la DB, ya que el amount es calculado por el backend.
                 let unit_price = Math.round(result.amount);
                 let quantity = 1;
+                let external_reference = result.id;
 
-                const body_mercadopago = { title, unit_price, quantity };
+                const body_mercadopago = { title, unit_price, quantity, external_reference };
 
                 const response = await fetch("http://localhost:5000/create-contract", {
                     method: "POST",

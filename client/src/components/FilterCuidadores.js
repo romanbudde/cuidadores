@@ -15,9 +15,9 @@ import ClientBottomBar from './ClientBottomBar';
 
 const FilterCuidadores = () => {
 
-	const WS_URL = 'ws://localhost:5000/';
+	// const WS_URL = 'ws://localhost:5000/';
 	
-	const socket = new WebSocket('ws://localhost:5000');
+	// const socket = new WebSocket('ws://localhost:5000');
 	
 	// const testingWebsocket = useWebSocket(WS_URL, {
 	// 	onOpen: () => {

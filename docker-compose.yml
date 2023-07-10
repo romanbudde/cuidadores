@@ -8,7 +8,8 @@ services:
         - 5000:5000
       volumes:
         - ./server:/app
-      command: npm run startdev
+      command: npm run startdevlt
+      # command: npm run startdev
       # command: npm start
     client:
       build: ./client

@@ -10,13 +10,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import ClientBottomBar from './ClientBottomBar';
 import CuidadorBottomBar from './CuidadorBottomBar';
+import { useSearchParams } from 'react-router-dom';
 
-const Account = () => {
+const Success = () => {
 	const { isAuthenticated } = useContext(AuthContext);
 	const { userId } = useContext(AuthContext);
 
 	const [user, setUser] = useState('');
 	const [userTypes, setUserTypes] = useState([]);
+	const [searchParams, setSearchParams] = useSearchParams();
 
 	const [showEditModal, setShowEditModal] = useState(false);
     
@@ -100,8 +102,9 @@ const Account = () => {
 					{ user.type === 1 && (
 						<ClientBottomBar/>
 					)}
-					<div className='w-full flex flex-col items-center px-5 space-y-3'>
-						<h1>Pago acreditado con éxito!</h1>
+					<p className='font-bold text-lg'>Pago acreditado con éxito!</p>
+					<div className='w-full flex flex-col items-left pl-10 space-y-3'>
+						<p>Numero del pago: {searchParams.get('payment_id')}</p>
 					</div>
 				</div>
 			</Fragment>
@@ -112,4 +115,4 @@ const Account = () => {
 	}
 }
 
-export default Account;
+export default Success;

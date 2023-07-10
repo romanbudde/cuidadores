@@ -17,6 +17,9 @@ import ClientBottomBar from './ClientBottomBar';
 import Paginate from './Paginate';
 import Select from 'react-select';
 
+import mercado_pago_icon from "../images/mercado-pago-icon.svg";
+import cash_bill_icon from "../images/cash-bill.svg";
+
 const ContractsAdmin = () => {
 	const navigate = useNavigate();
 	const cookies = new Cookies();
@@ -593,12 +596,33 @@ const ContractsAdmin = () => {
 									key={contract.id}
 								>
 									<p>Fecha: {contract.date}</p>
-									<p>Estado: {contract.status === 'active' ? 'Activo' 
+									<p>Estado del contrato: {contract.status === 'active' ? 'Activo' 
 									: contract.status === 'completed' ? 'Completado'
 									: contract.status === 'cancelled' ? 'Cancelado'
 									: contract.status === 'inactive' ? 'Inactivo'
 									: ''}</p>
-									<p>Total amount: ${contract.amount}</p>
+									<p>Estado del pago: {contract.payment_status === 'approved' ? 'Pagado' 
+									: contract.payment_status === 'pending' ? 'Pendiente'
+									: contract.payment_status === 'cancelled' ? 'Cancelado'
+									: ''}</p>
+									<div className=''>
+										{/* <p>Forma de pago:</p> */}
+									{ contract.payment_method_id === 1 && (
+										// <FontAwesomeIcon icon={faHandshake} size="xl" className='text-xl' style={{color: "#fff",}} />
+										<div className='flex flex-row items-center gap-1'>
+											<img src={mercado_pago_icon} width={45} alt="Mercado pago" />
+											<span>Mercado Pago</span>
+										</div>
+									)}
+									{ contract.payment_method_id === 2 && (
+										// <FontAwesomeIcon icon={faMoneyBillWave} size="xl" className='text-xl' style={{color: "#fff",}} />
+										<div className='flex flex-row items-center gap-2'>
+											<img src={cash_bill_icon} width={40} alt="Efectivo" />
+											<span>Efectivo</span>
+										</div>
+									)}
+									</div>
+									<p>Total: ${contract.amount}</p>
 									<p>Horarios: {contract.horarios.join(', ')}</p>
 
 									{/* validar que el ultimo horario del contrato sea mayor a la hora actual (usar moment js) */}

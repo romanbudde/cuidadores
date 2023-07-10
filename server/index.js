@@ -873,7 +873,7 @@ app.post("/contract", async(req, res) => {
             let status = '';
             // if payment is via mercado pago, we do not set the contract as active right away, but rather wait for mercadopago's response
             if(payment_method === 1){
-                status = 'pending';
+                status = 'inactive';
             }
             if(payment_method === 2){
                 status = 'active';

@@ -651,20 +651,62 @@ app.post("/webhook", async (req, res) => {
         const payment_data = data.body;
         if(payment_data.status === 'approved'){
             console.log('El pago ha sido aprobado con exito!');
+
+            const update_contract_status = await pool.query(
+                "UPDATE contract SET status = $1 WHERE id = $2 RETURNING *", 
+                ['active', payment_data.external_reference]
+            );
         }
+        if(payment_data.status === 'rejected'){
+            console.log('El pago ha sido rechazado por algun motivo.');
+
+            // el contrato pasa a estar en estado cancelado
+            const update_contract_status = await pool.query(
+                "UPDATE contract SET status = $1 WHERE id = $2 RETURNING *", 
+                ['cancelled', payment_data.external_reference]
+            );
+            
+            // si el pago es rechazado, tengo que liberar las horas del caregiver.
+
+            // get contract by payment_data.external_reference.
+            const contract = await pool.query('SELECT * FROM contract WHERE id = $1', [ payment_data.external_reference ]);
+            
+            const contract_data = contract.rows[0];
+            console.log('--------------- contract_data corresponding to the payment: ', contract_data);
+            
+            
+            // basing off of the fetched contract's date and time, add it back to caregiver availability
+            const previousAvailabilities = await pool.query("SELECT * FROM caregiver_availability WHERE caregiver_id = $1", [contract_data.caregiver_id]);
+            console.log('------------ horarios VIEJOS para el dia del contrato: ',  previousAvailabilities.rows[0].dates[contract_data.date]);
+            
+            // add the times to the end of the array, then sort the entire array (it sorts it cronologically).
+            let allAvailabilities = previousAvailabilities.rows[0].dates;
+            let availabilitiesForDate = previousAvailabilities.rows[0].dates[contract_data.date];
+            availabilitiesForDate = availabilitiesForDate.concat(contract_data.horarios).sort();
+            console.log('---- horarios del contrato: ', contract_data.horarios);
+
+            console.log('availabilitiesForDate (updated): ');
+            console.log(availabilitiesForDate);
+            allAvailabilities[contract_data.date] = availabilitiesForDate;
+
+            console.log('allAvailabilities entero y updateado: ');
+            console.log(allAvailabilities);
+    
+            // update caregiver availabilities
+            const newAvailabilities = await pool.query("UPDATE caregiver_availability SET dates = $1 WHERE caregiver_id = $2 RETURNING *", [allAvailabilities, contract_data.caregiver_id]);
+    
+            console.log('------ nuevas availabilities updateadas: ', newAvailabilities.rows[0]);
+        }
+
         const update_contract = await pool.query(
             "UPDATE contract SET payment_status = $1 WHERE id = $2 RETURNING *", 
             [payment_data.status, payment_data.external_reference]
         );
-
+        
         if(update_contract.rowCount > 0){
             res.status(200).json(update_contract.rows[0]);
         }
     }
-
-    // res.status(200).json({
-    //     "webhook": 'at webhook endpoint'
-    // });
 })
 
 // mercado pago initializing payment

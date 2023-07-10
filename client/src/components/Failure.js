@@ -11,7 +11,7 @@ import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import ClientBottomBar from './ClientBottomBar';
 import CuidadorBottomBar from './CuidadorBottomBar';
 
-const Account = () => {
+const Failure = () => {
 	const { isAuthenticated } = useContext(AuthContext);
 	const { userId } = useContext(AuthContext);
 
@@ -112,4 +112,4 @@ const Account = () => {
 	}
 }
 
-export default Account;
+export default Failure;

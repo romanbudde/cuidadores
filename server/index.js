@@ -53,7 +53,7 @@ app.use(passport.session());
 app.use(router);
 
 app.use(cors({
-    origin: "http://localhost:3000"
+    origin: "*"
 }))
 
 passport.use(new LocalStrategy(
@@ -772,9 +772,9 @@ app.post("/create-contract", async(req, res) => {
             auto_return: "all",
             external_reference: external_reference.toString(),
             back_urls: {
-                success: "http://localhost:3000/success",
-                failure: "http://localhost:3000/failure",
-                pending: "http://localhost:3000/pending"
+                success: "https://charming-genie-43c782.netlify.app/success",
+                failure: "https://charming-genie-43c782.netlify.app/failure",
+                pending: "https://charming-genie-43c782.netlify.app/pending"
             },
             // expires: false, 
             // external_reference: "MPNew_0002",

@@ -33,7 +33,9 @@ const ngrok_auth_token = process.env.NGROK_TOKEN;
 process.env.TZ = 'America/Sao_Paulo';
 
 // middleware
-app.use(cors());
+app.use(cors({
+    origin: "*"
+}))
 app.use(express.json());
 app.use(flash())
 

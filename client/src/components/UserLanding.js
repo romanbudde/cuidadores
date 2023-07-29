@@ -6,7 +6,7 @@ import Cookies from 'universal-cookie';
 import { useContext } from 'react';
 import { AuthContext } from './AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronLeft, faHouse } from '@fortawesome/free-solid-svg-icons';
+import { faChevronLeft, faHouse, faMagnifyingGlass, faFolderOpen, faUser } from '@fortawesome/free-solid-svg-icons';
 import ClientBottomBar from './ClientBottomBar';
 // import { faHouse as heartSolido } from '@fortawesome/free-regular-svg-icons'
 
@@ -54,21 +54,24 @@ const ListUsers = () => {
 					</div>
 					<div className='space-y-5 p-10 my-2 mx-auto flex flex-col justify-center items-center'>
 						<button
-							className='w-full text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'
+							className='flex flex-row items-center gap-5 justify-start pl-10 w-full text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-semibold rounded-lg text-lg px-5 py-5 text-center'
 							onClick={ (e) => { redirectBuscarCuidadores(e) }}
 						>
+							<FontAwesomeIcon className='text-5xl' icon={faMagnifyingGlass} />
 							Buscar cuidadores
 						</button>
 						<button
-							className='w-full text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'
+							className='flex flex-row items-center gap-5 justify-start pl-10 w-full text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-semibold rounded-lg text-lg px-5 py-5 text-center'
 							onClick={ (e) => { redirectVerMisContratos(e) }}
 						>
+							<FontAwesomeIcon className='text-5xl' icon={faFolderOpen} />
 							Ver mis contratos
 						</button>
 						<button
-							className='w-full text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'
+							className='flex flex-row items-center gap-5 justify-start pl-10 w-full text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-semibold rounded-lg text-lg px-5 py-5 text-center'
 							onClick={ (e) => { redirectProfile(e) }}
 						>
+							<FontAwesomeIcon className='text-5xl' icon={faUser} />
 							Mi perfil
 						</button>
 					</div>

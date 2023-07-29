@@ -7,7 +7,7 @@ import { useContext } from 'react';
 import { AuthContext } from './AuthContext';
 import UserEditData from './UserEditData';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
+import { faChevronLeft, faEnvelope, faComment, faPenToSquare, faMapPin } from '@fortawesome/free-solid-svg-icons';
 import ClientBottomBar from './ClientBottomBar';
 import CuidadorBottomBar from './CuidadorBottomBar';
 
@@ -93,6 +93,7 @@ const Account = () => {
 							onClick={ redirectLanding }
 						/>
 						<h1 className='flex justify-center font-bold text-lg py-4'>Mi perfil</h1>
+						<FontAwesomeIcon icon={faPenToSquare} className='text-2xl absolute right-5' onClick={handleShow} />
 					</div>
 					{ user.type === 1 && (
 						<CuidadorBottomBar/>
@@ -101,13 +102,9 @@ const Account = () => {
 						<ClientBottomBar/>
 					)}
 					<div className='w-full flex flex-col items-center px-5 space-y-3'>
-						<h1>Hola, {user.name}!</h1>
-						<button 
-							className='w-full text-white bg-gradient-to-r from-green-500 to-green-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'
-							onClick={handleShow}
-						>
-							Editar datos
-						</button>
+						<h1 className='font-medium text-lg flex flex-row items-center gap-1'>
+							Hola, <p className='p-1 px-2 bg-cyan-200 rounded-md'>{user.name}!</p>
+						</h1>
 						<UserEditData
 							user={user}
 							setUser={setUser}
@@ -116,9 +113,18 @@ const Account = () => {
 							onClose={handleClose}
 						/>
 						<div className='flex flex-col text-left space-y-4'>
-							<p>Tu mail actual es {user.mail}</p>
-							<p>Tu descripcion es: {user.description}</p>
-							<p>Tu dirección es: {user.address}</p>
+						<div className='flex flex-row gap-3 items-center'>
+								<FontAwesomeIcon className='text-2xl' icon={faEnvelope} />
+								<p>Tu email actual es {user.mail}</p>
+							</div>
+							<div className='flex flex-row gap-3 items-center'>
+								<FontAwesomeIcon className='text-2xl' icon={faComment} />
+								<p>Tu descripción es: {user.description}</p>
+							</div>
+							<div className='flex flex-row gap-3 items-center'>
+								<FontAwesomeIcon className='text-2xl' icon={faMapPin} />
+								<p>Tu dirección es: {user.address}</p>
+							</div>
 							{ user.type === 1 && (
 								<>
 									<p>Tarifa por media hora: {user.hourly_rate}</p>

@@ -778,7 +778,7 @@ app.post("/create-contract", async(req, res) => {
             },
             // expires: false, 
             // external_reference: "MPNew_0002",
-            notification_url: localtunnel_url + "/webhook"
+            notification_url:  "https://cuidadores-server.onrender.com" + "/webhook"
         });
 
         console.log('result: ', result);

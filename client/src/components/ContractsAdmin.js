@@ -165,11 +165,11 @@ const ContractsAdmin = () => {
 		// search contracts by client email and or caregiver email and or a range of dates and or status
 		try {
 			// console.log('statusSearch: ', statusSearch);
-            console.log(`http://localhost:5000/contracts?client_email=${userEmail}&caregiver_email=${caregiverEmail}&start_date=${dateStart}&end_date=${dateEnd}&status=${statusSearch}`);
+            // console.log(`http://localhost:5000/contracts?client_email=${userEmail}&caregiver_email=${caregiverEmail}&start_date=${dateStart}&end_date=${dateEnd}&status=${statusSearch}`);
 			
 			// get coinciding user IDS from user table first, then get contracts
 
-            const response = await fetch(`http://localhost:5000/contracts?client_email=${userEmail}&caregiver_email=${caregiverEmail}&start_date=${dateStart}&end_date=${dateEnd}&status=${statusSearch}`);
+            const response = await fetch((process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER : `http://localhost:5000/`) + `contracts?client_email=${userEmail}&caregiver_email=${caregiverEmail}&start_date=${dateStart}&end_date=${dateEnd}&status=${statusSearch}`);
             const jsonData = await response.json();
 
 			console.log('contracts: ', jsonData);
@@ -199,7 +199,7 @@ const ContractsAdmin = () => {
 
 		// update contract status by its id (contract.id)
 		const contract_update = await fetch(
-			`http://localhost:5000/contract/${contract.id}`,
+			(process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER : `http://localhost:5000/`) + `contract/${contract.id}`,
 			{
 				method: "PUT",
 				headers: {
@@ -382,9 +382,9 @@ const ContractsAdmin = () => {
     // get all users function
     const getContracts = async () => {
         try {
-            console.log(`http://localhost:5000/contract?user_id=${userId}`)
+            // console.log(`http://localhost:5000/contract?user_id=${userId}`)
 
-            const response = await fetch(`http://localhost:5000/contract?user_id=${userId}`);
+            const response = await fetch((process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER : `http://localhost:5000/`) + `contract?user_id=${userId}`);
             const jsonData = await response.json();
 
 			jsonData.sort((a, b) => {
@@ -405,7 +405,7 @@ const ContractsAdmin = () => {
     };
 
     const getUserData = async () => {
-		const response = await fetch("http://localhost:5000/cuidadores/" + userId);
+		const response = await fetch((process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER : `http://localhost:5000/`) + `cuidadores/${userId}`);
 		const jsonData = await response.json();
 
 		console.log('---- inside getUserData ----');

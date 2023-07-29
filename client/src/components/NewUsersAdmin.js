@@ -97,7 +97,7 @@ const NewUsersAdmin = () => {
     const disableUser = async (id) => {
         try {
             let disabledUser = {};
-            const disableUser = await fetch(`http://localhost:5000/cuidadores/${id}`, {
+            const disableUser = await fetch((process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER : `http://localhost:5000/`) + `cuidadores/${id}`, {
                 method: "DELETE"
             })
                 .then(response => response.json());
@@ -126,7 +126,7 @@ const NewUsersAdmin = () => {
                 enabled: true 
             };
             const enabledUser = await fetch(
-                `http://localhost:5000/cuidadores/${id}`,
+                (process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER : `http://localhost:5000/`) + `cuidadores/${id}`,
                 {
                     method: "PUT",
                     headers: {
@@ -184,11 +184,11 @@ const NewUsersAdmin = () => {
 		try {
 			// console.log('statusSearch: ', statusSearch);
 			console.log('status: ', statusSearch);
-            console.log(`http://localhost:5000/users?user_email=${userEmail}&user_firstname=${userFirstname}&user_lastname=${userLastname}&status=${statusSearch}`);
+            // console.log(`http://localhost:5000/users?user_email=${userEmail}&user_firstname=${userFirstname}&user_lastname=${userLastname}&status=${statusSearch}`);
 			
 			// get coinciding user IDS from user table first, then get contracts
 
-            const response = await fetch(`http://localhost:5000/users?user_email=${userEmail}&user_firstname=${userFirstname}&user_lastname=${userLastname}&status=${statusSearch}`);
+            const response = await fetch((process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER : `http://localhost:5000/`) + `users?user_email=${userEmail}&user_firstname=${userFirstname}&user_lastname=${userLastname}&status=${statusSearch}`);
             const jsonData = await response.json();
 
 			console.log('----------------------------------- users: ', jsonData);
@@ -218,7 +218,7 @@ const NewUsersAdmin = () => {
 
 		// update contract status by its id (contract.id)
 		const contract_update = await fetch(
-			`http://localhost:5000/contract/${contract.id}`,
+			(process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER : `http://localhost:5000/`) + `contract/${contract.id}`,
 			{
 				method: "PUT",
 				headers: {
@@ -394,7 +394,7 @@ const NewUsersAdmin = () => {
     // };
 
     const getUserData = async () => {
-		const response = await fetch("http://localhost:5000/cuidadores/" + userId);
+		const response = await fetch((process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER : `http://localhost:5000/`) + `cuidadores/${userId}`);
 		const jsonData = await response.json();
 
 		console.log('---- inside getUserData ----');

@@ -43,7 +43,7 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
 
     const getPaymentMethods = async () => {
         try {
-            const response = await fetch("http://localhost:5000/payment_methods");
+            const response = await fetch((process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER : `http://localhost:5000/`) + `payment_methods`);
             const jsonData = await response.json();
 
 			// console.log('---- inside getPaymentMethods ----');
@@ -67,7 +67,7 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
 	// get all users function
     const getHorarios = async () => {
         try {
-            const response = await fetch("http://localhost:5000/caregiver_get_available_dates?caregiver_id=" + cuidador.id);
+            const response = await fetch((process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER : `http://localhost:5000/`) + `caregiver_get_available_dates?caregiver_id=${cuidador.id}`);
             const jsonData = await response.json();
 
 			// console.log('---- inside getHorarios ----');
@@ -187,7 +187,7 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
             payment_method: chosenPaymentMethodId
         };
 
-        const response = await fetch("http://localhost:5000/contract/", {
+        const response = await fetch((process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER : `http://localhost:5000/`) + `contract/`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -218,7 +218,7 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
 
                 const body_mercadopago = { title, unit_price, quantity, external_reference };
 
-                const response = await fetch("http://localhost:5000/create-contract", {
+                const response = await fetch((process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER : `http://localhost:5000/`) + `create-contract`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"

@@ -15,16 +15,6 @@ import ClientBottomBar from './ClientBottomBar';
 
 const FilterCuidadores = () => {
 
-	// const WS_URL = 'ws://localhost:5000/';
-	
-	// const socket = new WebSocket('ws://localhost:5000');
-	
-	// const testingWebsocket = useWebSocket(WS_URL, {
-	// 	onOpen: () => {
-	// 	  console.log('WebSocket connection established.');
-	// 	}
-	// });
-
 	const { isAuthenticated } = useContext(AuthContext);
 	const [search, setSearch] = useState('');
 	const [tarifaMinima, setTarifaMinima] = useState('');
@@ -104,7 +94,7 @@ const FilterCuidadores = () => {
 			lowest_score_acceptable: lowestScoreAcceptable
 		};
 		const response = await fetch(
-			"http://localhost:5000/search_cuidadores/",
+			(process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER : `http://localhost:5000/`) + `search_cuidadores/`,
 			{
 				method: "POST",
 				headers: {

@@ -100,7 +100,7 @@ const MisContratos = () => {
 
 		// update contract status by its id (contract.id)
 		const contract_update = await fetch(
-			`http://localhost:5000/contract/${contract.id}`,
+			(process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER : `http://localhost:5000/`) + `contract/${contract.id}`,
 			{
 				method: "PUT",
 				headers: {
@@ -277,9 +277,9 @@ const MisContratos = () => {
     // get all users function
     const getContracts = async () => {
         try {
-            console.log(`http://localhost:5000/contract?user_id=${userId}`)
+            // console.log(`http://localhost:5000/contract?user_id=${userId}`)
 
-            const response = await fetch(`http://localhost:5000/contract?user_id=${userId}`);
+            const response = await fetch((process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER : `http://localhost:5000/`) + `contract?user_id=${userId}`);
             const jsonData = await response.json();
 
 			jsonData.sort((a, b) => {
@@ -300,7 +300,7 @@ const MisContratos = () => {
     };
 
     const getUserData = async () => {
-		const response = await fetch("http://localhost:5000/cuidadores/" + userId);
+		const response = await fetch((process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER : `http://localhost:5000/`) + `cuidadores/${userId}`);
 		const jsonData = await response.json();
 
 		console.log('---- inside getUserData ----');

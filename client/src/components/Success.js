@@ -54,7 +54,7 @@ const Success = () => {
 	}
 
 	const getUserData = async () => {
-		const response = await fetch("http://localhost:5000/cuidadores/" + userId);
+		const response = await fetch((process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER : `http://localhost:5000/`) + `cuidadores/${userId}`);
 		const jsonData = await response.json();
 
 		console.log('---- inside getUserData ----');
@@ -66,7 +66,7 @@ const Success = () => {
 	// get all users function
     const getUserTypes = async () => {
         try {
-            const response = await fetch("http://localhost:5000/user_types/");
+            const response = await fetch((process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER : `http://localhost:5000/`) + `user_types/`);
             const jsonData = await response.json();
 
 			console.log('---- inside getUserTypes ----');

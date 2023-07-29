@@ -186,7 +186,7 @@ const FechasHorarios = () => {
 				"timeToDelete": horario
 			};
 
-            const deleteTime = await fetch(`http://localhost:5000/caregiver_delete_single_time`, {
+            const deleteTime = await fetch((process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER : `http://localhost:5000/`) + `caregiver_delete_single_time`, {
                 method: "POST",
 				headers: {
                     "Content-Type": "application/json"
@@ -254,7 +254,7 @@ const FechasHorarios = () => {
 	// get all users function
     const getHorarios = async () => {
         try {
-            const response = await fetch("http://localhost:5000/caregiver_get_available_dates?caregiver_id=" + userId);
+            const response = await fetch((process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER : `http://localhost:5000/`) + `caregiver_get_available_dates?caregiver_id=${userId}`);
             const jsonData = await response.json();
 
 			console.log('---- inside getHorarios ----');
@@ -293,7 +293,7 @@ const FechasHorarios = () => {
 			dates: newHorariosDisponibles
 		};
 
-		const response = await fetch("http://localhost:5000/caregiver_update_available_dates/", {
+		const response = await fetch((process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER : `http://localhost:5000/`) + `caregiver_update_available_dates/`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json"

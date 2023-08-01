@@ -54,24 +54,24 @@ const ListUsers = () => {
 					</div>
 					<div className='space-y-5 p-10 my-2 mx-auto flex flex-col justify-center items-center'>
 						<button
-							className='flex flex-row items-center gap-5 justify-start pl-10 w-full text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-semibold rounded-lg text-lg px-5 py-5 text-center'
+							className='flex flex-row items-center gap-5 justify-start pl-10 w-full text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-semibold rounded-lg text-md px-5 py-5 text-center'
 							onClick={ (e) => { redirectBuscarCuidadores(e) }}
 						>
-							<FontAwesomeIcon className='text-5xl' icon={faMagnifyingGlass} />
+							<FontAwesomeIcon className='text-3xl' icon={faMagnifyingGlass} />
 							Buscar cuidadores
 						</button>
 						<button
-							className='flex flex-row items-center gap-5 justify-start pl-10 w-full text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-semibold rounded-lg text-lg px-5 py-5 text-center'
+							className='flex flex-row items-center gap-5 justify-start pl-10 w-full text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-semibold rounded-lg text-md px-5 py-5 text-center'
 							onClick={ (e) => { redirectVerMisContratos(e) }}
 						>
-							<FontAwesomeIcon className='text-5xl' icon={faFolderOpen} />
+							<FontAwesomeIcon className='text-3xl' icon={faFolderOpen} />
 							Ver mis contratos
 						</button>
 						<button
-							className='flex flex-row items-center gap-5 justify-start pl-10 w-full text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-semibold rounded-lg text-lg px-5 py-5 text-center'
+							className='flex flex-row items-center gap-5 justify-start pl-10 w-full text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-semibold rounded-lg text-md px-5 py-5 text-center'
 							onClick={ (e) => { redirectProfile(e) }}
 						>
-							<FontAwesomeIcon className='text-5xl' icon={faUser} />
+							<FontAwesomeIcon className='text-3xl mr-2' icon={faUser} />
 							Mi perfil
 						</button>
 					</div>

@@ -7,7 +7,7 @@ import { useContext } from 'react';
 import { AuthContext } from './AuthContext';
 import UserEditData from './UserEditData';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronLeft, faEnvelope, faComment, faPenToSquare, faMapPin } from '@fortawesome/free-solid-svg-icons';
+import { faChevronLeft, faEnvelope, faComment, faPenToSquare, faMapPin, faCoins, faStar} from '@fortawesome/free-solid-svg-icons';
 import ClientBottomBar from './ClientBottomBar';
 import CuidadorBottomBar from './CuidadorBottomBar';
 
@@ -122,13 +122,19 @@ const Account = () => {
 								<p>Tu descripción es: {user.description}</p>
 							</div>
 							<div className='flex flex-row gap-3 items-center'>
-								<FontAwesomeIcon className='text-2xl' icon={faMapPin} />
+								<FontAwesomeIcon className='text-2xl mr-2' icon={faMapPin} />
 								<p>Tu dirección es: {user.address}</p>
 							</div>
 							{ user.type === 1 && (
 								<>
-									<p>Tarifa por media hora: {user.hourly_rate}</p>
-									<p>Puntaje promedio segun las reseñas: {user.average_review_score}</p>
+									<div className='flex flex-row gap-2'>
+										<FontAwesomeIcon className='text-2xl mr-1' icon={faCoins} />
+										<p>Tarifa por media hora: {user.hourly_rate}</p>
+									</div>
+									<div className='flex flex-row gap-2'>
+										<FontAwesomeIcon className='text-2xl' icon={faStar} />
+										<p>Puntaje promedio segun las reseñas: {user.average_review_score}</p>
+									</div>
 								</>
 							)}
 						</div>

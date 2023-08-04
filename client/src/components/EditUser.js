@@ -227,16 +227,6 @@ const UserEditData = ({ user, users, setUsers, displayedUsers, setDisplayedUsers
 											</div>
 										) : null}
 								</div>
-								{/* <label className="block mr-auto text-sm font-medium text-gray-900 dark:text-white">
-									Email
-								</label>
-								<Field name="email" type="email" placeholder="ej: pedrogomez@hotmail.com" className={`${errors.email && touched.email ?  'bg-gray-50 border text-red-500 placeholder-red-500 text-sm focus:ring-red-500 focus:border-red-500 block w-full p-2.5 bg-transparent rounded-lg border-b border-solid border-opacity-100 focus:outline-none focus:outline-0 border-red-500' : 
-								'bg-gray-50 border text-gray-900 text-sm focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5 bg-transparent rounded-lg border-b border-gray-400 border-solid border-opacity-100 focus:outline-none focus:outline-0'}`}/>
-									{errors.email && touched.email ? (
-										<div className='text-red-500 font-normal w-full text-sm text-left'>
-											{errors.email}
-										</div>
-									) : null} */}
 								<div className='flex flex-col py-2'>
 									<label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
 										Descripción

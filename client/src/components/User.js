@@ -78,7 +78,7 @@ const User = ({ user, users, setUsers, displayedUsers, setDisplayedUsers, disabl
                             className='bg-transparent focus:outline-none mt-2 text-gray-300 font-semibold hover:text-white py-2 px-4 border border-gray-200 hover:border-transparent rounded'
                             onClick={() => disableUser(user.id)}
                         >
-                            Disable
+                            Desactivar
                         </button>
 
                     ) : (
@@ -86,7 +86,7 @@ const User = ({ user, users, setUsers, displayedUsers, setDisplayedUsers, disabl
                             className='bg-transparent mt-2 text-gray-300 font-semibold hover:text-white py-2 px-4 border border-gray-200 hover:border-transparent rounded'
                             onClick={() => enableUser(user.id, user)}
                         >
-                            Enable
+                            Activar
                         </button>
                     )
                 }

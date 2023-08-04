@@ -59,6 +59,12 @@ const NewUsersAdmin = () => {
 		{ value: 'all', label: 'Todos' },
 	];
 
+	const optionsTipoUsuario = [
+		{ value: 'cliente', label: 'Cliente' },
+		{ value: 'cuidador', label: 'Cuidador' },
+		{ value: 'all', label: 'Todos' },
+	]
+
 	const paginate = (pageNumber) => {
 		setCurrentPage(pageNumber);
 	};
@@ -107,6 +113,7 @@ const NewUsersAdmin = () => {
 
             if(disableUser.rowCount > 0) {
                 setUsers(users.map((user) => user.id === id ? { ...user, enabled:false } : user));
+                setDisplayedUsers(users.map((user) => user.id === id ? { ...user, enabled:false } : user));
             }
 
         } catch (error) {
@@ -142,12 +149,18 @@ const NewUsersAdmin = () => {
 
             if(enabledUser.id) {
                 setUsers(users.map((user) => user.id === id ? { ...user, enabled:true } : user));
+                setDisplayedUsers(users.map((user) => user.id === id ? { ...user, enabled:true } : user));
             }
 
         } catch (error) {
             console.error(error);
         }
     }
+
+	const handleSearchUserTypeChange = (e) => {
+		// console.log(e.value)
+		setStatusSearch(e.value);
+	}
 
 	const handleSearchStatusFilterChange = (e) => {
 		// console.log(e.value)
@@ -426,6 +439,12 @@ const NewUsersAdmin = () => {
 							onClick={ redirectLanding }
 						/>
 						<h1 className='flex justify-center font-bold text-lg py-4'>Usuarios</h1>
+						<button
+							className='absolute right-3 text-green-500 font-semibold py-2 px-4 border border-green-600 rounded-lg'
+							onClick={handleAddUserModalOpen}
+						>
+							+
+						</button>
 					</div>
 					<div className='mb-28'>
 						<div className='flex flex-col mx-5 mt-2 gap-3'>
@@ -500,6 +519,30 @@ const NewUsersAdmin = () => {
 							/>
 						</div>
 
+						<div className='mx-5 mt-3 mb-6 flex flex-col items-start'>
+							<label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
+								Tipo de usuario
+							</label>
+							<Select
+								defaultValue={optionsTipoUsuario.find(option => option.value === 'all')}
+								onChange={ handleSearchUserTypeChange }
+								placeholder={'Tipo de usuario:'}
+								options={optionsTipoUsuario}
+								maxMenuHeight={240}
+								className='rounded-md w-full'
+								isSearchable={false}
+								theme={(theme) => ({
+									...theme,
+									borderRadius: 10,
+									colors: {
+									...theme.colors,
+									primary25: '#8FD5FF',
+									primary: 'black',
+									},
+								})}
+							/>
+						</div>
+
 						<div className='flex flex-row justify-center'>
 							<button
 								className='text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-2/3 py-2.5 text-center shadow-lg'
@@ -509,19 +552,7 @@ const NewUsersAdmin = () => {
 							</button>
 						</div>
 
-						<div className='flex flex-row justify-center w-full'>
-							<button
-								className='bg-transparent text-green-500 font-semibold py-2 px-4 border border-green-600 rounded-lg w-2/3 my-5'
-								onClick={handleAddUserModalOpen}
-							>
-								Crear usuario
-							</button>
-							{/* <button
-								className='text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-2/3 py-2.5 text-center shadow-lg'
-								onClick = {searchUsers}
-							>
-								Buscar usuarios
-							</button> */}
+						<div className='my-7 mx-5 border-b-2 border-gray-400'>
 						</div>
 
 						<Paginate

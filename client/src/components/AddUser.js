@@ -71,7 +71,7 @@ const AddUser = ( {users, setUsers, show, onClose, displayedUsers, setDisplayedU
 						<div className='bg-white p-5 rounded flex flex-col gap-5'>
 							<div className="flex items-start justify-between border-b rounded-t dark:border-gray-600">
 								<h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-									Add new user
+									Agregar usuario
 								</h3>
 								
 							</div>
@@ -90,7 +90,7 @@ const AddUser = ( {users, setUsers, show, onClose, displayedUsers, setDisplayedU
 								</div>
 								<div className='flex flex-col'>
 									<label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
-										Password
+										Contraseña
 									</label>
 									<input
 										type="password"
@@ -102,7 +102,7 @@ const AddUser = ( {users, setUsers, show, onClose, displayedUsers, setDisplayedU
 								</div>
 								<div className='flex flex-col'>
 									<label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
-										Description
+										Descripción
 									</label>
 									<input
 										type="text"
@@ -115,7 +115,7 @@ const AddUser = ( {users, setUsers, show, onClose, displayedUsers, setDisplayedU
 								</div>
 								<div className='flex flex-col'>
 									<label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
-										User type
+										Tipo de usuario
 									</label>
 									<select 
 										id="user_type"
@@ -130,7 +130,7 @@ const AddUser = ( {users, setUsers, show, onClose, displayedUsers, setDisplayedU
 								</div>
 								<div className='flex flex-col'>
 									<label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
-										First Name
+										Nombre
 									</label>
 									<input
 										type="text"
@@ -143,7 +143,7 @@ const AddUser = ( {users, setUsers, show, onClose, displayedUsers, setDisplayedU
 								</div>
 								<div className='flex flex-col'>
 									<label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
-										Last Name
+										Apellido
 									</label>
 									<input
 										type="text"
@@ -162,7 +162,7 @@ const AddUser = ( {users, setUsers, show, onClose, displayedUsers, setDisplayedU
 										onClose(); 
 									}}
 								>
-									Add user
+									Crear usuario
 								</button>
 							</form>
 						</div>

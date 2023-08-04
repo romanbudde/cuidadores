@@ -71,6 +71,25 @@ const User = ({ user, users, setUsers, displayedUsers, setDisplayedUsers, disabl
                 <p>Apellido: {user.last_name}</p>
                 <p>Dirección: {user.address}</p>
                 <p>Fecha de creación: {moment(user.created_at).format('DD/MM/YYYY')}</p>
+
+                {
+                    user.enabled ? (
+                        <button
+                            className='bg-transparent focus:outline-none mt-2 text-gray-300 font-semibold hover:text-white py-2 px-4 border border-gray-200 hover:border-transparent rounded'
+                            onClick={() => disableUser(user.id)}
+                        >
+                            Disable
+                        </button>
+
+                    ) : (
+                        <button
+                            className='bg-transparent mt-2 text-gray-300 font-semibold hover:text-white py-2 px-4 border border-gray-200 hover:border-transparent rounded'
+                            onClick={() => enableUser(user.id, user)}
+                        >
+                            Enable
+                        </button>
+                    )
+                }
             </div>
 
             {/* <tr key={user.id} className="bg-white border-b dark:bg-gray-900 dark:border-gray-700">

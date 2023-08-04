@@ -487,6 +487,44 @@ app.get("/payment_methods", async(req, res) => {
     }
 });
 
+// get mercadopago config's access token
+app.get("/mercadopago_access_token", async(req, res) => {
+    try {
+        console.log('---------------- MP ACCESS TOKENNNNNNN --------------------')
+        let mercadopago_config;
+
+        mercadopago_config = await pool.query("SELECT * from mercadopago_config WHERE config_name = 'access_token'");
+
+        console.log('mercadopago_config: ', mercadopago_config);
+        res.json({
+            "access_token": mercadopago_config.rows[0].config_value
+        });
+    }
+    catch (error) {
+        console.error(error.message);
+    }
+});
+
+// get mercadopago config's access token
+app.put("/mercadopago_access_token", async(req, res) => {
+    try {
+        console.log('---------------- UPDATE - MP ACCESS TOKENNNNNNN --------------------')
+        let mercadopago_config;
+
+        const { access_token } = req.body;
+
+        mercadopago_config = await pool.query("UPDATE mercadopago_config SET config_value = $1  WHERE config_name = 'access_token'RETURNING *", [access_token]);
+
+        console.log('mercadopago_config: ', mercadopago_config);
+        res.json({
+            "access_token": mercadopago_config.rows[0].config_value
+        });
+    }
+    catch (error) {
+        console.error(error.message);
+    }
+});
+
 // get contracts by different parametres
 app.get("/contracts", async(req, res) => {
     try {

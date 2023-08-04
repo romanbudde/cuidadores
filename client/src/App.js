@@ -22,6 +22,7 @@ import AddUser from './components/AddUser';
 import ListUsers from './components/ListUsers';
 import User from "./components/User";
 import NewUsersListPage from "./routes/NewUsersListPage";
+import MercadoPagoConfigPage from "./routes/MercadoPagoConfigPage";
 
 const App = () => {
   // return (
@@ -142,6 +143,14 @@ const App = () => {
 				element={
 					<>
 					{ <FailurePage /> }
+					</>
+				} 
+				/>
+				<Route 
+				path="/mercadopago-config"
+				element={
+					<>
+					{ <MercadoPagoConfigPage /> }
 					</>
 				} 
 				/>

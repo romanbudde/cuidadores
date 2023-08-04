@@ -9,7 +9,7 @@ import UserEditData from './UserEditData';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faHouse } from '@fortawesome/free-solid-svg-icons';
 
-const BottomBar = (userType) => {
+const BottomBar = ( {userType} ) => {
 	const { isAuthenticated } = useContext(AuthContext);
 	const { userId } = useContext(AuthContext);
     
@@ -17,7 +17,12 @@ const BottomBar = (userType) => {
 	const cookies = new Cookies();
 
 	const redirectLanding = () => {
-		navigate('/landing-cuidador');
+		if(userType === 1){
+			navigate('/landing-cuidador');
+		}
+		if(userType === 2){
+			navigate('/landing-admin');
+		}
 	}
 
 	if(isAuthenticated){

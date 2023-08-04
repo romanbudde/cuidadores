@@ -758,7 +758,6 @@ app.post("/create-contract", async(req, res) => {
             // cuenta testing - vendedor
             access_token: 'APP_USR-7129350085452910-070912-90070389d55a42626319cd0f07f166e0-1414155674'
         });
-
     
         const result = await mercadopago.preferences.create({
             items: [

@@ -10,6 +10,7 @@ import { AuthContext } from './AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faHouse, faCheck, faMoneyBillWave, faHandshake } from '@fortawesome/free-solid-svg-icons';
 import ClientBottomBar from './ClientBottomBar';
+import ReviewModal from './ReviewModal';
 import Paginate from './Paginate';
 import moment from 'moment';
 import Select from 'react-select';
@@ -24,6 +25,8 @@ const MisContratos = () => {
     const [dateFilter, setDateFilter] = useState('newest');
     const [statusFilter, setStatusFilter] = useState('all');
     const [user, setUser] = useState([]);
+    const [reviews, setReviews] = useState([]);
+    const [showReviewModal, setShowReviewModal] = useState(false);
 	
 	// -- Pagination
     // const [displayedContracts, setDisplayedContracts] = useState([]);
@@ -91,6 +94,14 @@ const MisContratos = () => {
 		setDateFilter(e.value);
 		newSortContracts(e.value, '');
 		setCurrentPage(1);
+	}
+
+	const handleShowReviewModal = () => {
+		setShowReviewModal(true);
+	}
+
+	const onCloseReviewModal = () => {
+		setShowReviewModal(false);
 	}
 
 	const changeContractStatusToComplete = async (contract) => {
@@ -309,10 +320,28 @@ const MisContratos = () => {
 		setUser(jsonData);
 	}
 
+	// get all reviews
+    const getReviews = async () => {
+        try {
+            const response = await fetch((process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER : `http://localhost:5000/`) + `caregiver_review?customer_id=${userId}`);
+            const jsonData = await response.json();
+
+			console.log('---- inside getReviews ----');
+			console.log(jsonData);
+
+			setReviews(jsonData);
+        } catch (error) {
+            console.error(error.message);
+        }
+    };
+
+	console.log('reviews: ', reviews)
+
     // when page loads, get all Users
     useEffect(() => {
         getContracts();
         getUserData();
+		getReviews();
     }, []);
 
     // console.log('contracts');
@@ -387,6 +416,29 @@ const MisContratos = () => {
 									: 'bg-gray-700'} p-5 m-5 rounded-md flex flex-col items-start text-white font-medium`}
 									key={contract.id}
 								>
+									{contract.status === 'completed' && user.type === 0 && !reviews.some((review) => review.contract_id === contract.id) &&(
+										<>
+											<button
+												className='p-2 bg-gray-600 rounded-md ml-auto'
+												onClick={() => setShowReviewModal(true)}
+											>
+												Agregar reseña
+											</button>
+											{ showReviewModal && (
+												<ReviewModal 
+													contract = {contract}
+													onClose = {onCloseReviewModal}
+													reviews = {reviews}
+													setReviews = {setReviews}
+												/>
+											)}
+										</>
+									)}
+									{ reviews.some((review) => review.contract_id === contract.id) &&(
+										<p className='text-sm text-gray-200 py-1 px-2 bg-gray-500 rounded-full ml-auto'>
+											Reseña enviada
+										</p>
+									)}
 									<p>Fecha: {contract.date}</p>
 									<p>Estado del contrato: {contract.status === 'active' ? 'Activo' 
 									: contract.status === 'completed' ? 'Completado'
@@ -419,13 +471,18 @@ const MisContratos = () => {
 
 									{/* validar que el ultimo horario del contrato sea mayor a la hora actual (usar moment js) */}
 									{
+										// console.log('---- horarios: ', contract.horarios)
+									}
+									{
 										// console.log('ultimo horario del contrato: ', contract.horarios[contract.horarios.length - 1])
 										// console.log('user type: ', user.type)
-										console.log('comparacion horario entre contract: ', moment(contract.date, 'DD/MM/YYYY').isSame(moment(), 'day') && moment(contract.horarios[contract.horarios.length - 1], 'HH:mm').format('HH:mm') < moment().format('HH:mm'))
-
+										// console.log('comparacion horario entre contract: ', moment(contract.date, 'DD/MM/YYYY').isSame(moment(), 'day') && moment(contract.horarios[contract.horarios.length - 1], 'HH:mm').format('HH:mm') < moment().format('HH:mm'))
+										// console.log('---- 1ER CONDICION (mismo dia): ', moment(contract.date, 'DD/MM/YYYY').isSame(moment(), 'day'))
 										
-										// moment(contract.horarios[contract.horarios.length - 1], 'HH:mm').format('HH:mm') < moment().format('HH:mm')
 									}
+									{
+										// console.log('-------- 2DA CONDICION (hora menor q actual): ', moment(contract.horarios[contract.horarios.length - 1], 'HH:mm').add(30,'minutes').format('HH:mm') < moment().format('HH:mm'))
+									}	
 									{user.type === 1 && 
 									contract.status === 'active' && 
 									(

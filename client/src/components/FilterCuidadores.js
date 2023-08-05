@@ -12,6 +12,7 @@ import VerDisponibilidad from './VerDisponibilidad';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import ClientBottomBar from './ClientBottomBar';
+import Paginate from './Paginate';
 
 const FilterCuidadores = () => {
 
@@ -26,7 +27,15 @@ const FilterCuidadores = () => {
 		fantastico: false
 	});
 	const [cuidadores, setCuidadores] = useState([]);
+	const [displayedCuidadores, setDisplayedCuidadores] = useState([]);
 	const [showDisponibilidadModal, setShowDisponibilidadModal] = useState(false);
+
+	const [currentPage, setCurrentPage] = useState(1);
+	const [postsPerPage] = useState(3);
+
+	const indexOfLastPost = currentPage * postsPerPage;
+	const indexOfFirstPost = indexOfLastPost - postsPerPage;
+	const currentPosts = displayedCuidadores.slice(indexOfFirstPost, indexOfLastPost);
     
 	const handleCheckboxReviewsChange = (event) => {
 		const { name, checked } = event.target;
@@ -40,6 +49,10 @@ const FilterCuidadores = () => {
 	const cookies = new Cookies();
 
 	// console.log("isAuthenticated: ", isAuthenticated);
+
+	const paginate = (pageNumber) => {
+		setCurrentPage(pageNumber);
+	};
 
 	const logout = () => {
 		// unset cookie
@@ -107,6 +120,7 @@ const FilterCuidadores = () => {
 		console.log('response of searching for cuidadores: ');
 		console.log(response);
 		setCuidadores(response);
+		setDisplayedCuidadores(response);
 	}
 	console.log('cuidadores: ', cuidadores.length)
 	// console.log(cuidadores)
@@ -219,7 +233,48 @@ const FilterCuidadores = () => {
 				{
 					console.log('cuidadores length: ', cuidadores.length)
 				}
-				{ cuidadores.length > 0 && (
+
+
+				<Paginate
+					postsPerPage={postsPerPage}
+					totalPosts={displayedCuidadores.length}
+					paginate={paginate}
+					currentPage={currentPage}
+					setCurrentPage={setCurrentPage}
+				/>
+				{currentPosts.length > 0 && (
+					<>
+						<div className='mx-5 my-7 border border-gray-300'>
+						</div>
+						<div className='flex flex-col space-y-7 mx-auto items-center rounded-md justify-start w-96 mb-28'>
+							<h1 className='flex justify-center font-bold text-md'>{cuidadores.length} Cuidadores encontrados:</h1>
+							{currentPosts.map(cuidador => (
+								<div 
+									className='bg-gray-300 p-4 rounded-md shadow-lg'
+									key={cuidador.id}
+								>
+									<h2 className='flex flex-row gap-1'><p className='font-semibold'>Cuidador:</p> {cuidador.name}</h2>
+									<h2 className='flex flex-row gap-1'><p className='font-semibold'>Tarifa por hora:</p> {cuidador.hourly_rate}</h2>
+									<h2 className='flex flex-row gap-1'><p className='font-semibold'>Puntaje promedio de reseñas:</p> {cuidador.average_review_score}</h2>
+									<button
+										className='w-full mt-7 text-white bg-gradient-to-r from-green-500 to-green-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'
+										onClick={handleShowDisponibilidadModal(cuidador)}
+									>
+										Ver disponibilidad
+									</button>
+									<VerDisponibilidad
+										cuidador={cuidador}
+										show={showDisponibilidadModal === cuidador}
+										onClose={handleClose}
+									/>
+								</div>
+							))}
+						</div>
+					</>
+				)}
+							
+
+				{/* { cuidadores.length > 0 && (
 					<div className='flex flex-col space-y-4 mx-auto items-center rounded-md justify-start w-96 py-2 my-5 border-t-2 border-t-gray-200 mb-28'>
 						<h1 className='flex justify-center font-bold text-md py-4'>{cuidadores.length} Cuidadores encontrados:</h1>
 						{cuidadores.length > 0 && cuidadores.map(cuidador => (
@@ -250,7 +305,7 @@ const FilterCuidadores = () => {
 						<h1 className='flex justify-center font-bold text-md py-4'>{cuidadores.length} Cuidadores encontrados</h1>
 						
 					</div>
-				)}
+				)} */}
 			</Fragment>
 		);
 	}

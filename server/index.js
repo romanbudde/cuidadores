@@ -331,22 +331,36 @@ app.post("/search_cuidadores", async(req, res) => {
     }
 });
 
+
+// get caregiver_reviews for a customer by the customer's id
+app.get("/caregiver_review", async(req, res) => {
+    try {
+        const { customer_id } = req.query;
+        const reviews = await pool.query("SELECT * from caregiver_score WHERE customer_id = $1", [customer_id])
+        res.json(reviews.rows);
+    }
+    catch (error) {
+        console.error(error.message);
+    }
+});
+
 // add review for a caregiver and update users average_review_score
 app.post("/caregiver_review", async(req, res) => {
     try {
-		const { observation, caregiver_id, customer_id, review_score } = req.body;
+		const { observation, caregiver_id, contract_id, customer_id, review_score } = req.body;
 		console.log('observation: ', observation);
 		console.log('caregiver_id: ', caregiver_id);
+		console.log('contract_id: ', contract_id);
 		console.log('review_score: ', review_score);
 
         const caregiver = await pool.query("SELECT * FROM users WHERE type = '1' AND enabled = true AND id = $1", [caregiver_id]);
 		if(caregiver.rows[0].id > 0) {
-			let query = "INSERT INTO caregiver_score (caregiver_id, customer_id, score, observation, created_at) VALUES($1, $2, $3, $4, $5) RETURNING *";
+			let query = "INSERT INTO caregiver_score (caregiver_id, customer_id, contract_id, score, observation, created_at) VALUES($1, $2, $3, $4, $5, $6) RETURNING *";
 	
 			const created_at = new Date();
 			const modified_at = new Date();
 	
-			const allCuidadores = await pool.query(query, [caregiver_id, customer_id, review_score, observation, created_at ]);
+			const allCuidadores = await pool.query(query, [caregiver_id, customer_id, contract_id, review_score, observation, created_at ]);
 			// console.log(allCuidadores);
 			res.json(allCuidadores.rows[0]);
 	
@@ -513,7 +527,7 @@ app.put("/mercadopago_access_token", async(req, res) => {
 
         const { access_token } = req.body;
 
-        mercadopago_config = await pool.query("UPDATE mercadopago_config SET config_value = $1  WHERE config_name = 'access_token'RETURNING *", [access_token]);
+        mercadopago_config = await pool.query("UPDATE mercadopago_config SET config_value = $1  WHERE config_name = 'access_token' RETURNING *", [access_token]);
 
         console.log('mercadopago_config: ', mercadopago_config);
         res.json({
@@ -648,31 +662,6 @@ app.put("/contract/:id", async(req, res) => {
     }
 });
 
-// app.get("/webhook-mercadopago", async(req, res) => {
-//     try{
-//         mercadopago.configure({
-//             access_token: MERCADOPAGO_TEST_TOKEN
-//         });
-    
-//         const result = await mercadopago.preferences.create({
-//             items: [
-//                 { 
-//                     title: "Contrato 000001",
-//                     unit_price: 29,
-//                     currency_id: 'ARS',
-//                     quantity: 1
-//                 }
-//             ],
-//             notification_url: "",
-//         })
-    
-//         console.log('result: ', result);
-//     }
-//     catch(error){
-//         console.log('error: ', error);
-//     }
-// });
-
 // listening for mercadopagos webhook
 app.post("/webhook", async (req, res) => {
     console.log('----------------------------------------------------------------------------------------------------------------')
@@ -792,9 +781,18 @@ app.post("/create-contract", async(req, res) => {
 
         const { title, unit_price, quantity, external_reference } = req.body;
 
+        mercadopago_config = await pool.query("SELECT * FROM mercadopago_config  WHERE config_name = 'access_token'");
+
+        console.log('---------- MP Config: ', mercadopago_config);
+
+        let mp_access_token = '';
+        if(mercadopago_config.rows[0].id > 0) {
+            mp_access_token = mercadopago_config.rows[0].config_value;
+        }
+
         mercadopago.configure({
             // cuenta testing - vendedor
-            access_token: 'APP_USR-7129350085452910-070912-90070389d55a42626319cd0f07f166e0-1414155674'
+            access_token: mp_access_token
         });
     
         const result = await mercadopago.preferences.create({

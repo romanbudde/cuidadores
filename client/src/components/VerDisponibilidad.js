@@ -25,6 +25,7 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
     const [date, setDate] = useState(new Date());
 	const [horariosDisponibles, setHorariosDisponibles] = useState([]);
 	const [checkedHorarios, setCheckedHorarios] = useState([]);
+	const [user, setUser] = useState();
 	const [displayCreateContractMessage, setDisplayCreateContractMessage] = useState(false);
 	const [createContractMessage, setCreateContractMessage] = useState('');
 	const [contractResponseError, setContractResponseError] = useState(false);
@@ -112,10 +113,21 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
         }
     };
 
+    const getUserData = async () => {
+		const response = await fetch((process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER : `http://localhost:5000/`) + `cuidadores/${userId}`);
+		const jsonData = await response.json();
+
+		console.log('---- inside getUserData ----');
+		console.log(jsonData);
+
+		setUser(jsonData);
+	}
+
     // when page loads, get all Users
     useEffect(() => {
         getHorarios();
         getPaymentMethods();
+        getUserData();
 		// const today = moment().format('DD/MM/YYYY');
     }, []);
 
@@ -165,6 +177,28 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
     // console.log('checkedHorarios: ');
     // console.log(checkedHorarios);
     // console.log('date selected: ', date);
+
+    const formatTimeRange = (startTime, endTime) => {
+        return `${moment(startTime, 'HH:mm').format('HH:mm')} a ${moment(endTime, 'HH:mm').add(30, 'minutes').format('HH:mm')}`;
+      };
+      
+    const renderTimeRanges = (horarios) => {
+        let timeRanges = [];
+        
+        for (let i = 0; i < horarios.length; i++) {
+            let startTime = horarios[i];
+            let endTime = horarios[i];
+        
+            while (i + 1 < horarios.length && moment(horarios[i + 1], 'HH:mm').diff(moment(horarios[i], 'HH:mm'), 'minutes') === 30) {
+                endTime = horarios[i + 1];
+                i++;
+            }
+        
+            timeRanges.push(formatTimeRange(startTime, endTime));
+        }
+        
+        return timeRanges.join(', y de ');
+    };
     
     const createContract = async () => {
         // usando los datos de: checkedHorarios, date, userId, cuidadorId. voy al backend y creo el contract.
@@ -200,6 +234,10 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
 
         console.log('111111111');
         console.log(result);
+
+        let contract_email = { ...result };
+        let horarios = '';
+
         setDisplayPaymentMethodModal(false);
         if(result.error){
             setContractResponseError(true);
@@ -208,6 +246,7 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
             setCreateContractMessage(result.error);
         }
         else {
+            horarios = renderTimeRanges(result.horarios);
             if(chosenPaymentMethod === 'Mercado Pago'){
                 console.log('----------payment method es: mercado pago:');
 
@@ -239,15 +278,23 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
                 setDisplayCreateContractMessage(true);
                 setCreateContractMessage(`Contrato creado con éxito para el día ${date.toLocaleDateString("en-GB")}.`);
             }    
+            console.log('-------- enviar email!')
+    
+            const body_email = { 
+                cuidador: cuidador,
+                cliente: user, 
+                contract: contract_email,
+                horarios: horarios
+            }
+            const email_response = await fetch((process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER : `http://localhost:5000/`) + `contract_creation_email/`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(body_email)
+            })
         }
-        console.log('-------- enviar email!')
-        const email_response = await fetch((process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER : `http://localhost:5000/`) + `contract_creation_email/`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(body)
-        })
+
         console.log('222222222');
     }
 

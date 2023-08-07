@@ -293,23 +293,23 @@ const MisContratos = () => {
 		return `${moment(startTime, 'HH:mm').format('HH:mm')} a ${moment(endTime, 'HH:mm').add(30, 'minutes').format('HH:mm')}`;
 	  };
 	  
-	  const renderTimeRanges = (horarios) => {
+	const renderTimeRanges = (horarios) => {
 		let timeRanges = [];
-	  
+		
 		for (let i = 0; i < horarios.length; i++) {
-		  let startTime = horarios[i];
-		  let endTime = horarios[i];
-	  
-		  while (i + 1 < horarios.length && moment(horarios[i + 1], 'HH:mm').diff(moment(horarios[i], 'HH:mm'), 'minutes') === 30) {
-			endTime = horarios[i + 1];
-			i++;
-		  }
-	  
-		  timeRanges.push(formatTimeRange(startTime, endTime));
+			let startTime = horarios[i];
+			let endTime = horarios[i];
+		
+			while (i + 1 < horarios.length && moment(horarios[i + 1], 'HH:mm').diff(moment(horarios[i], 'HH:mm'), 'minutes') === 30) {
+				endTime = horarios[i + 1];
+				i++;
+			}
+		
+			timeRanges.push(formatTimeRange(startTime, endTime));
 		}
-	  
+		
 		return timeRanges.join(', y de ');
-	  };
+	};
 
     // get all users function
     const getContracts = async () => {

@@ -25,6 +25,7 @@ const LocalStrategy = require('passport-local');
 const flash = require('express-flash');
 const session = require('express-session');
 const { lt_url } = require('./new-dev-localtunnel');
+const { render } = require('ejs');
 
 const MERCADOPAGO_TEST_TOKEN = process.env.MERCADOPAGO_TEST_TOKEN; 
 const port = process.env.PORT; 
@@ -63,7 +64,7 @@ const transporter = nodemailer.createTransport({
     auth: {
       // TODO: replace `user` and `pass` values from <https://forwardemail.net>
       user: 'cuidadoresproject@gmail.com',
-      pass: 'reloco1234'
+      pass: 'taudydogztjaaxsl'
     }
 });
 
@@ -709,19 +710,47 @@ app.put("/contract/:id", async(req, res) => {
 app.post("/contract_creation_email", async (req, res) => {
     console.log('------------------------------- SENDING CONTRACT CREATION EMAIL')
     
+    const { cuidador, cliente, contract, horarios } = req.body;
+
+    console.log('cuidador: ', cuidador);
+    console.log('cliente: ', cliente);
+    console.log('contract: ', contract);
+    console.log('horarios: ', horarios);
+
+    email_html = `
+        <div style="text-align: center;">
+            <h3>Hola! Tienes un nuevo contrato para el día ${contract.date}.</h1>
+        </div>
+        <p><strong>Número de contrato: </strong>${contract.id} </p>
+        <p><strong>Email del cuidador: </strong>${cuidador.mail} </p>
+        <p><strong>Nombre del cuidador: </strong>${cuidador.name} ${cuidador.last_name}</p>
+        <p><strong>Dni del cuidador: </strong>${cuidador.dni}</p>
+        <p><strong>Email del cliente: </strong>${cliente.mail} </p>
+        <p><strong>Nombre del cliente: </strong>${cliente.name} ${cliente.last_name}</p>
+        <p><strong>Dni del cliente: </strong>${cliente.dni}</p>
+        <p><strong>Horarios: </strong>${horarios}</p>
+        <p><strong>Método de pago: </strong>${contract.payment_method_id === 1 ? 'Mercado Pago' : 'Efectivo'}</p>
+        <p><strong>Monto total del contrato: </strong>$${contract.amount}</p>
+    `;
+
     const mailOptions = {
         from: 'cuidadoresproject@gmail.com', // Replace with your email address
-        to: 'roman_budde@hotmail.com', // Replace with the recipient's email address
-        subject: 'Cuidadores - Testing Email', // Replace with the email subject
-        html: '<p>Hello, this is a test email from React.js!</p>', // Replace with your HTML content
+        to: `${cuidador.mail}, ${cliente.mail}, roman_budde@hotmail.com`, // Replace with the recipient's email address
+        subject: `Cuidadores - Nuevo contrato día ${contract.date}, Nº ${contract.id}`, // Replace with the email subject
+        html: email_html, // Replace with your HTML content
     };
-    transporter.sendMail(mailOptions, (error, info) => {
+    const email_sent = await transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
             console.log('Error sending email:', error);
         } else {
             console.log('Email sent:', info.response);
         }
     });
+
+    console.log('Email sent: ', email_sent);
+    return res.json({
+        "email_sent": email_sent
+    })
 });
 
 // listening for mercadopagos webhook

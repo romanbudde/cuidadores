@@ -22,6 +22,16 @@ const User = ({ user, users, setUsers, displayedUsers, setDisplayedUsers, disabl
                 className={`${user.enabled ? 'bg-gradient-to-r from-green-500 to-green-400' 
                 : 'bg-gradient-to-r from-red-500 to-red-400'} p-5 m-5 rounded-md flex flex-col items-start text-white font-medium relative`}
             >
+                {user.type === 0 && (
+                    <p className='text-center w-full font-bold mb-3'>Cliente</p>
+                )}
+                {user.type === 1 && (
+                    <p className='text-center w-full font-bold mb-3'>Cuidador</p>
+                )}
+                {user.type === 2 && (
+                    <p className='text-center w-full font-bold mb-3'>Admin</p>
+                )}
+                
                 <div className='flex flex-row w-full justify-between'>
                     <div className={`${user.enabled ? 'bg-green-700 ' : 'bg-red-700'} flex flex-row items-center gap-3 p-2 mb-3 rounded-lg shadow-md`}>
                         { user.enabled ? (

@@ -8,19 +8,23 @@ import Cookies from 'universal-cookie';
 import { useContext } from 'react';
 import { AuthContext } from './AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronLeft, faHouse, faCheck, faMoneyBillWave, faHandshake } from '@fortawesome/free-solid-svg-icons';
+import { faChevronLeft, faHouse, faCheck, faMoneyBillWave, faHandshake, faFilePdf } from '@fortawesome/free-solid-svg-icons';
 import ClientBottomBar from './ClientBottomBar';
 import ReviewModal from './ReviewModal';
+import { PDFDownloadLink } from "@react-pdf/renderer";
 import Paginate from './Paginate';
 import moment from 'moment';
 import Select from 'react-select';
 
+import ComprobanteContrato from './ComprobanteContrato';
 import mercado_pago_icon from "../images/mercado-pago-icon.svg";
 import cash_bill_icon from "../images/cash-bill.svg";
 
 const MisContratos = () => {
 	const { isAuthenticated, userId } = useContext(AuthContext);
     const [contracts, setContracts] = useState([]);
+    const [cuidadores, setCuidadores] = useState([]);
+    const [clientes, setClientes] = useState([]);
     const [displayedContracts, setDisplayedContracts] = useState([]);
     const [dateFilter, setDateFilter] = useState('newest');
     const [statusFilter, setStatusFilter] = useState('all');
@@ -285,6 +289,28 @@ const MisContratos = () => {
 		return sortedArray;
 	}
 
+	const formatTimeRange = (startTime, endTime) => {
+		return `${moment(startTime, 'HH:mm').format('HH:mm')} a ${moment(endTime, 'HH:mm').add(30, 'minutes').format('HH:mm')}`;
+	  };
+	  
+	  const renderTimeRanges = (horarios) => {
+		let timeRanges = [];
+	  
+		for (let i = 0; i < horarios.length; i++) {
+		  let startTime = horarios[i];
+		  let endTime = horarios[i];
+	  
+		  while (i + 1 < horarios.length && moment(horarios[i + 1], 'HH:mm').diff(moment(horarios[i], 'HH:mm'), 'minutes') === 30) {
+			endTime = horarios[i + 1];
+			i++;
+		  }
+	  
+		  timeRanges.push(formatTimeRange(startTime, endTime));
+		}
+	  
+		return timeRanges.join(', y de ');
+	  };
+
     // get all users function
     const getContracts = async () => {
         try {
@@ -321,6 +347,38 @@ const MisContratos = () => {
 	}
 
 	// get all reviews
+    const getCuidadores = async () => {
+        try {
+            const response = await fetch((process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER : `http://localhost:5000/`) + `fetch-cuidadores`);
+            const jsonData = await response.json();
+
+			console.log('---- inside getCuidadores ----');
+			console.log(jsonData);
+
+			setCuidadores(jsonData);
+        } catch (error) {
+            console.error(error.message);
+        }
+    };
+
+	// get all reviews
+    const getClientes = async () => {
+        try {
+            const response = await fetch((process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER : `http://localhost:5000/`) + `fetch-clientes`);
+            const jsonData = await response.json();
+
+			console.log('---- inside getClientes ----');
+			console.log(jsonData);
+
+			setClientes(jsonData);
+        } catch (error) {
+            console.error(error.message);
+        }
+    };
+
+	console.log('cuidadores: ', cuidadores)
+
+	// get all reviews
     const getReviews = async () => {
         try {
             const response = await fetch((process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER : `http://localhost:5000/`) + `caregiver_review?customer_id=${userId}`);
@@ -340,6 +398,8 @@ const MisContratos = () => {
     // when page loads, get all Users
     useEffect(() => {
         getContracts();
+        getCuidadores();
+        getClientes();
         getUserData();
 		getReviews();
     }, []);
@@ -413,7 +473,7 @@ const MisContratos = () => {
 									className={`${contract.status === 'active' ? 'bg-gradient-to-r from-yellow-400 to-yellow-300' 
 									: contract.status === 'completed' ? 'bg-gradient-to-r from-green-500 to-green-400'
 									: contract.status === 'cancelled' ? 'bg-red-500'
-									: 'bg-gray-700'} p-5 m-5 rounded-md flex flex-col items-start text-white font-medium`}
+									: 'bg-gray-700'} p-5 m-5 rounded-md flex flex-col items-start text-white font-medium relative`}
 									key={contract.id}
 								>
 									{contract.status === 'completed' && user.type === 0 && !reviews.some((review) => review.contract_id === contract.id) &&(
@@ -439,7 +499,9 @@ const MisContratos = () => {
 											Reseña enviada
 										</p>
 									)}
+									<p className='font-bold'>Nº: {contract.id}</p>
 									<p>Fecha: {contract.date}</p>
+									<p>Cuidador: {cuidadores.find(cuidador => cuidador.id === contract.caregiver_id)?.name}</p>
 									<p>Estado del contrato: {contract.status === 'active' ? 'Activo' 
 									: contract.status === 'completed' ? 'Completado'
 									: contract.status === 'cancelled' ? 'Cancelado'
@@ -467,7 +529,46 @@ const MisContratos = () => {
 									)}
 									</div>
 									<p>Total: ${contract.amount}</p>
-									<p>Horarios: {contract.horarios.join(', ')}</p>
+									{/* { contract.horarios && contract.horarios.length === 1 && (
+										<>
+											<p>Horario inicio: {contract.horarios[0]}</p>
+											<p>Horario fin: {moment(contract.horarios[0], 'HH:mm').add(30, 'minutes').format('HH:mm')}</p>
+										</>
+									)
+									} */}
+									<p>Horarios: {renderTimeRanges(contract.horarios)}.</p>
+									{/* <p>Horario inicio: {contract.horarios.join(', ')}</p>
+									<p>Horario fin: {contract.horarios.join(', ')}</p> */}
+									{ contract.payment_status === 'approved' && (
+										// <button className='ml-auto flex flex-row gap-2 items-center p-1.5 bg-gray-500 rounded-sm'>
+										// 	<FontAwesomeIcon className='text-gray-200 text-2xl' icon={faFilePdf} />
+										// 	Comprobante pdf
+										// </button>
+										<PDFDownloadLink
+											document={
+												<ComprobanteContrato 
+													contract={contract}
+													cuidador={cuidadores.find(cuidador => cuidador.id === contract.caregiver_id)}
+													cliente={clientes.find(cliente => cliente.id === contract.customer_id)}
+													renderTimeRanges={renderTimeRanges}
+												/>
+											}
+											fileName={`Comprobante_contrato_${contract.id}`}
+										>
+											{({loading}) => 
+												loading ? (
+													<button className='ml-auto mt-3 flex flex-row gap-2 items-center p-1.5 bg-gray-500 rounded-sm'>
+														Cargando archivo...
+													</button>
+												) : (
+													<button className='ml-auto mt-3 flex flex-row gap-2 items-center p-1.5 bg-gray-500 rounded-sm'>
+														<FontAwesomeIcon className='text-gray-200 text-2xl' icon={faFilePdf} />
+														Comprobante pdf
+													</button>
+												)
+											}
+										</PDFDownloadLink>
+									)}
 
 									{/* validar que el ultimo horario del contrato sea mayor a la hora actual (usar moment js) */}
 									{

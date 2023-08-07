@@ -33,13 +33,21 @@ const Register = () => {
 	  .min(2, 'El apellido es demasiado corto!')
 	  .max(50, 'El apellido es demasiado largo!')
 	  .required('Campo requerido!'),
+	dni: Yup.string()
+	  .min(6, 'El DNI es demasiado corto!')
+	  .max(8, 'El DNI es demasiado largo!')
+	  .required('Campo requerido!'),
+	telefono: Yup.string()
+	  .min(6, 'El telefono es demasiado corto!')
+	  .max(15, 'El telefono es demasiado largo!')
+	  .required('Campo requerido!'),
 	password: Yup.string()
 	  .min(8, 'La contraseña debe ser mayor a 8 caracteres de largo!')
 	  .max(50, 'La contraseña es demasiado larga')
 	  .matches(/^[a-zA-Z0-9]{8,}$/, 'La contraseña tiene que contener solamente números y/o letras!.')
 	  .required('Campo requerido!'),
-	  email: Yup.string().email('Invalid email').required('Campo requerido!'),
-	  address: Yup.string()
+	email: Yup.string().email('Invalid email').required('Campo requerido!'),
+	address: Yup.string()
 	  .min(4, 'Dirección demasiado corta!')
 	  .max(100, 'La dirección es demasiado larga')
 	  .matches(/^.*\b\w+\b.*\d.*,.*/, 'La dirección no posee altura de la calle.')
@@ -124,6 +132,8 @@ const Register = () => {
       initialValues={{
         firstname: '',
         lastname: '',
+        dni: '',
+		telefono: '',
         password: '',
         address: '',
         email: '',
@@ -175,6 +185,26 @@ const Register = () => {
 						{errors.email && touched.email ? (
 							<div className='text-red-500 font-normal w-full text-sm text-left'>
 								{errors.email}
+							</div>
+						) : null}
+					<label className="block mr-auto text-sm font-medium text-gray-900 dark:text-white">
+						DNI
+					</label>
+					<Field name="dni" type="dni" placeholder="ej: 35937038" className={`${errors.dni && touched.dni ?  'bg-gray-50 border text-red-500 placeholder-red-500 text-sm focus:ring-red-500 focus:border-red-500 block w-full p-2.5 bg-transparent rounded-lg border-b border-solid border-opacity-100 focus:outline-none focus:outline-0 border-red-500' : 
+					'bg-gray-50 border text-gray-900 text-sm focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5 bg-transparent rounded-lg border-b border-gray-400 border-solid border-opacity-100 focus:outline-none focus:outline-0'}`}/>
+						{errors.dni && touched.dni ? (
+							<div className='text-red-500 font-normal w-full text-sm text-left'>
+								{errors.dni}
+							</div>
+						) : null}
+					<label className="block mr-auto text-sm font-medium text-gray-900 dark:text-white">
+						Teléfono
+					</label>
+					<Field name="telefono" type="telefono" placeholder="ej: 3413529375" className={`${errors.telefono && touched.telefono ?  'bg-gray-50 border text-red-500 placeholder-red-500 text-sm focus:ring-red-500 focus:border-red-500 block w-full p-2.5 bg-transparent rounded-lg border-b border-solid border-opacity-100 focus:outline-none focus:outline-0 border-red-500' : 
+					'bg-gray-50 border text-gray-900 text-sm focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5 bg-transparent rounded-lg border-b border-gray-400 border-solid border-opacity-100 focus:outline-none focus:outline-0'}`}/>
+						{errors.telefono && touched.telefono ? (
+							<div className='text-red-500 font-normal w-full text-sm text-left'>
+								{errors.telefono}
 							</div>
 						) : null}
 					<label className="block mr-auto text-sm font-medium text-gray-900 dark:text-white">

@@ -231,39 +231,46 @@ app.post('/register', async(req, res) => {
     try {
         console.log('---- backend (register route) ----');
         console.log(req.body);
-        const { email, password, firstname, lastname, address} = req.body;
+        const { email, password, dni, firstname, lastname, address} = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
         const created_at = new Date();
 
 
-        const userExists = await pool.query(
+        const userEmailExists = await pool.query(
             "SELECT * FROM users WHERE mail = $1",
             [email]
         );
 
-        if(userExists.rows > 0) {
+        const userDniExists = await pool.query(
+            "SELECT * FROM users WHERE dni = $1",
+            [dni]
+        );
+
+        if(userDniExists.rows > 0) {
+            return res.status(401).json({ error: 'Ups, el dni ya está registrado con otro usuario.' });
+        } 
+        if(userEmailExists.rows > 0) {
             return res.status(401).json({ error: 'Ups, el email ya está registrado con otro usuario.' });
         } 
-        else {
-            const newUser = await pool.query(
-                "INSERT INTO users (mail, password, type, created_at, enabled, name, last_name, address) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *", 
-                [email, hashedPassword, '0', created_at, 1, firstname, lastname, address]
-            );
-    
-            // Generate token
-            const payload = { userEmail: email };
-            const secretKey = process.env.JWT_SECRET;
+        
+        const newUser = await pool.query(
+            "INSERT INTO users (mail, password, dni, type, created_at, enabled, name, last_name, address) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *", 
+            [email, hashedPassword, dni, '0', created_at, 1, firstname, lastname, address]
+        );
 
-            const token = jwt.sign(payload, secretKey);
-            console.log("JWT Token: ", token);
+        // Generate token
+        const payload = { userEmail: email };
+        const secretKey = process.env.JWT_SECRET;
 
-            // send token back to the client
-            
-            res.json({
-                "user": newUser.rows[0],
-                "token": token
-            });
-        }
+        const token = jwt.sign(payload, secretKey);
+        console.log("JWT Token: ", token);
+
+        // send token back to the client
+        
+        res.json({
+            "user": newUser.rows[0],
+            "token": token
+        });
 
         // res.json(req.body);
         res.json(userExists.rows[0]);
@@ -279,6 +286,32 @@ app.get("/cuidadores", async(req, res) => {
     try {
         const allCuidadores = await pool.query("SELECT * from users")
         res.json(allCuidadores.rows);
+    }
+    catch (error) {
+        console.error(error.message);
+    }
+});
+
+// get all - cuidadores
+app.get("/fetch-cuidadores", async(req, res) => {
+    try {
+        console.log('------- at fetch-cuidadores endpoint')
+        const allCuidadores = await pool.query("SELECT * from users WHERE type = '1'")
+        console.log('------- CUIDADORES: ', allCuidadores)
+        res.json(allCuidadores.rows);
+    }
+    catch (error) {
+        console.error(error.message);
+    }
+});
+
+// get all - cuidadores
+app.get("/fetch-clientes", async(req, res) => {
+    try {
+        console.log('------- at fetch-clientes endpoint')
+        const allClientes = await pool.query("SELECT * from users WHERE type = '0'")
+        console.log('------- clientes: ', allClientes)
+        res.json(allClientes.rows);
     }
     catch (error) {
         console.error(error.message);

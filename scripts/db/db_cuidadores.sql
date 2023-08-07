@@ -68,7 +68,8 @@ CREATE TABLE public.caregiver_score (
     observation character varying(500) NOT NULL,
     score numeric NOT NULL,
     created_at timestamp without time zone NOT NULL,
-    modified_at timestamp without time zone
+    modified_at timestamp without time zone,
+    contract_id integer
 );
 
 
@@ -260,7 +261,9 @@ CREATE TABLE public.users (
     enabled boolean,
     hourly_rate double precision,
     average_review_score numeric,
-    address character varying
+    address character varying,
+    telefono character varying,
+    dni character varying
 );
 
 
@@ -352,46 +355,46 @@ COPY public.caregiver_availability (id, caregiver_id, dates) FROM stdin;
 -- Data for Name: caregiver_score; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.caregiver_score (id, caregiver_id, customer_id, observation, score, created_at, modified_at) FROM stdin;
-2	4	2	review dos	8.5	2023-04-10 12:34:56	2023-04-10 12:34:56
-1	6	2	el mejor servicio de todos	9.5	2023-04-10 12:34:56	2023-04-10 12:34:56
-3	30	2	review tres	7.5	2023-04-10 12:34:56	2023-04-10 12:34:56
-4	48	2	review cuatro	6.5	2023-04-10 12:34:56	2023-04-10 12:34:56
-6	6	2	el mejor servicio lejos	8	2023-05-11 15:25:13.574	\N
-7	6	2	el mejor servicio lejos	8	2023-05-11 15:25:55.713	\N
-38	6	2	el mejor servicio lejos	7	2023-05-11 16:02:27.524	\N
-39	6	2	el mejor servicio lejos	7	2023-05-11 16:03:34.143	\N
-40	6	2	el mejor servicio lejos	7	2023-05-11 16:03:57.092	\N
-41	6	2	el mejor servicio lejos	7	2023-05-11 16:05:17.656	\N
-42	6	2	el mejor servicio lejos	7	2023-05-11 16:07:12.944	\N
-43	6	2	el mejor servicio lejos	7	2023-05-11 16:11:17.508	\N
-44	6	2	el mejor servicio lejos	7	2023-05-11 16:11:35.94	\N
-45	6	2	el mejor servicio lejos	7	2023-05-11 16:11:59.325	\N
-46	6	2	el mejor servicio lejos	7	2023-05-11 16:12:56.677	\N
-47	6	2	el mejor servicio lejos	7	2023-05-11 16:13:11.435	\N
-48	6	2	el mejor servicio lejos	7	2023-05-11 16:13:26.826	\N
-49	6	2	el mejor servicio lejos	7	2023-05-11 16:13:45.884	\N
-50	6	2	el mejor servicio lejos	7	2023-05-11 16:14:21.988	\N
-51	6	2	el mejor servicio lejos	8	2023-05-11 16:14:37.817	\N
-52	6	2	el mejor servicio lejos	8	2023-05-11 16:15:28.664	\N
-53	6	2	el mejor servicio lejos	8	2023-05-11 16:17:43.511	\N
-54	49	2	el mejor servicio lejos	8	2023-05-11 16:18:38.832	\N
-55	49	2	el mejor servicio lejos	7	2023-05-11 16:18:43.847	\N
-56	49	2	el mejor servicio lejos	7	2023-05-11 16:19:15.397	\N
-57	49	2	el mejor servicio lejos	6	2023-05-11 16:19:20.047	\N
-58	49	2	el mejor servicio lejos	10	2023-05-11 16:19:30.053	\N
-59	49	2	el mejor servicio lejos	10	2023-05-11 16:19:30.728	\N
-60	49	2	el mejor servicio lejos	10	2023-05-11 16:19:33.368	\N
-61	49	2	el mejor servicio lejos	10	2023-05-11 16:19:35.287	\N
-62	49	2	el mejor servicio lejos	10	2023-05-11 16:20:31.156	\N
-63	49	2	el mejor servicio lejos	10	2023-05-11 16:34:24.556	\N
-64	49	2	el mejor servicio lejos	10	2023-05-11 16:35:25.347	\N
-65	48	2	el mejor servicio lejos	10	2023-05-11 16:40:56.726	\N
-66	48	2	el mejor servicio lejos	10	2023-05-11 16:43:23.537	\N
-67	48	2	el mejor servicio lejos	10	2023-05-11 16:43:35.809	\N
-68	48	2	el mejor servicio lejos	10	2023-05-11 16:43:48.122	\N
-69	48	2	el mejor servicio lejos	10	2023-05-11 16:44:59.035	\N
-70	4	2	el mejor servicio lejos	10	2023-05-11 16:49:46.464	\N
+COPY public.caregiver_score (id, caregiver_id, customer_id, observation, score, created_at, modified_at, contract_id) FROM stdin;
+2	4	2	review dos	8.5	2023-04-10 12:34:56	2023-04-10 12:34:56	\N
+1	6	2	el mejor servicio de todos	9.5	2023-04-10 12:34:56	2023-04-10 12:34:56	\N
+3	30	2	review tres	7.5	2023-04-10 12:34:56	2023-04-10 12:34:56	\N
+4	48	2	review cuatro	6.5	2023-04-10 12:34:56	2023-04-10 12:34:56	\N
+6	6	2	el mejor servicio lejos	8	2023-05-11 15:25:13.574	\N	\N
+7	6	2	el mejor servicio lejos	8	2023-05-11 15:25:55.713	\N	\N
+38	6	2	el mejor servicio lejos	7	2023-05-11 16:02:27.524	\N	\N
+39	6	2	el mejor servicio lejos	7	2023-05-11 16:03:34.143	\N	\N
+40	6	2	el mejor servicio lejos	7	2023-05-11 16:03:57.092	\N	\N
+41	6	2	el mejor servicio lejos	7	2023-05-11 16:05:17.656	\N	\N
+42	6	2	el mejor servicio lejos	7	2023-05-11 16:07:12.944	\N	\N
+43	6	2	el mejor servicio lejos	7	2023-05-11 16:11:17.508	\N	\N
+44	6	2	el mejor servicio lejos	7	2023-05-11 16:11:35.94	\N	\N
+45	6	2	el mejor servicio lejos	7	2023-05-11 16:11:59.325	\N	\N
+46	6	2	el mejor servicio lejos	7	2023-05-11 16:12:56.677	\N	\N
+47	6	2	el mejor servicio lejos	7	2023-05-11 16:13:11.435	\N	\N
+48	6	2	el mejor servicio lejos	7	2023-05-11 16:13:26.826	\N	\N
+49	6	2	el mejor servicio lejos	7	2023-05-11 16:13:45.884	\N	\N
+50	6	2	el mejor servicio lejos	7	2023-05-11 16:14:21.988	\N	\N
+51	6	2	el mejor servicio lejos	8	2023-05-11 16:14:37.817	\N	\N
+52	6	2	el mejor servicio lejos	8	2023-05-11 16:15:28.664	\N	\N
+53	6	2	el mejor servicio lejos	8	2023-05-11 16:17:43.511	\N	\N
+54	49	2	el mejor servicio lejos	8	2023-05-11 16:18:38.832	\N	\N
+55	49	2	el mejor servicio lejos	7	2023-05-11 16:18:43.847	\N	\N
+56	49	2	el mejor servicio lejos	7	2023-05-11 16:19:15.397	\N	\N
+57	49	2	el mejor servicio lejos	6	2023-05-11 16:19:20.047	\N	\N
+58	49	2	el mejor servicio lejos	10	2023-05-11 16:19:30.053	\N	\N
+59	49	2	el mejor servicio lejos	10	2023-05-11 16:19:30.728	\N	\N
+60	49	2	el mejor servicio lejos	10	2023-05-11 16:19:33.368	\N	\N
+61	49	2	el mejor servicio lejos	10	2023-05-11 16:19:35.287	\N	\N
+62	49	2	el mejor servicio lejos	10	2023-05-11 16:20:31.156	\N	\N
+63	49	2	el mejor servicio lejos	10	2023-05-11 16:34:24.556	\N	\N
+64	49	2	el mejor servicio lejos	10	2023-05-11 16:35:25.347	\N	\N
+65	48	2	el mejor servicio lejos	10	2023-05-11 16:40:56.726	\N	\N
+66	48	2	el mejor servicio lejos	10	2023-05-11 16:43:23.537	\N	\N
+67	48	2	el mejor servicio lejos	10	2023-05-11 16:43:35.809	\N	\N
+68	48	2	el mejor servicio lejos	10	2023-05-11 16:43:48.122	\N	\N
+69	48	2	el mejor servicio lejos	10	2023-05-11 16:44:59.035	\N	\N
+70	4	2	el mejor servicio lejos	10	2023-05-11 16:49:46.464	\N	\N
 \.
 
 
@@ -431,7 +434,7 @@ COPY public.contract (id, status, date, customer_id, created_at, modified_at, am
 31	active	10/07/2023	50	2023-07-10 12:03:35.378	2023-07-10 12:03:35.378	55	51	["18:00"]	1	approved
 32	pending	10/07/2023	50	2023-07-10 12:07:28.77	2023-07-10 12:07:28.77	55	51	["18:30"]	1	pending
 33	inactive	10/07/2023	50	2023-07-10 12:08:49.656	2023-07-10 12:08:49.656	55	51	["18:30"]	1	pending
-38	completed	05/08/2023	50	2023-08-05 10:34:40.544	2023-08-05 10:34:40.544	110	51	["10:00"]	1	approved
+38	completed	05/08/2023	50	2023-08-05 10:34:40.544	2023-08-05 10:34:40.544	110	51	["10:00", "15:00", "15:30", "19:00", "19:30", "20:00"]	1	approved
 \.
 
 
@@ -469,23 +472,23 @@ COPY public.user_type (user_type_number, user_type, id) FROM stdin;
 -- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.users (id, description, name, last_name, password, mail, type, created_at, modified_at, enabled, hourly_rate, average_review_score, address) FROM stdin;
-755	descriptionnnn	firstname	asdasdsda	$2b$10$FKEeFnI1rC6cwkaLD2ncJO1CvEX/58WKfUqNIfrW5fxhiOWE4h3NO	cuidador755	1	2023-06-03 12:53:35.977	2023-06-24 18:14:50.48	t	\N	\N	Avenida 9 de Julio 5, Buenos Aires, Argentina
-31	qweeqw	123	123	\N	adsasd	0	2023-04-09 18:04:41.672	2023-05-11 15:47:46.231	t	\N	\N	\N
-1	desccc	111111111111	111111111	\N	11111111111	1	2023-04-09 18:04:41.672	2023-05-11 15:47:46.231	f	45	\N	\N
-53	\N	name	lastname	$2b$10$kkKaP6YOO.P/xgn1mpUFjOXf/IXXKnZm4FuDqVC237vQCGW5R.DGW	newwwuser@hotmail.com	0	2023-06-18 23:38:16.92	\N	t	\N	\N	direcc
-48	newwdescccc	updatedAgain	lastname	$2a$10$N0IU4mQeWMBBx0JacWifdOgSXsiKg3AejjuaWQ4RIJ9CUbsJTPOIi	asd	1	2023-04-09 18:04:41.672	2023-06-02 14:30:02.391	t	21	9.42	\N
-6	The description	Josh	Peck	$2y$10$iKJBVKYUMF6u967o8KWBae8rcBYfyugYgO38WeBWSdXXQV56PQ6Z2	email@hotmail.com	1	2023-04-09 18:04:41.672	2023-05-11 15:58:45.628	t	75	7.55	\N
-2	2222222	22222	222222	\N	222222	0	2023-04-09 18:04:41.672	2023-05-11 15:47:46.231	t	\N	\N	\N
-4	1111111111	11111111	111111111111	\N	111111111	1	2023-04-09 18:04:41.672	2023-05-11 16:49:46.464	t	27	9.25	\N
-998	descriptionnnn	998firstname	asdasdsda	$2b$10$FKEeFnI1rC6cwkaLD2ncJO1CvEX/58WKfUqNIfrW5fxhiOWE4h3NO	client998	0	2023-06-03 12:53:35.977	2023-06-24 18:14:50.48	t	\N	\N	Avenida 9 de Julio 5, Buenos Aires, Argentina
-52	descc	nombreUpdated20.03	apellido	$2b$10$iQHsqBx9LB7xNtmAxM5tmOBrMAzFC5iJFbErpTwPLldwAGL5XV1Hy	newuserrr@hotmail.com	0	2023-06-18 23:37:21.661	2023-07-01 20:03:56.631	t	\N	\N	\N
-30	dasdsadsa	nombre20.04	wqwqrweqr	\N	wqeeqw	1	2023-04-09 18:04:41.672	2023-07-01 20:04:16.729	t	\N	\N	\N
-54	admin_descriptionnnn	admin_firstnamee	admin_lastnameat20.15	$2b$10$FKEeFnI1rC6cwkaLD2ncJO1CvEX/58WKfUqNIfrW5fxhiOWE4h3NO	admin	2	2023-06-03 12:53:35.977	2023-07-01 20:15:12.732	t	\N	\N	\N
-55	asdasd	firstname	lastname	$2b$10$P1czp6ry81PQinRtjjCQoOoaUWGIy1BV3bSlkisZ4rAcDwm1M0B26	testing_create	1	2023-07-01 20:24:51.472	\N	t	\N	\N	\N
-56	asdasddesc	firstname	lastname	$2b$10$aOBLXMe1eY/B.uzSLvT1wOrHtc8lWz9/e2iC9XBbJhjUPB/0DlK3e	testing_create2	0	2023-07-01 20:25:56.981	\N	t	\N	\N	\N
-50	descriptionnnn	50updatedat20.05	asdasdsda	$2b$10$FKEeFnI1rC6cwkaLD2ncJO1CvEX/58WKfUqNIfrW5fxhiOWE4h3NO	client	0	2023-06-03 12:53:35.977	2023-07-01 20:09:01.517	t	\N	\N	\N
-51	descccccc	firstname	lastname	$2b$10$1SBtjnQPPuCXZIyuUErEMOctccTOXxl0lQzfUuBe5XYlTkATfPMpG	cuidador	1	2023-04-09 18:04:41.672	\N	t	55	9.51	\N
+COPY public.users (id, description, name, last_name, password, mail, type, created_at, modified_at, enabled, hourly_rate, average_review_score, address, telefono, dni) FROM stdin;
+755	descriptionnnn	firstname	asdasdsda	$2b$10$FKEeFnI1rC6cwkaLD2ncJO1CvEX/58WKfUqNIfrW5fxhiOWE4h3NO	cuidador755	1	2023-06-03 12:53:35.977	2023-06-24 18:14:50.48	t	\N	\N	Avenida 9 de Julio 5, Buenos Aires, Argentina	\N	\N
+31	qweeqw	123	123	\N	adsasd	0	2023-04-09 18:04:41.672	2023-05-11 15:47:46.231	t	\N	\N	\N	\N	\N
+1	desccc	111111111111	111111111	\N	11111111111	1	2023-04-09 18:04:41.672	2023-05-11 15:47:46.231	f	45	\N	\N	\N	\N
+53	\N	name	lastname	$2b$10$kkKaP6YOO.P/xgn1mpUFjOXf/IXXKnZm4FuDqVC237vQCGW5R.DGW	newwwuser@hotmail.com	0	2023-06-18 23:38:16.92	\N	t	\N	\N	direcc	\N	\N
+48	newwdescccc	updatedAgain	lastname	$2a$10$N0IU4mQeWMBBx0JacWifdOgSXsiKg3AejjuaWQ4RIJ9CUbsJTPOIi	asd	1	2023-04-09 18:04:41.672	2023-06-02 14:30:02.391	t	21	9.42	\N	\N	\N
+6	The description	Josh	Peck	$2y$10$iKJBVKYUMF6u967o8KWBae8rcBYfyugYgO38WeBWSdXXQV56PQ6Z2	email@hotmail.com	1	2023-04-09 18:04:41.672	2023-05-11 15:58:45.628	t	75	7.55	\N	\N	\N
+2	2222222	22222	222222	\N	222222	0	2023-04-09 18:04:41.672	2023-05-11 15:47:46.231	t	\N	\N	\N	\N	\N
+4	1111111111	11111111	111111111111	\N	111111111	1	2023-04-09 18:04:41.672	2023-05-11 16:49:46.464	t	27	9.25	\N	\N	\N
+998	descriptionnnn	998firstname	asdasdsda	$2b$10$FKEeFnI1rC6cwkaLD2ncJO1CvEX/58WKfUqNIfrW5fxhiOWE4h3NO	client998	0	2023-06-03 12:53:35.977	2023-06-24 18:14:50.48	t	\N	\N	Avenida 9 de Julio 5, Buenos Aires, Argentina	\N	\N
+52	descc	nombreUpdated20.03	apellido	$2b$10$iQHsqBx9LB7xNtmAxM5tmOBrMAzFC5iJFbErpTwPLldwAGL5XV1Hy	newuserrr@hotmail.com	0	2023-06-18 23:37:21.661	2023-07-01 20:03:56.631	t	\N	\N	\N	\N	\N
+30	dasdsadsa	nombre20.04	wqwqrweqr	\N	wqeeqw	1	2023-04-09 18:04:41.672	2023-07-01 20:04:16.729	t	\N	\N	\N	\N	\N
+54	admin_descriptionnnn	admin_firstnamee	admin_lastnameat20.15	$2b$10$FKEeFnI1rC6cwkaLD2ncJO1CvEX/58WKfUqNIfrW5fxhiOWE4h3NO	admin	2	2023-06-03 12:53:35.977	2023-07-01 20:15:12.732	t	\N	\N	\N	\N	\N
+55	asdasd	firstname	lastname	$2b$10$P1czp6ry81PQinRtjjCQoOoaUWGIy1BV3bSlkisZ4rAcDwm1M0B26	testing_create	1	2023-07-01 20:24:51.472	\N	t	\N	\N	\N	\N	\N
+56	asdasddesc	firstname	lastname	$2b$10$aOBLXMe1eY/B.uzSLvT1wOrHtc8lWz9/e2iC9XBbJhjUPB/0DlK3e	testing_create2	0	2023-07-01 20:25:56.981	\N	t	\N	\N	\N	\N	\N
+50	descriptionnnn	50updatedat20.05	asdasdsda	$2b$10$FKEeFnI1rC6cwkaLD2ncJO1CvEX/58WKfUqNIfrW5fxhiOWE4h3NO	client	0	2023-06-03 12:53:35.977	2023-07-01 20:09:01.517	t	\N	\N	\N	\N	\N
+51	descccccc	firstname	lastname	$2b$10$1SBtjnQPPuCXZIyuUErEMOctccTOXxl0lQzfUuBe5XYlTkATfPMpG	cuidador	1	2023-04-09 18:04:41.672	\N	t	55	9.51	\N	\N	\N
 \.
 
 

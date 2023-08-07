@@ -7,7 +7,7 @@ import { useContext } from 'react';
 import { AuthContext } from './AuthContext';
 import UserEditData from './UserEditData';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronLeft, faEnvelope, faComment, faPenToSquare, faMapPin, faCoins, faStar} from '@fortawesome/free-solid-svg-icons';
+import { faChevronLeft, faEnvelope, faComment, faPenToSquare, faMapPin, faCoins, faStar, faRightFromBracket} from '@fortawesome/free-solid-svg-icons';
 import ClientBottomBar from './ClientBottomBar';
 import CuidadorBottomBar from './CuidadorBottomBar';
 
@@ -112,7 +112,7 @@ const Account = () => {
 							userTypes={userTypes}
 							onClose={handleClose}
 						/>
-						<div className='flex flex-col text-left space-y-4'>
+						<div className='w-full ml-5 flex flex-col text-left space-y-4'>
 						<div className='flex flex-row gap-3 items-center'>
 								<FontAwesomeIcon className='text-2xl' icon={faEnvelope} />
 								<p>Tu email actual es {user.mail}</p>
@@ -137,6 +137,13 @@ const Account = () => {
 									</div>
 								</>
 							)}
+							<div
+								className='flex flex-row gap-4 pt-12 items-center'
+								onClick={logout}
+							>
+								<FontAwesomeIcon className='text-2xl rotate-180' icon={faRightFromBracket} />
+								<p className='text-gray-700 font-medium text-lg'>Cerrar sesión</p>
+							</div>
 						</div>
 					</div>
 				</div>

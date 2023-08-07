@@ -500,17 +500,38 @@ const MisContratos = () => {
 										</p>
 									)}
 									<p className='font-bold'>Nº: {contract.id}</p>
-									<p>Fecha: {contract.date}</p>
-									<p>Cuidador: {cuidadores.find(cuidador => cuidador.id === contract.caregiver_id)?.name}</p>
-									<p>Estado del contrato: {contract.status === 'active' ? 'Activo' 
-									: contract.status === 'completed' ? 'Completado'
-									: contract.status === 'cancelled' ? 'Cancelado'
-									: contract.status === 'inactive' ? 'Inactivo'
-									: ''}</p>
-									<p>Estado del pago: {contract.payment_status === 'approved' ? 'Pagado' 
+									<p className='flex flex-row gap-2'><p className='font-bold'>Fecha:</p> {contract.date}</p>
+									<p className='flex flex-row gap-2'>
+										<p className='font-bold'>Nombre del cuidador:</p>
+										{cuidadores.find(cuidador => cuidador.id === contract.caregiver_id)?.name}
+									</p>
+									<p className='flex flex-row gap-2'>
+										<p className='font-bold'>Email del cuidador:</p> 
+										{cuidadores.find(cuidador => cuidador.id === contract.caregiver_id)?.mail}
+									</p>
+									<p className='flex flex-row gap-2'>
+										<p className='font-bold'>Nombre del cliente:</p> 
+										{clientes.find(cliente => cliente.id === contract.customer_id)?.name}
+									</p>
+									<p className='flex flex-row gap-2'>
+										<p className='font-bold'>Email del cliente:</p>
+										{clientes.find(cliente => cliente.id === contract.customer_id)?.mail}
+									</p>
+									<p className='flex flex-row gap-2'>
+										<p className='font-bold'>Estado del contrato:</p>
+										{contract.status === 'active' ? 'Activo' 
+										: contract.status === 'completed' ? 'Completado'
+										: contract.status === 'cancelled' ? 'Cancelado'
+										: contract.status === 'inactive' ? 'Inactivo'
+										: ''}
+									</p>
+									<p className='flex flex-row gap-2'>
+										<p className='font-bold'>Estado del pago:</p>
+									{contract.payment_status === 'approved' ? 'Pagado' 
 									: contract.payment_status === 'pending' ? 'Pendiente'
 									: contract.payment_status === 'cancelled' ? 'Cancelado'
-									: ''}</p>
+									: ''}
+									</p>
 									<div className=''>
 										{/* <p>Forma de pago:</p> */}
 									{ contract.payment_method_id === 1 && (
@@ -528,7 +549,10 @@ const MisContratos = () => {
 										</div>
 									)}
 									</div>
-									<p>Total: ${contract.amount}</p>
+									<p className='flex flex-row gap-2'>
+										<p className='font-bold'>Total:</p>
+										${contract.amount}
+									</p>
 									{/* { contract.horarios && contract.horarios.length === 1 && (
 										<>
 											<p>Horario inicio: {contract.horarios[0]}</p>
@@ -536,7 +560,10 @@ const MisContratos = () => {
 										</>
 									)
 									} */}
-									<p>Horarios: {renderTimeRanges(contract.horarios)}.</p>
+									<p className='flex flex-row gap-2'>
+										<p className='font-bold'>Horarios:</p>
+										{renderTimeRanges(contract.horarios)}.
+									</p>
 									{/* <p>Horario inicio: {contract.horarios.join(', ')}</p>
 									<p>Horario fin: {contract.horarios.join(', ')}</p> */}
 									{ contract.payment_status === 'approved' && (

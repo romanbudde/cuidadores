@@ -41,7 +41,9 @@ const ComprobanteContrato = ({ contract, cuidador, cliente, renderTimeRanges }) 
 					</Text>
 					<Text>Nombre del cuidador: {cuidador.name}</Text>
 					<Text>Email del cuidador: {cuidador.mail}</Text>
+					<Text>Dni del cuidador: {cuidador.dni}</Text>
 					<Text>Nombre del cliente: {cliente.name}</Text>
+					<Text>Dni del cliente: {cliente.dni}</Text>
 					<Text>Email del cliente: {cliente.mail}</Text>
 					<Text>Fecha del contrato: {contract.date}</Text>
 					<Text>Horarios: {renderTimeRanges(contract.horarios)}.</Text>

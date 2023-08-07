@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 const mercadopago = require('mercadopago');
 const ngrok = require('ngrok');
+const nodemailer = require("nodemailer");
 
 // const { ngrok_url } = require('./new-dev-im-testing.js')
 const ngrok_url = process.env.NGROK_URL;
@@ -55,6 +56,16 @@ app.use(router);
 app.use(cors({
     origin: "*"
 }))
+
+const transporter = nodemailer.createTransport({
+    service: "gmail",
+    host: 'smtp.gmail.com',
+    auth: {
+      // TODO: replace `user` and `pass` values from <https://forwardemail.net>
+      user: 'cuidadoresproject@gmail.com',
+      pass: 'reloco1234'
+    }
+});
 
 passport.use(new LocalStrategy(
 	{usernameField:"email", passwordField:"password"},
@@ -693,6 +704,24 @@ app.put("/contract/:id", async(req, res) => {
     catch (error) {
         console.error(error.message);
     }
+});
+
+app.post("/contract_creation_email", async (req, res) => {
+    console.log('------------------------------- SENDING CONTRACT CREATION EMAIL')
+    
+    const mailOptions = {
+        from: 'cuidadoresproject@gmail.com', // Replace with your email address
+        to: 'roman_budde@hotmail.com', // Replace with the recipient's email address
+        subject: 'Cuidadores - Testing Email', // Replace with the email subject
+        html: '<p>Hello, this is a test email from React.js!</p>', // Replace with your HTML content
+    };
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.log('Error sending email:', error);
+        } else {
+            console.log('Email sent:', info.response);
+        }
+    });
 });
 
 // listening for mercadopagos webhook

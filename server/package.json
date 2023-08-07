@@ -24,6 +24,7 @@
     "localtunnel": "^2.0.2",
     "mercadopago": "^1.5.16",
     "ngrok": "^5.0.0-beta.2",
+    "nodemailer": "^6.9.4",
     "nodemon": "^2.0.21",
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",

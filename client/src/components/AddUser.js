@@ -9,6 +9,8 @@ const AddUser = ( {users, setUsers, show, onClose, displayedUsers, setDisplayedU
 	const { isAuthenticated } = useContext(AuthContext);
     const [description, setDescription] = useState('');
     const [email, setEmail] = useState('');
+    const [dni, setDni] = useState('');
+    const [telefono, setTelefono] = useState('');
     const [password, setPassword] = useState('');
     const [firstname, setFirstname] = useState('');
     const [lastname, setLastname] = useState('');
@@ -86,6 +88,30 @@ const AddUser = ( {users, setUsers, show, onClose, displayedUsers, setDisplayedU
 										className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
 										value={email}
 										onChange={e => setEmail(e.target.value)}
+									/>
+								</div>
+								<div className='flex flex-col'>
+									<label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
+										DNI
+									</label>
+									<input
+										type="dni"
+										name="dni"
+										className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+										value={dni}
+										onChange={e => setDni(e.target.value)}
+									/>
+								</div>
+								<div className='flex flex-col'>
+									<label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
+										Teléfono
+									</label>
+									<input
+										type="telefono"
+										name="telefono"
+										className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+										value={telefono}
+										onChange={e => setTelefono(e.target.value)}
 									/>
 								</div>
 								<div className='flex flex-col'>

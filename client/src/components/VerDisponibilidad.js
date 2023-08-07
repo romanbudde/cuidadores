@@ -3,6 +3,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import Cookies from 'universal-cookie';
 import Calendar from 'react-calendar';
+// import nodemailer from 'nodemailer';
 import 'react-calendar/dist/Calendar.css';
 import dayjs from 'dayjs';
 import moment from 'moment';
@@ -231,16 +232,22 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
                     console.log(result);
                     // direcciono a mercado pago!
                     window.location.replace(result.response.init_point);
-                    // guardo result.response.external_reference en el estado del component (o capaz como cookie?)
-                    // porque con este numero identifico unicamente al pago.
                 });
             }
             if(chosenPaymentMethod === 'Efectivo'){
                 setContractResponseError(false);
                 setDisplayCreateContractMessage(true);
                 setCreateContractMessage(`Contrato creado con éxito para el día ${date.toLocaleDateString("en-GB")}.`);
-            }
+            }    
         }
+        console.log('-------- enviar email!')
+        const email_response = await fetch((process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER : `http://localhost:5000/`) + `contract_creation_email/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(body)
+        })
         console.log('222222222');
     }
 

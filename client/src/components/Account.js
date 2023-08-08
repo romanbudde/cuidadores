@@ -98,7 +98,7 @@ const Account = () => {
 					{ user.type === 1 && (
 						<CuidadorBottomBar/>
 					)}
-					{ user.type === 1 && (
+					{ user.type === 0 && (
 						<ClientBottomBar/>
 					)}
 					<div className='w-full flex flex-col items-center px-5 space-y-3'>

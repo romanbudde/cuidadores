@@ -151,7 +151,7 @@ const Register = () => {
 			<Form>
 				<div className='gap-2 px-10 py-5 mx-auto flex flex-col justify-center items-center'>
 					<div className='flex flex-row items-center w-full justify-center relative border-b-2 border-b-gray-200'>
-						<h1 className='flex justify-center font-bold text-lg py-4'>Cuidar</h1>
+						<h1 className='flex justify-center font-bold text-lg py-4'>CuidadorApp</h1>
 					</div>
 					<label className="block mr-auto text-sm font-medium text-gray-900 dark:text-white">
 						Nombre

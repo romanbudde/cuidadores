@@ -283,9 +283,6 @@ app.post('/register', async(req, res) => {
             "user": newUser.rows[0],
             "token": token
         });
-
-        // res.json(req.body);
-        res.json(userExists.rows[0]);
     }
     catch (error) {
         console.error(error.message);

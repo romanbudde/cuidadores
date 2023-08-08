@@ -47,7 +47,7 @@ const LandingAdmin = () => {
 					<CuidadorBottomBar />
 					<div className='flex flex-col items-center justify-center relative border-b-2 border-b-gray-200'>
 						<h1 className='flex justify-center font-bold text-lg pt-4 pb-1'>
-							Cuidar
+							CuidadorApp
 						</h1>
 						<p className='text-md text-gray-600'>Panel de Administrador</p>
 					</div>

@@ -165,7 +165,7 @@ app.post('/cuidadores', async(req, res) => {
     try {
         console.log('---- backend ----');
         console.log(req.body);
-        const { description, password, email, userType, firstname, lastname } = req.body;
+        const { description, password, email, userType, firstname, lastname, dni, telefono, hourly_rate, address } = req.body;
         
         console.log('---- current date ----');
         const created_at = new Date();
@@ -175,8 +175,8 @@ app.post('/cuidadores', async(req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const newCuidador = await pool.query(
-            "INSERT INTO users (description, mail, password, type, created_at, enabled, name, last_name) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *", 
-            [description, email, hashedPassword, userType, created_at, 1, firstname, lastname]
+            "INSERT INTO users (description, mail, password, type, created_at, enabled, name, last_name, dni, telefono, address, hourly_rate) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *", 
+            [description, email, hashedPassword, userType, created_at, 1, firstname, lastname, dni, telefono, address, hourly_rate]
         );
 
         // res.json(req.body);
@@ -1144,11 +1144,11 @@ app.get("/cuidadores/:id", async(req, res) => {
 app.put("/cuidadores/:id", async(req, res) => {
     try {
         const {id} = req.params;
-        const { description, email, firstname, lastname, userType, enabled, hourlyRate, address } = req.body;
+        const { description, email, firstname, lastname, dni, telefono, userType, enabled, hourlyRate, address } = req.body;
         const modified_at = new Date();
         const updateUser = await pool.query(
-            "UPDATE users SET description = $1, mail = $2, name = $3, last_name = $4, type = $5,  modified_at = $6, enabled = $7, hourly_rate = $8, address = $9 WHERE id = $10 RETURNING *", 
-            [description, email, firstname, lastname, userType, modified_at, enabled, hourlyRate, address,	 id]
+            "UPDATE users SET description = $1, mail = $2, name = $3, last_name = $4, dni = $5, telefono = $6, type = $7,  modified_at = $8, enabled = $9, hourly_rate = $10, address = $11 WHERE id = $12 RETURNING *", 
+            [description, email, firstname, lastname, dni, telefono, userType, modified_at, enabled, hourlyRate, address, id]
         );
 
         if(updateUser.rowCount > 0){

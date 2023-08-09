@@ -20,6 +20,8 @@ const UserEditData = ({ user, setUser, show, onClose }) => {
     const [firstname, setFirstname] = useState('');
     const [lastname, setLastname] = useState('');
     const [address, setAddress] = useState('');
+    const [dni, setDni] = useState('');
+    const [telefono, setTelefono] = useState('');
     const [hourlyRate, setHourlyRate] = useState('');
 	const [editDataMessageError, setEditDataMessageError] = useState(false);
 	const [displayEditDataMessage, setDisplayEditDataMessage] = useState(false);
@@ -43,6 +45,14 @@ const UserEditData = ({ user, setUser, show, onClose }) => {
 		description: Yup.string()
 			.min(2, 'La descripción es demasiado corta!')
 			.max(50, 'La descripción es demasiado larga!')
+			.required('Campo requerido!'),
+		dni: Yup.string()
+			.min(6, 'El dni es demasiado corto!')
+			.max(8, 'El dni es demasiado largo!')
+			.required('Campo requerido!'),
+		telefono: Yup.string()
+			.min(6, 'El telefono es demasiado corto!')
+			.max(15, 'El telefono es demasiado largo!')
 			.required('Campo requerido!'),
 		hourly_rate: Yup.string()
 			.min(1, 'La tarifa es demasiado pequeña!')
@@ -69,6 +79,8 @@ const UserEditData = ({ user, setUser, show, onClose }) => {
             setLastname(user.last_name || '');
             setHourlyRate(user.hourly_rate || '');
             setAddress(user.address || '');
+            setTelefono(user.telefono || '');
+            setDni(user.dni || '');
             // setUserType(user.type || '');
         }
     }, [user]);
@@ -148,6 +160,8 @@ const UserEditData = ({ user, setUser, show, onClose }) => {
 				initialValues={{
 					firstname: firstname,
 					lastname: lastname,
+					dni: dni,
+					telefono: telefono,
 					address: address,
 					email: email,
 					description: description,
@@ -223,6 +237,30 @@ const UserEditData = ({ user, setUser, show, onClose }) => {
 										{errors.description && touched.description ? (
 											<div className='text-red-500 font-normal w-full text-sm text-left'>
 												{errors.description}
+											</div>
+										) : null}
+								</div>
+								<div className='flex flex-col py-2'>
+									<label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
+										Dni
+									</label>
+									<Field name="dni" placeholder="ej: 17038593" className={`${errors.dni && touched.dni ?  'bg-gray-50 border text-red-500 placeholder-red-500 text-sm focus:ring-red-500 focus:border-red-500 block w-full p-2.5 bg-transparent rounded-lg border-b border-solid border-opacity-100 focus:outline-none focus:outline-0 border-red-500' : 
+									'bg-gray-50 border text-gray-900 text-sm focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5 bg-transparent rounded-lg border-b border-gray-400 border-solid border-opacity-100 focus:outline-none focus:outline-0'}`}/>
+										{errors.dni && touched.dni ? (
+											<div className='text-red-500 font-normal w-full text-sm text-left'>
+												{errors.dni}
+											</div>
+										) : null}
+								</div>
+								<div className='flex flex-col py-2'>
+									<label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
+										Teléfono
+									</label>
+									<Field name="telefono" placeholder="ej: 3416503593" className={`${errors.telefono && touched.telefono ?  'bg-gray-50 border text-red-500 placeholder-red-500 text-sm focus:ring-red-500 focus:border-red-500 block w-full p-2.5 bg-transparent rounded-lg border-b border-solid border-opacity-100 focus:outline-none focus:outline-0 border-red-500' : 
+									'bg-gray-50 border text-gray-900 text-sm focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5 bg-transparent rounded-lg border-b border-gray-400 border-solid border-opacity-100 focus:outline-none focus:outline-0'}`}/>
+										{errors.telefono && touched.telefono ? (
+											<div className='text-red-500 font-normal w-full text-sm text-left'>
+												{errors.telefono}
 											</div>
 										) : null}
 								</div>

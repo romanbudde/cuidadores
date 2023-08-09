@@ -80,6 +80,9 @@ const UserEditData = ({ user, users, setUsers, displayedUsers, setDisplayedUsers
             setFirstname(user.name || '');
             setId(user.id || '');
             setLastname(user.last_name || '');
+            setDni(user.dni || '');
+            setTelefono(user.telefono || '');
+            setLastname(user.last_name || '');
             setHourlyRate(user.hourly_rate || '');
             setAddress(user.address || '');
             // setUserType(user.type || '');

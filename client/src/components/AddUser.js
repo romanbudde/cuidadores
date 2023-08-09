@@ -5,20 +5,80 @@ import { AuthContext } from './AuthContext';
 import { useNavigate } from "react-router-dom";
 import Cookies from 'universal-cookie';
 
+import { Formik, Form, Field, ErrorMessage, useFormik } from 'formik';
+import * as Yup from 'yup';
+import { GeoapifyGeocoderAutocomplete, GeoapifyContext } from '@geoapify/react-geocoder-autocomplete';
+import '@geoapify/geocoder-autocomplete/styles/minimal.css';
+import Autocomplete from "react-google-autocomplete";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleXmark, faCircleCheck } from '@fortawesome/free-solid-svg-icons';
+import '../css/autocomplete.css';
+
 const AddUser = ( {users, setUsers, show, onClose, displayedUsers, setDisplayedUsers} ) => {
 	const { isAuthenticated } = useContext(AuthContext);
     const [description, setDescription] = useState('');
-    const [email, setEmail] = useState('');
     const [dni, setDni] = useState('');
     const [telefono, setTelefono] = useState('');
     const [password, setPassword] = useState('');
     const [firstname, setFirstname] = useState('');
+    const [address, setAddress] = useState('');
+    const [hourlyRate, setHourlyRate] = useState('');
+	const [editDataMessageError, setEditDataMessageError] = useState(false);
+	const [displayEditDataMessage, setDisplayEditDataMessage] = useState(false);
     const [lastname, setLastname] = useState('');
-    const [userType, setUserType] = useState('');
+    const [userType, setUserType] = useState();
 	const navigate = useNavigate();
 	const cookies = new Cookies();
 
-    const onSubmitUser = async (e) => {
+	const closeEditDataMessage = () => {
+        setDisplayEditDataMessage(false);
+    }
+
+	const UpdateSchema = Yup.object().shape({
+		firstname: Yup.string()
+			.min(2, 'El nombre es demasiado corto!')
+			.max(50, 'El nombre es demasiado largo!')
+			.required('Campo requerido!'),
+		lastname: Yup.string()
+			.min(2, 'El apellido es demasiado corto!')
+			.max(50, 'El apellido es demasiado largo!')
+			.required('Campo requerido!'),
+		dni: Yup.string()
+			.min(6, 'El dni es demasiado corto!')
+			.max(8, 'El dni es demasiado largo!')
+			.required('Campo requerido!'),
+		telefono: Yup.string()
+			.min(6, 'El telefono es demasiado corto!')
+			.max(15, 'El telefono es demasiado largo!')
+			.required('Campo requerido!'),
+		description: Yup.string()
+			.min(2, 'La descripción es demasiado corta!')
+			.max(50, 'La descripción es demasiado larga!')
+			.required('Campo requerido!'),
+		hourly_rate: Yup.string()
+			.max(20, 'La tarifa es demasiado larga!'),
+			// .required('Campo requerido!'),
+		// password: Yup.string()
+		// 	.min(8, 'La contraseña debe ser mayor a 8 caracteres de largo!')
+		// 	.max(50, 'La contraseña es demasiado larga')
+		// 	.matches(/^[a-zA-Z0-9]{8,}$/, 'La contraseña tiene que contener solamente números y/o letras!.')
+		// 	.required('Campo requerido!'),
+		// email: Yup.string().email('Invalid email').required('Campo requerido!'),
+		address: Yup.string()
+			.min(4, 'Dirección demasiado corta!')
+			.max(100, 'La dirección es demasiado larga')
+			.matches(/^.*\b\w+\b.*\d.*,.*/, 'La dirección no posee altura de la calle.')
+			.required('Campo requerido!'),
+		userType: Yup.string()
+			// .min(1, 'Tipo de usuario demasiado corto!')
+			// .max(2, 'Tipo de usuario es demasiado largo.')
+			.required('Campo requerido!'),
+	});
+
+	console.log('-------userType: ', userType)
+	console.log('-------userType: ', userType === '1')
+
+    const onSubmitUser = async (values) => {
         console.log('----------------- onSubmitUser -------------- ');
 
 		const authToken = cookies.get('auth-token');
@@ -26,9 +86,10 @@ const AddUser = ( {users, setUsers, show, onClose, displayedUsers, setDisplayedU
 			return navigate('/');
 		}
 		
-        e.preventDefault();
         try {
-            const body = {description, email, userType, firstname, lastname, password};
+            // const body = {description, email, userType, firstname, lastname, dni, telefono, password};
+			console.log('values: ', values)
+            const body = {...values};
             console.log(JSON.stringify(body));
             console.log('---- end of body to be submitted ----');
             let newUser = {};
@@ -45,6 +106,9 @@ const AddUser = ( {users, setUsers, show, onClose, displayedUsers, setDisplayedU
                         console.log('add user result: ');
                         console.log(result);
                         newUser = result;
+
+						setEditDataMessageError(false);
+						setDisplayEditDataMessage(true);
                     }
                 });
 
@@ -64,136 +128,255 @@ const AddUser = ( {users, setUsers, show, onClose, displayedUsers, setDisplayedU
 	if(isAuthenticated){
 		return (
 			<Fragment>
-				<div className='fixed inset-0 bg-gray-800 bg-opacity-40 z-50 flex justify-center items-center'>
-					<div className='flex flex-col relative max-h-screen overflow-y-scroll'>
-						<button onClick={ onClose } type="button" className="absolute top-2 right-2 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="defaultModal">
-							<svg aria-hidden="true" className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"></path></svg>
-							<span className="sr-only">Close modal</span>
-						</button>
-						<div className='bg-white p-5 rounded flex flex-col gap-5'>
-							<div className="flex items-start justify-between border-b rounded-t dark:border-gray-600">
-								<h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-									Agregar usuario
-								</h3>
-								
-							</div>
-							<form className="space-y-6">
-								<div className='flex flex-col'>
-									<label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
-										Email
-									</label>
-									<input
-										type="email"
-										name="email"
-										className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-										value={email}
-										onChange={e => setEmail(e.target.value)}
-									/>
-								</div>
-								<div className='flex flex-col'>
-									<label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
-										DNI
-									</label>
-									<input
-										type="dni"
-										name="dni"
-										className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-										value={dni}
-										onChange={e => setDni(e.target.value)}
-									/>
-								</div>
-								<div className='flex flex-col'>
-									<label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
-										Teléfono
-									</label>
-									<input
-										type="telefono"
-										name="telefono"
-										className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-										value={telefono}
-										onChange={e => setTelefono(e.target.value)}
-									/>
-								</div>
-								<div className='flex flex-col'>
-									<label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
-										Contraseña
-									</label>
-									<input
-										type="password"
-										name="password"
-										className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-										value={password}
-										onChange={e => setPassword(e.target.value)}
-									/>
-								</div>
-								<div className='flex flex-col'>
-									<label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
-										Descripción
-									</label>
-									<input
-										type="text"
-										name="description"
-										className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-										value={description}
-										onChange={e => setDescription(e.target.value)}
-										required
-									/>
-								</div>
-								<div className='flex flex-col'>
-									<label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
-										Tipo de usuario
-									</label>
-									<select 
-										id="user_type"
-										className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-										onChange={e => setUserType(e.target.value)}
+				<Formik
+					// innerRef={formik} // Add a ref to the formik object
+					initialValues={{
+						firstname: '',
+						lastname: '',
+						dni: '',
+						telefono: '',
+						address: '',
+						description: '',
+						userType: '',
+						hourly_rate: '',
+						email: '',
+						password: ''
+					}}
+					validationSchema={UpdateSchema}
+					// onSubmit={onSubmitUser}
+					onSubmit={(values) => {
+						// same shape as initial values
+						// setFieldValue('address', address);
+						console.log('submit form!');
+						console.log(values);
+						onSubmitUser(values);
+					}}
+				>
+					{({ errors, touched, setFieldValue, setFieldError }) => (
+						<Form>
+							<div className='fixed inset-0 bg-gray-800 bg-opacity-40 z-50 flex justify-center items-center'>
+								<div className='flex flex-col relative w-5/6 max-h-screen overflow-y-scroll bg-gray-100 p-7 rounded-md'>
+									<button onClick={ onClose } type="button" className="absolute top-2 right-2 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="defaultModal">
+										<svg aria-hidden="true" className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"></path></svg>
+										<span className="sr-only">Close modal</span>
+									</button>
+									<p className='font-bold my-2 text-center'>Agregar usuario</p>
+									<div className='flex flex-col py-2'>
+										<label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
+											Nombre
+										</label>
+										<Field
+											name="firstname"
+											placeholder="ej: Pedro"
+											className={`${errors.firstname && touched.firstname ?  'bg-gray-50 border text-red-500 placeholder-red-500 text-sm focus:ring-red-500 focus:border-red-500 block w-full p-2.5 bg-transparent rounded-lg border-b border-solid border-opacity-100 focus:outline-none focus:outline-0 border-red-500' : 
+											'bg-gray-50 border text-gray-900 text-sm focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5 bg-transparent rounded-lg border-b border-gray-400 border-solid border-opacity-100 focus:outline-none focus:outline-0'}`} 
+										/>
+											{errors.firstname && touched.firstname ? (
+												<div className='text-red-500 font-normal w-full text-sm text-left'>
+													{errors.firstname}
+												</div>
+											) : null}
+									</div>
+									<div className='flex flex-col py-2'>
+										<label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
+											Apellido
+										</label>
+										<Field name="lastname" placeholder="ej: Gomez" className={`${errors.lastname && touched.lastname ?  'bg-gray-50 border text-red-500 placeholder-red-500 text-sm focus:ring-red-500 focus:border-red-500 block w-full p-2.5 bg-transparent rounded-lg border-b border-solid border-opacity-100 focus:outline-none focus:outline-0 border-red-500' : 
+										'bg-gray-50 border text-gray-900 text-sm focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5 bg-transparent rounded-lg border-b border-gray-400 border-solid border-opacity-100 focus:outline-none focus:outline-0'}`}/>
+											{errors.lastname && touched.lastname ? (
+												<div className='text-red-500 font-normal w-full text-sm text-left'>
+													{errors.lastname}
+												</div>
+											) : null}
+									</div>
+									<div className='flex flex-col'>
+										<label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
+											Tipo de usuario
+										</label>
+										<select
+											id="userType"
+											className={`${errors.userType && touched.userType ? 'bg-gray-50 border text-red-500 placeholder-red-500 text-sm focus:ring-red-500 focus:border-red-500 block w-full p-2.5 bg-transparent rounded-lg border-b border-solid border-opacity-100 focus:outline-none focus:outline-0 border-red-500' : 'border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5'}`}
+											onChange = {e => {
+												console.log('selected: ', e.target.value);
+												setUserType(e.target.value);
+												setFieldValue('userType', e.target.value);
+												if(e.target.value === '0') {
+													setFieldValue('hourly_rate', '');
+												}
+											}}
+										>
+											<option>Tipo de usuario</option>
+											<option value="0">Cliente</option>
+											<option value="1">Cuidador</option>
+											<option value="2">Admin</option>
+										</select>
+									</div>
+									{errors.userType && touched.userType ? (
+										<div className='text-red-500 font-normal w-full text-sm text-left'>
+											{errors.userType}
+										</div>
+									) : null}
+									<div className='flex flex-col py-2'>
+										<label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
+											DNI
+										</label>
+										<Field name="dni" placeholder="ej: 17038593" className={`${errors.dni && touched.dni ?  'bg-gray-50 border text-red-500 placeholder-red-500 text-sm focus:ring-red-500 focus:border-red-500 block w-full p-2.5 bg-transparent rounded-lg border-b border-solid border-opacity-100 focus:outline-none focus:outline-0 border-red-500' : 
+										'bg-gray-50 border text-gray-900 text-sm focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5 bg-transparent rounded-lg border-b border-gray-400 border-solid border-opacity-100 focus:outline-none focus:outline-0'}`}/>
+										{errors.dni && touched.dni ? (
+											<div className='text-red-500 font-normal w-full text-sm text-left'>
+												{errors.dni}
+											</div>
+										) : null}
+									</div>
+									<div className='flex flex-col py-2'>
+										<label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
+											Teléfono
+										</label>
+										<Field name="telefono" placeholder="ej: 3416503593" className={`${errors.telefono && touched.telefono ?  'bg-gray-50 border text-red-500 placeholder-red-500 text-sm focus:ring-red-500 focus:border-red-500 block w-full p-2.5 bg-transparent rounded-lg border-b border-solid border-opacity-100 focus:outline-none focus:outline-0 border-red-500' : 
+										'bg-gray-50 border text-gray-900 text-sm focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5 bg-transparent rounded-lg border-b border-gray-400 border-solid border-opacity-100 focus:outline-none focus:outline-0'}`}/>
+										{errors.telefono && touched.telefono ? (
+											<div className='text-red-500 font-normal w-full text-sm text-left'>
+												{errors.telefono}
+											</div>
+										) : null}
+									</div>
+									<div className='flex flex-col py-2'>
+										<label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
+											Descripción
+										</label>
+										<Field
+											name="description"
+											placeholder="Tu descripción"
+											className={`${errors.description && touched.description ?  'bg-gray-50 border text-red-500 placeholder-red-500 text-sm focus:ring-red-500 focus:border-red-500 block w-full p-2.5 bg-transparent rounded-lg border-b border-solid border-opacity-100 focus:outline-none focus:outline-0 border-red-500' : 
+											'bg-gray-50 border text-gray-900 text-sm focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5 bg-transparent rounded-lg border-b border-gray-400 border-solid border-opacity-100 focus:outline-none focus:outline-0'}`} 
+										/>
+											{errors.description && touched.description ? (
+												<div className='text-red-500 font-normal w-full text-sm text-left'>
+													{errors.description}
+												</div>
+											) : null}
+									</div>
+									<div className='flex flex-col py-2'>
+										<label className="block mr-auto text-sm font-medium text-gray-900 dark:text-white">
+											Email
+										</label>
+										<Field name="email" type="email" placeholder="ej: miemail@hotmail.com" className={`${errors.email && touched.email ?  'bg-gray-50 border text-red-500 placeholder-red-500 text-sm focus:ring-red-500 focus:border-red-500 block w-full p-2.5 bg-transparent rounded-lg border-b border-solid border-opacity-100 focus:outline-none focus:outline-0 border-red-500' : 
+										'bg-gray-50 border text-gray-900 text-sm focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5 bg-transparent rounded-lg border-b border-gray-400 border-solid border-opacity-100 focus:outline-none focus:outline-0'}`}/>
+											{errors.email && touched.email ? (
+												<div className='text-red-500 font-normal w-full text-sm text-left'>
+													{errors.email}
+												</div>
+											) : null}
+									</div>
+									<div className='flex flex-col py-2'>
+										<label className="block mr-auto text-sm font-medium text-gray-900 dark:text-white">
+											Contraseña
+										</label>
+										<Field name="password" type="password" placeholder="••••••" className={`${errors.password && touched.password ?  'bg-gray-50 border text-red-500 placeholder-red-500 text-sm focus:ring-red-500 focus:border-red-500 block w-full p-2.5 bg-transparent rounded-lg border-b border-solid border-opacity-100 focus:outline-none focus:outline-0 border-red-500' : 
+										'bg-gray-50 border text-gray-900 text-sm focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5 bg-transparent rounded-lg border-b border-gray-400 border-solid border-opacity-100 focus:outline-none focus:outline-0'}`}/>
+											{errors.password && touched.password ? (
+												<div className='text-red-500 font-normal w-full text-sm text-left'>
+													{errors.password}
+												</div>
+											) : null}
+									</div>
+									{userType === '1' && (
+										<div className='flex flex-col py-2'>
+											<label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
+												Tarifa por media hora
+											</label>
+											<Field name="hourly_rate" type="text" placeholder="ej: 2500" className={`${errors.hourly_rate && touched.hourly_rate ?  'bg-gray-50 border text-red-500 placeholder-red-500 text-sm focus:ring-red-500 focus:border-red-500 block w-full p-2.5 bg-transparent rounded-lg border-b border-solid border-opacity-100 focus:outline-none focus:outline-0 border-red-500' : 
+											'bg-gray-50 border text-gray-900 text-sm focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5 bg-transparent rounded-lg border-b border-gray-400 border-solid border-opacity-100 focus:outline-none focus:outline-0'}`}/>
+											{errors.hourly_rate && touched.hourly_rate ? (
+												<div className='text-red-500 font-normal w-full text-sm text-left'>
+													{errors.hourly_rate}
+												</div>
+											) : null}
+										</div>
+									)}
+									<div className='flex flex-col py-1'>
+										<label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
+											Dirección
+										</label>
+										<Autocomplete
+											apiKey={'AIzaSyDdEqsnFUhTgQJmNN1t4iyn3VhMLJY6Yk4'}
+											debounce={1000}
+											name='address'
+											placeholder='Escriba su dirección'
+											className={`${errors.address && touched.address ?  'bg-gray-50 border text-red-500 placeholder-red-500 text-sm focus:ring-red-500 focus:border-red-500 block w-full p-2.5 bg-transparent rounded-lg border-b border-solid border-opacity-100 focus:outline-none focus:outline-0 border-red-500' : 
+											'bg-gray-50 border text-gray-900 text-sm focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5 bg-transparent rounded-lg border-b border-gray-400 border-solid border-opacity-100 focus:outline-none focus:outline-0'}`}
+											style={{ width: "100%" }}
+											onChange={(e) => {
+												setFieldValue('address', e.target.value);
+												// setFieldError('address', 'Selecciona una direccion del menu desplegable!');
+												console.log(e.target.value)
+											}}
+											onPlaceSelected={(place) => {
+												console.log(place);
+												console.log('formated address: ', place.formatted_address);
+												setFieldValue('address', place.formatted_address);
+											}}
+											options={{
+												types: ["address"],
+												componentRestrictions: { country: "ar" },
+											}}
+											defaultValue={address}
+										/>
+										{errors.address && touched.address ? (
+											<div className='text-red-500 font-normal w-full text-sm text-left'>
+												{errors.address}
+											</div>
+										) : null}
+									</div>
+									<button 
+										type="submit"
+										className="w-full text-white bg-gradient-to-r from-green-400 to-green-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 mt-12"
 									>
-										<option defaultValue={userType}>Tipo de usuario</option>
-										<option value="0">Cliente</option>
-										<option value="1">Cuidador</option>
-										<option value="2">Admin</option>
-									</select>
+										Crear usuario
+									</button>
 								</div>
-								<div className='flex flex-col'>
-									<label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
-										Nombre
-									</label>
-									<input
-										type="text"
-										name="firstname"
-										className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-										value={firstname}
-										onChange={e => setFirstname(e.target.value)}
-										required
-									/>
+							</div>
+							{  displayEditDataMessage && editDataMessageError === true  &&(
+								<div className='fixed inset-0 bg-gray-900 bg-opacity-40 z-50 flex justify-center items-center'>
+									<div className='bg-red-500 p-5 rounded w-9/12 flex flex-col gap-5 items-center justify-center relative'>
+										<button onClick={ closeEditDataMessage } type="button" className="absolute top-2 right-2 text-gray-100 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="defaultModal">
+											<svg aria-hidden="true" className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"></path></svg>
+											<span className="sr-only">Close modal</span>
+										</button>
+										<p className='font-bold text-2xl text-white'>Error!</p>
+										<p className='text-white text-center font-medium'>No se han podido guardar los datos.</p>
+										<FontAwesomeIcon icon={faCircleXmark} size="2xl" className='text-8xl' style={{color: "#fff",}} />
+										<button
+											className='bg-red-800 mt-10 hover:bg-blue-700 text-white font-bold py-2 px-16 rounded-full'
+											onClick={ closeEditDataMessage }
+										>
+											Continuar
+										</button>
+									</div>
 								</div>
-								<div className='flex flex-col'>
-									<label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
-										Apellido
-									</label>
-									<input
-										type="text"
-										name="lastname"
-										className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-										value={lastname}
-										onChange={e => setLastname(e.target.value)}
-										required
-									/>
+							)}
+							{ displayEditDataMessage && editDataMessageError === false && (
+								<div className='fixed inset-0 bg-gray-900 bg-opacity-40 z-50 flex justify-center items-center'>
+									<div className='bg-green-400 p-5 rounded w-9/12 flex flex-col gap-5 items-center justify-center relative'>
+										<button onClick={ closeEditDataMessage } type="button" className="absolute top-2 right-2 text-gray-200 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="defaultModal">
+											<svg aria-hidden="true" className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"></path></svg>
+											<span className="sr-only">Close modal</span>
+										</button>
+										<p className='font-bold text-2xl text-white'>Genial!</p>
+										<p className='text-white text-center font-medium'>Datos guardados con éxito</p>
+										<FontAwesomeIcon icon={faCircleCheck} size="2xl" className='text-8xl' style={{color: "#fff",}} />
+										<button
+											className='bg-green-600 mt-10 hover:bg-blue-700 text-white font-bold py-2 px-16 rounded-full'
+											onClick={ closeEditDataMessage }
+										>
+											Continuar
+										</button>
+									</div>
 								</div>
-								<button 
-									type="submit"
-									className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-									onClick={ (e) => {
-										onSubmitUser(e);
-										onClose(); 
-									}}
-								>
-									Crear usuario
-								</button>
-							</form>
-						</div>
-					</div>
-				</div>
+							)}
+						</Form>
+					)}
+				</Formik>
 			</Fragment>
 		);
 	}

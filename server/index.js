@@ -167,6 +167,28 @@ app.post('/cuidadores', async(req, res) => {
         console.log(req.body);
         const { description, password, email, userType, firstname, lastname, dni, telefono, hourly_rate, address } = req.body;
         
+        const userEmailExists = await pool.query(
+            "SELECT * FROM users WHERE mail = $1",
+            [email]
+        );
+
+        const userDniExists = await pool.query(
+            "SELECT * FROM users WHERE dni = $1",
+            [dni]
+        );
+
+        console.log('userDniexists: ', userDniExists);
+        console.log('userDniexists condition: ', userDniExists.rows > 0);
+        console.log('userEmailExists: ', userEmailExists);
+        console.log('userEmailExists condition: ', userEmailExists.rows.length > 0);
+
+        if(userDniExists.rows.length > 0) {
+            return res.status(401).json({ error: 'Ups, el dni ya está registrado con otro usuario.' });
+        } 
+        if(userEmailExists.rows.length > 0) {
+            return res.status(401).json({ error: 'Ups, el email ya está registrado con otro usuario.' });
+        } 
+
         console.log('---- current date ----');
         const created_at = new Date();
         console.log(created_at);
@@ -174,10 +196,22 @@ app.post('/cuidadores', async(req, res) => {
         console.log(password);
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const newCuidador = await pool.query(
-            "INSERT INTO users (description, mail, password, type, created_at, enabled, name, last_name, dni, telefono, address, hourly_rate) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *", 
-            [description, email, hashedPassword, userType, created_at, 1, firstname, lastname, dni, telefono, address, hourly_rate]
-        );
+        let newCuidador;
+
+        if(hourly_rate === '') {
+            newCuidador = await pool.query(
+                "INSERT INTO users (description, mail, password, type, created_at, enabled, name, last_name, dni, telefono, address) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *", 
+                [description, email, hashedPassword, userType, created_at, 1, firstname, lastname, dni, telefono, address]
+            );
+            
+        }
+        else {
+            newCuidador = await pool.query(
+                "INSERT INTO users (description, mail, password, type, created_at, enabled, name, last_name, dni, telefono, address, hourly_rate) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *", 
+                [description, email, hashedPassword, userType, created_at, 1, firstname, lastname, dni, telefono, address, hourly_rate]
+            );
+        }
+
 
         // res.json(req.body);
         res.json(newCuidador.rows[0]);

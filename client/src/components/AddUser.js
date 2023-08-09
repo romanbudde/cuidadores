@@ -25,6 +25,7 @@ const AddUser = ( {users, setUsers, show, onClose, displayedUsers, setDisplayedU
     const [hourlyRate, setHourlyRate] = useState('');
 	const [editDataMessageError, setEditDataMessageError] = useState(false);
 	const [displayEditDataMessage, setDisplayEditDataMessage] = useState(false);
+	const [addUserErrorMessage, setAddUserErrorMessage] = useState('');
     const [lastname, setLastname] = useState('');
     const [userType, setUserType] = useState();
 	const navigate = useNavigate();
@@ -110,6 +111,11 @@ const AddUser = ( {users, setUsers, show, onClose, displayedUsers, setDisplayedU
 						setEditDataMessageError(false);
 						setDisplayEditDataMessage(true);
                     }
+					if(result.error){
+						setEditDataMessageError(true);
+						setDisplayEditDataMessage(true);
+						setAddUserErrorMessage(result.error);
+					}
                 });
 
             // console.log(response.json();
@@ -144,11 +150,12 @@ const AddUser = ( {users, setUsers, show, onClose, displayedUsers, setDisplayedU
 					}}
 					validationSchema={UpdateSchema}
 					// onSubmit={onSubmitUser}
-					onSubmit={(values) => {
+					onSubmit={(values, setFieldError) => {
 						// same shape as initial values
 						// setFieldValue('address', address);
 						console.log('submit form!');
 						console.log(values);
+				
 						onSubmitUser(values);
 					}}
 				>
@@ -344,7 +351,7 @@ const AddUser = ( {users, setUsers, show, onClose, displayedUsers, setDisplayedU
 											<span className="sr-only">Close modal</span>
 										</button>
 										<p className='font-bold text-2xl text-white'>Error!</p>
-										<p className='text-white text-center font-medium'>No se han podido guardar los datos.</p>
+										<p className='text-white text-center font-medium'>{addUserErrorMessage}</p>
 										<FontAwesomeIcon icon={faCircleXmark} size="2xl" className='text-8xl' style={{color: "#fff",}} />
 										<button
 											className='bg-red-800 mt-10 hover:bg-blue-700 text-white font-bold py-2 px-16 rounded-full'

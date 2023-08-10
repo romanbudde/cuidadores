@@ -162,6 +162,7 @@ const ReviewModal = ({ contract, onClose, reviews, setReviews }) => {
 										<Field
 											name="puntaje_review"
 											placeholder="ej: 7.55"
+											type="number"
 											className={`${errors.puntaje_review && touched.puntaje_review ?  'bg-gray-50 border text-red-500 placeholder-red-500 text-sm focus:ring-red-500 focus:border-red-500 block w-full p-2.5 bg-transparent rounded-lg border-b border-solid border-opacity-100 focus:outline-none focus:outline-0 border-red-500' : 
 											'bg-gray-50 border text-white text-sm focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5 bg-transparent rounded-lg border-b border-gray-400 border-solid border-opacity-100 focus:outline-none focus:outline-0'}`} 
 										/>

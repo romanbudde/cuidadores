@@ -11,7 +11,10 @@ import CuidadorBottomBar from './CuidadorBottomBar';
 
 const LandingAdmin = () => {
 	const { isAuthenticated } = useContext(AuthContext);
-    
+    const { userId } = useContext(AuthContext);
+
+	const [user, setUser] = useState('');
+	
 	const navigate = useNavigate();
 	const cookies = new Cookies();
 
@@ -40,11 +43,27 @@ const LandingAdmin = () => {
 		navigate('/mercadopago-config');
 	}
 
+	const getUserData = async () => {
+		const response = await fetch((process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER : `http://localhost:5000/`) + `cuidadores/${userId}`);
+		const jsonData = await response.json();
+
+		console.log('---- inside getUserData ----');
+		console.log(jsonData);
+
+		setUser(jsonData);
+	}
+
+	useEffect(() => {
+        getUserData();
+    }, []);
+
 	if(isAuthenticated){
 		return (
 			<Fragment>
 				<div className='relative h'>
-					<CuidadorBottomBar />
+					<CuidadorBottomBar 
+						userType={user.type}
+					/>
 					<div className='flex flex-col items-center justify-center relative border-b-2 border-b-gray-200'>
 						<h1 className='flex justify-center font-bold text-lg pt-4 pb-1'>
 							CuidadorApp

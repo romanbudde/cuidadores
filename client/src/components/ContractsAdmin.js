@@ -13,7 +13,7 @@ import Datepicker from "react-tailwindcss-datepicker";
 import '../css/datepicker.css';
 import dayjs from 'dayjs';
 import moment from 'moment';
-import ClientBottomBar from './ClientBottomBar';
+import CuidadorBottomBar from './CuidadorBottomBar';
 import Paginate from './Paginate';
 import Select from 'react-select';
 
@@ -429,7 +429,9 @@ const ContractsAdmin = () => {
 		return (
 			<Fragment>
                 <div className='relative'>
-					<ClientBottomBar />
+					<CuidadorBottomBar
+						userType = {user.type}	
+					/>
 					<div className='flex flex-row items-center justify-center relative border-b-2 border-b-gray-200'>
 						<FontAwesomeIcon
 							className='absolute left-5'

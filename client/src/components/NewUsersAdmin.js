@@ -13,7 +13,7 @@ import Datepicker from "react-tailwindcss-datepicker";
 import '../css/datepicker.css';
 import dayjs from 'dayjs';
 import moment from 'moment';
-import ClientBottomBar from './ClientBottomBar';
+import CuidadorBottomBar from './CuidadorBottomBar';
 import Paginate from './Paginate';
 import Select from 'react-select';
 
@@ -33,6 +33,7 @@ const NewUsersAdmin = () => {
     const [updateStatusFilter, setUpdateStatusFilter] = useState('all');
     const [updateStatusSearch, setUpdateStatusSearch] = useState('all');
     const [statusSearch, setStatusSearch] = useState('all');
+    const [userType, setUserType] = useState();
 	const [showAddUserModal, setShowAddUserModal] = useState(false);
     const [userEmail, setUserEmail] = useState('');
     const [noUsersWithThatStatusMessage, setNoUsersWithThatStatusMessage] = useState('');
@@ -60,8 +61,9 @@ const NewUsersAdmin = () => {
 	];
 
 	const optionsTipoUsuario = [
-		{ value: 'cliente', label: 'Cliente' },
-		{ value: 'cuidador', label: 'Cuidador' },
+		{ value: '0', label: 'Cliente' },
+		{ value: '1', label: 'Cuidador' },
+		{ value: '2', label: 'Admin' },
 		{ value: 'all', label: 'Todos' },
 	]
 
@@ -158,8 +160,8 @@ const NewUsersAdmin = () => {
     }
 
 	const handleSearchUserTypeChange = (e) => {
-		// console.log(e.value)
-		setStatusSearch(e.value);
+		console.log(e.value)
+		setUserType(e.value);
 	}
 
 	const handleSearchStatusFilterChange = (e) => {
@@ -191,17 +193,14 @@ const NewUsersAdmin = () => {
 		// console.log('statusSearch when searching contracts: ', statusSearch)
 		setUpdateStatusSearch(statusSearch);
 		setUpdateStatusFilter(statusSearch);
-		// setDateFilter('newest');
 
 		// search contracts by client email and or caregiver email and or a range of dates and or status
 		try {
-			// console.log('statusSearch: ', statusSearch);
 			console.log('status: ', statusSearch);
-            // console.log(`http://localhost:5000/users?user_email=${userEmail}&user_firstname=${userFirstname}&user_lastname=${userLastname}&status=${statusSearch}`);
 			
 			// get coinciding user IDS from user table first, then get contracts
 
-            const response = await fetch((process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER : `http://localhost:5000/`) + `users?user_email=${userEmail}&user_firstname=${userFirstname}&user_lastname=${userLastname}&status=${statusSearch}`);
+            const response = await fetch((process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER : `http://localhost:5000/`) + `users?user_email=${userEmail}&user_firstname=${userFirstname}&user_lastname=${userLastname}&status=${statusSearch}&type=${userType}`);
             const jsonData = await response.json();
 
 			console.log('----------------------------------- users: ', jsonData);
@@ -431,7 +430,9 @@ const NewUsersAdmin = () => {
 		return (
 			<Fragment>
                 <div className='relative'>
-					<ClientBottomBar />
+					<CuidadorBottomBar 
+						userType={user.type}
+					/>
 					<div className='flex flex-row items-center justify-center relative border-b-2 border-b-gray-200'>
 						<FontAwesomeIcon
 							className='absolute left-5'

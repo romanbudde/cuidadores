@@ -15,7 +15,7 @@ const Account = () => {
 	const { isAuthenticated } = useContext(AuthContext);
 	const { userId } = useContext(AuthContext);
 
-	const [user, setUser] = useState('');
+	const [user, setUser] = useState();
 	const [userTypes, setUserTypes] = useState([]);
 
 	const [showEditModal, setShowEditModal] = useState(false);
@@ -82,7 +82,7 @@ const Account = () => {
 		getUserTypes();
     }, []);
 
-	if(isAuthenticated){
+	if(isAuthenticated && user){
 		return (
 			<Fragment>
 				<div className='space-y-5 flex flex-col justify-center items-center rounded-md bg-slate-200z'>
@@ -95,10 +95,12 @@ const Account = () => {
 						<h1 className='flex justify-center font-bold text-lg py-4'>Mi perfil</h1>
 						<FontAwesomeIcon icon={faPenToSquare} className='text-2xl absolute right-5' onClick={handleShow} />
 					</div>
-					{ user.type === 1 && (
-						<CuidadorBottomBar/>
+					{ user && (user.type === 1 || user.type === 2) && (
+						<CuidadorBottomBar
+							userType = {user.type}
+						/>
 					)}
-					{ user.type === 0 && (
+					{ user && user.type === 0 && (
 						<ClientBottomBar/>
 					)}
 					<div className='w-full flex flex-col items-center px-5 space-y-3'>

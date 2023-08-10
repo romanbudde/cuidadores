@@ -10,6 +10,7 @@ import { AuthContext } from './AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faHouse, faCheck, faMoneyBillWave, faHandshake, faFilePdf } from '@fortawesome/free-solid-svg-icons';
 import ClientBottomBar from './ClientBottomBar';
+import CuidadorBottomBar from './CuidadorBottomBar';
 import ReviewModal from './ReviewModal';
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import Paginate from './Paginate';
@@ -411,7 +412,14 @@ const MisContratos = () => {
 		return (
 			<Fragment>
                 <div className='relative'>
-					<ClientBottomBar />
+					{user.type === 0 && (
+						<ClientBottomBar />
+					)}
+					{user.type === 1 && (
+						<CuidadorBottomBar
+							userType = {user.type}
+						/>
+					)}
 					<div className='flex flex-row items-center justify-center relative border-b-2 border-b-gray-200'>
 						<FontAwesomeIcon
 							className='absolute left-5'

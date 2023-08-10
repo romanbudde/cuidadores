@@ -480,7 +480,7 @@ app.post("/caregiver_review", async(req, res) => {
 // get users by different parametres
 app.get("/users", async(req, res) => {
     try {
-        let { user_email, user_firstname, user_lastname, status } = req.query;
+        let { user_email, user_firstname, user_lastname, status, type } = req.query;
 
         // bring from users table those that have similarities with client email or caregiver email
         let users;
@@ -507,6 +507,12 @@ app.get("/users", async(req, res) => {
                 conditions.push(`(enabled = $${values.length + 1})`);
                 values.push(false);
             }
+        }
+
+        // Check if type is provided
+        if (type && type !== 'all') {
+            conditions.push(`(type = $${values.length + 1})`);
+            values.push(type);
         }
 
         if (user_firstname) {

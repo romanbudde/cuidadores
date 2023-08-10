@@ -22,6 +22,7 @@ const FechasHorarios = () => {
 	const { isAuthenticated } = useContext(AuthContext);
 	const { userId } = useContext(AuthContext);
     const [date, setDate] = useState(new Date());
+    const [user, setUser] = useState();
     const [selectedHoraDesde, setSelectedHoraDesde] = useState();
     const [selectedHoraHasta, setSelectedHoraHasta] = useState();
     const [selectedDatesInterval, setSelectedDatesInterval] = useState({ 
@@ -274,9 +275,20 @@ const FechasHorarios = () => {
         }
     };
 
+	const getUserData = async () => {
+		console.log('---- inside getUserData ----');
+		const response = await fetch((process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER : `http://localhost:5000/`) + `cuidadores/${userId}`);
+		const jsonData = await response.json();
+
+		console.log(jsonData);
+
+		setUser(jsonData);
+	}
+
     // when page loads, get all Users
     useEffect(() => {
         getHorarios();
+		getUserData();
 
 		const today = moment().format('DD/MM/YYYY');
 		setDatesArrayToAdd([today]);
@@ -439,7 +451,9 @@ const FechasHorarios = () => {
 		return (
 			<Fragment>
 				<div className='min-w-70 w-96 rounded-md'>
-					<CuidadorBottomBar />
+					<CuidadorBottomBar 
+						userType={user ? user.type : ''}
+					/>
 					<div className='flex flex-row items-center w-full justify-center relative border-b-2 border-b-gray-200'>
 						<FontAwesomeIcon
 							className='absolute left-5'

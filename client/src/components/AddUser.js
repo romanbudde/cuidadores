@@ -56,8 +56,8 @@ const AddUser = ( {users, setUsers, show, onClose, displayedUsers, setDisplayedU
 			.min(2, 'La descripción es demasiado corta!')
 			.max(50, 'La descripción es demasiado larga!')
 			.required('Campo requerido!'),
-		hourly_rate: Yup.string()
-			.max(20, 'La tarifa es demasiado larga!'),
+		hourly_rate: Yup.number()
+			.max(999999, 'La tarifa es demasiado larga!'),
 			// .required('Campo requerido!'),
 		// password: Yup.string()
 		// 	.min(8, 'La contraseña debe ser mayor a 8 caracteres de largo!')
@@ -292,7 +292,7 @@ const AddUser = ( {users, setUsers, show, onClose, displayedUsers, setDisplayedU
 											<label className="block mb-2 mr-auto text-sm font-medium text-gray-900 dark:text-white">
 												Tarifa por media hora
 											</label>
-											<Field name="hourly_rate" type="text" placeholder="ej: 2500" className={`${errors.hourly_rate && touched.hourly_rate ?  'bg-gray-50 border text-red-500 placeholder-red-500 text-sm focus:ring-red-500 focus:border-red-500 block w-full p-2.5 bg-transparent rounded-lg border-b border-solid border-opacity-100 focus:outline-none focus:outline-0 border-red-500' : 
+											<Field name="hourly_rate" type="number" placeholder="ej: 2500" className={`${errors.hourly_rate && touched.hourly_rate ?  'bg-gray-50 border text-red-500 placeholder-red-500 text-sm focus:ring-red-500 focus:border-red-500 block w-full p-2.5 bg-transparent rounded-lg border-b border-solid border-opacity-100 focus:outline-none focus:outline-0 border-red-500' : 
 											'bg-gray-50 border text-gray-900 text-sm focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5 bg-transparent rounded-lg border-b border-gray-400 border-solid border-opacity-100 focus:outline-none focus:outline-0'}`}/>
 											{errors.hourly_rate && touched.hourly_rate ? (
 												<div className='text-red-500 font-normal w-full text-sm text-left'>

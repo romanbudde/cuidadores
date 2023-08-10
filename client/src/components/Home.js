@@ -87,8 +87,8 @@ const Home = () => {
 			<div className='flex flex-row items-center w-full justify-center relative border-b-2 border-b-gray-200'>
 				<h1 className='flex justify-center font-bold text-lg py-4'>CuidadorApp</h1>
 			</div>
-			<div className='space-y-2 p-10 mx-auto flex flex-col justify-center items-center'>
-				<div className='w-full pb-4'>
+			<div className='space-y-5 p-10 mx-auto flex flex-col justify-center items-center'>
+				<div className='w-full pb'>
 					<h1 className='text-left font-medium text-3xl mb-2 text-blue-900'>Bienvenido!</h1>
 					<h4 className='text-left font-semibold mb-16 text-gray-500'>Inicia sesión con tu cuenta</h4>
 					<label
@@ -121,9 +121,9 @@ const Home = () => {
 						onChange={e => setPassword(e.target.value)}
 					/>
 				</div>
-				<a className="text-cyan-500 ml-auto font-bold text-md pb-2" href="">
+				{/* <a className="text-cyan-500 ml-auto font-bold text-md pb-2" href="">
 					Olvidaste tu contraseña?
-				</a>
+				</a> */}
 				{ credentialsErrorMessage && (
 					<p className='w-full text-left text-red-500'>
 						Email o contraseña incorrectos.
@@ -131,7 +131,7 @@ const Home = () => {
 				)}
 				<button 
 					type="submit"
-					className="w-full text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+					className="w-full text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
 					onClick={ (e) => { loginUser(e) }}
 				>
 					Iniciar sesión

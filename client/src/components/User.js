@@ -64,6 +64,11 @@ const User = ({ user, users, setUsers, displayedUsers, setDisplayedUsers, disabl
                 <p>ID: {user.id}</p>
                 <p>Email: {user.mail}</p>
                 <p>Nombre: {user.name}</p>
+                <p>Dni: {user.telefono}</p>
+                <p>Telefono: {user.telefono}</p>
+                {user.type === 1 && (
+                    <p>Tarifa por media hora: ${user.hourly_rate}</p>
+                )}
                 <p>Apellido: {user.last_name}</p>
                 <p>Dirección: {user.address}</p>
                 <p>Fecha de creación: {moment(user.created_at).format('DD/MM/YYYY')}</p>

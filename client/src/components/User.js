@@ -9,6 +9,11 @@ import UserEditData from './UserEditData';
 const User = ({ user, users, setUsers, displayedUsers, setDisplayedUsers, disableUser, enableUser }) => {
 
     const [showEditModal, setShowEditModal] = useState(false);
+    const [showModalDisableUser, setShowModalDisableUser] = useState(false);
+    const [showModalEnableUser, setShowModalEnableUser] = useState(false);
+    const [userToDisableEnable, setUserToDisableEnable] = useState(false);
+    const [userIdToEnable, setUserIdToEnable] = useState();
+    const [userToEnable, setUserToEnable] = useState();
     
     const handleShow = () => setShowEditModal(true);
     const handleClose = () => {
@@ -77,7 +82,11 @@ const User = ({ user, users, setUsers, displayedUsers, setDisplayedUsers, disabl
                     user.enabled ? (
                         <button
                             className='bg-transparent focus:outline-none mt-2 text-gray-300 font-semibold hover:text-white py-2 px-4 border border-gray-200 hover:border-transparent rounded'
-                            onClick={() => disableUser(user.id)}
+                            // onClick={() => disableUser(user.id)}
+                            onClick={() => {
+                                setShowModalDisableUser(true);
+                                setUserToDisableEnable(user.id);
+                            }}
                         >
                             Desactivar
                         </button>
@@ -85,12 +94,68 @@ const User = ({ user, users, setUsers, displayedUsers, setDisplayedUsers, disabl
                     ) : (
                         <button
                             className='bg-transparent mt-2 text-gray-300 font-semibold hover:text-white py-2 px-4 border border-gray-200 hover:border-transparent rounded'
-                            onClick={() => enableUser(user.id, user)}
+                            onClick={() => {
+                                setShowModalEnableUser(true);
+                                setUserIdToEnable(user.id);
+                                setUserToEnable(user);
+                            }}
                         >
                             Activar
                         </button>
                     )
                 }
+                { showModalDisableUser && (
+                    <div className='flex flex-col items-center justify-center fixed inset-0 bg-opacity-50 bg-gray-800 h-screen z-50'>
+                        <div className='flex flex-col mx-auto relative w-5/6 overflow-y-scroll bg-gray-700 p-7 rounded-md'>
+                            <p className='text-center'>
+                                ¿Está seguro que desea desactivar el usuario?
+                            </p>
+                            <div className='w-full flex flex-row justify-between mt-7'>
+                                <button
+                                    className='bg-transparent focus:outline-none mt-2 text-gray-300 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded'
+                                    onClick={() => {
+                                        disableUser(userToDisableEnable);
+                                        setShowModalDisableUser(false);
+                                    }}
+                                >
+                                    Desactivar
+                                </button>
+                                <button
+                                    className='bg-transparent focus:outline-none mt-2 text-gray-300 font-semibold hover:text-white py-2 px-4 border border-gray-200 hover:border-transparent rounded'
+                                    onClick={() => setShowModalDisableUser(false)}
+                                >
+                                    Cancelar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+                { showModalEnableUser && (
+                    <div className='flex flex-col items-center justify-center fixed inset-0 bg-opacity-50 bg-gray-800 h-screen z-50'>
+                        <div className='flex flex-col mx-auto relative w-5/6 overflow-y-scroll bg-gray-700 p-7 rounded-md'>
+                            <p className='text-center'>
+                                ¿Está seguro que desea activar el usuario?
+                            </p>
+                            <div className='w-full flex flex-row justify-between mt-7'>
+                                <button
+                                    className='bg-transparent focus:outline-none mt-2 text-gray-300 font-semibold hover:text-white py-2 px-4 border border-green-400 hover:border-transparent rounded'
+                                    onClick={() => {
+                                        enableUser(userIdToEnable, userToEnable);
+                                        setShowModalEnableUser(false);
+                                    }}
+                                >
+                                    Activar
+                                </button>
+                                <button
+                                    className='bg-transparent focus:outline-none mt-2 text-gray-300 font-semibold hover:text-white py-2 px-4 border border-gray-200 hover:border-transparent rounded'
+                                    onClick={() => setShowModalEnableUser(false)}
+                                >
+                                    Cancelar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </>
     )

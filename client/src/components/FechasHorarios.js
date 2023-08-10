@@ -31,7 +31,7 @@ const FechasHorarios = () => {
 	});
 	const [horariosDisponibles, setHorariosDisponibles] = useState([]);
 	const [datesArrayToAdd, setDatesArrayToAdd] = useState([]);
-	const [optionsFiltered, setOptionsFiltered] = useState([]);
+	const [timeOptionsToUse, setTimeOptionsToUse] = useState([]);
 	const [displayEliminarDisponibilidadError, setDisplayEliminarDisponibilidadError] = useState(false);
 	const [eliminarDisponibilidadError, setEliminarDisponibilidadError] = useState('');
 	const navigate = useNavigate();
@@ -140,6 +140,16 @@ const FechasHorarios = () => {
 		console.log("Dates interval new value:", newInterval);
 		let startDate = formatDate(newInterval.startDate);
 		let endDate = formatDate(newInterval.endDate);
+
+		const currentDate = moment();
+
+		if(moment(startDate, 'DD/MM/YYYY').isAfter(currentDate)){
+			console.log('------------- selected initial date is after today!');
+			setTimeOptionsToUse(optionsUnfiltered);
+		}
+		else {
+			setTimeOptionsToUse(options);
+		}
 
 		console.log(`startDate at Interval Change: ${startDate}`);
 		console.log(`endDate at Interval Change: ${endDate}`);
@@ -473,7 +483,7 @@ const FechasHorarios = () => {
 						/>
 						<div className='w-full flex flex-row items-center gap-10'>
 							<div className='flex flex-col justify-between w-full'>
-								<p>Puede seleccionar un intervalo de fechas:</p>
+								<p className='mb-3 text-center'>Seleccione una o más fechas para disponibilizar horarios:</p>
 								<Datepicker
 									primaryColor={"emerald"}
 									i18n={"es"} 
@@ -494,7 +504,7 @@ const FechasHorarios = () => {
 									value={selectedHoraDesde}
 									onChange={e => handleHoraDesdeChange(e)}
 									placeholder={selectedHoraDesde ? selectedHoraDesde : 'Hora'}
-									options={options}
+									options={timeOptionsToUse}
 									maxMenuHeight={160}
 									className='rounded-md'
 									theme={(theme) => ({
@@ -515,7 +525,7 @@ const FechasHorarios = () => {
 									value={selectedHoraHasta}
 									onChange={e => handleHoraHastaChange(e)}
 									placeholder={selectedHoraHasta ? selectedHoraHasta : 'Hora'}
-									options={options}
+									options={timeOptionsToUse}
 									maxMenuHeight={160}
 									theme={(theme) => ({
 										...theme,

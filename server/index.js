@@ -412,7 +412,14 @@ app.post("/search_cuidadores", async(req, res) => {
 app.get("/caregiver_review", async(req, res) => {
     try {
         const { customer_id } = req.query;
-        const reviews = await pool.query("SELECT * from caregiver_score WHERE customer_id = $1", [customer_id])
+
+        let reviews;
+        if(!customer_id) {
+            reviews = await pool.query("SELECT * from caregiver_score")   
+        }
+        else {
+            reviews = await pool.query("SELECT * from caregiver_score WHERE customer_id = $1", [customer_id])
+        }
         res.json(reviews.rows);
     }
     catch (error) {
@@ -484,6 +491,8 @@ app.get("/users", async(req, res) => {
 
         // bring from users table those that have similarities with client email or caregiver email
         let users;
+
+        console.log('type: ', type)
 
         let query = "SELECT * FROM users";
         // Array to store the conditions
@@ -955,11 +964,12 @@ app.post("/create-contract", async(req, res) => {
 // create a contract
 app.post("/contract", async(req, res) => {
     try {
-		const { caregiver_id, customer_id, date, horarios, payment_method } = req.body;
+		const { caregiver_id, customer_id, date, horarios, payment_method, address } = req.body;
 		console.log('customer_id: ', customer_id);
 		console.log('caregiver_id: ', caregiver_id);
 		console.log('date: ', date);
 		console.log('horarios: ', horarios);
+		console.log('address: ', address);
 		console.log('horarios.length: ', horarios.length);
 		// console.log('------------- payment_method: ', payment_method);
 
@@ -1033,7 +1043,7 @@ app.post("/contract", async(req, res) => {
             // create contract now that we have the caregiver availabilities updated, and we've checked that the client does NOT have a contract
             // for any of those times already.
 
-			let query = "INSERT INTO contract (customer_id, caregiver_id, created_at, modified_at, amount, horarios, date, status, payment_method_id, payment_status) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *";
+			let query = "INSERT INTO contract (customer_id, caregiver_id, created_at, modified_at, amount, horarios, date, status, payment_method_id, payment_status, address) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *";
 
             let status = '';
             // if payment is via mercado pago, we do not set the contract as active right away, but rather wait for mercadopago's response
@@ -1049,7 +1059,7 @@ app.post("/contract", async(req, res) => {
 
             let horarios_json = JSON.stringify(horarios);
 	
-			const newContract = await pool.query(query, [customer_id, caregiver_id, created_at, modified_at, amount, horarios_json, date, status, payment_method, 'pending' ]);
+			const newContract = await pool.query(query, [customer_id, caregiver_id, created_at, modified_at, amount, horarios_json, date, status, payment_method, 'pending', address ]);
 			// console.log(allCuidadores);
 			res.json(newContract.rows[0]);
 

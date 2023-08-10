@@ -219,7 +219,8 @@ const VerDisponibilidad = ({ cuidador, show, onClose }) => {
             customer_id: userId, 
             date: contractDate, 
             horarios: checkedHorarios,
-            payment_method: chosenPaymentMethodId
+            payment_method: chosenPaymentMethodId,
+            address: user.address
         };
 
         const response = await fetch((process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER : `http://localhost:5000/`) + `contract/`, {

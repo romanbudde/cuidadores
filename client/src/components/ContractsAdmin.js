@@ -8,8 +8,9 @@ import Cookies from 'universal-cookie';
 import { useContext } from 'react';
 import { AuthContext } from './AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronLeft, faHouse, faCheck } from '@fortawesome/free-solid-svg-icons';
+import { faChevronLeft, faHouse, faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
 import Datepicker from "react-tailwindcss-datepicker";
+import ReviewModalAdmin from './ReviewModalAdmin';
 import '../css/datepicker.css';
 import dayjs from 'dayjs';
 import moment from 'moment';
@@ -27,6 +28,9 @@ const ContractsAdmin = () => {
 
 	const { isAuthenticated, userId } = useContext(AuthContext);
     const [contracts, setContracts] = useState([]);
+    const [clientes, setClientes] = useState([]);
+    const [cuidadores, setCuidadores] = useState([]);
+    const [reviews, setReviews] = useState([]);
     const [displayedContracts, setDisplayedContracts] = useState([]);
     const [searchButtonClicked, setSearchButtonClicked] = useState(false);
     const [dateFilter, setDateFilter] = useState('newest');
@@ -39,6 +43,9 @@ const ContractsAdmin = () => {
     const [noContractsWithThatStatusMessage, setNoContractsWithThatStatusMessage] = useState('');
 	const [selectedDatesInterval, setSelectedDatesInterval] = useState({});
     const [user, setUser] = useState([]);
+    const [showReviewModal, setShowReviewModal] = useState(false);
+    const [selectedContractId, setSelectedContractId] = useState();
+
 	
 	// -- Pagination
     // const [displayedContracts, setDisplayedContracts] = useState([]);
@@ -90,6 +97,11 @@ const ContractsAdmin = () => {
 		if(user.type === 0) {
 			navigate('/landing');
 		}
+	}
+
+	const onCloseReviewModal = () => {
+		setShowReviewModal(false);
+		setSelectedContractId();
 	}
 
 	const handleSearchStatusFilterChange = (e) => {
@@ -379,26 +391,48 @@ const ContractsAdmin = () => {
 		return sortedArray;
 	}
 
-    // get all users function
-    const getContracts = async () => {
+	// get all reviews
+    const getCuidadores = async () => {
         try {
-            // console.log(`http://localhost:5000/contract?user_id=${userId}`)
-
-            const response = await fetch((process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER : `http://localhost:5000/`) + `contract?user_id=${userId}`);
+            const response = await fetch((process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER : `http://localhost:5000/`) + `fetch-cuidadores`);
             const jsonData = await response.json();
 
-			jsonData.sort((a, b) => {
-				const dateA = moment(a.date, 'DD/MM/YYYY');
-				const dateB = moment(b.date, 'DD/MM/YYYY');
-				return dateB.diff(dateA);
-			});
-
-			console.log('jsonData: ');
+			console.log('---- inside getCuidadores ----');
 			console.log(jsonData);
 
-            setContracts(jsonData);
-			setDisplayedContracts(jsonData);
+			setCuidadores(jsonData);
+        } catch (error) {
+            console.error(error.message);
+        }
+    };
 
+	// get all reviews
+    const getClientes = async () => {
+        try {
+            const response = await fetch((process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER : `http://localhost:5000/`) + `fetch-clientes`);
+            const jsonData = await response.json();
+
+			console.log('---- inside getClientes ----');
+			console.log(jsonData);
+
+			setClientes(jsonData);
+        } catch (error) {
+            console.error(error.message);
+        }
+    };
+
+	console.log('cuidadores: ', cuidadores)
+
+	// get all reviews
+    const getReviews = async () => {
+        try {
+            const response = await fetch((process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER : `http://localhost:5000/`) + `caregiver_review`);
+            const jsonData = await response.json();
+
+			console.log('---- inside getReviews ----');
+			console.log(jsonData);
+
+			setReviews(jsonData);
         } catch (error) {
             console.error(error.message);
         }
@@ -417,6 +451,9 @@ const ContractsAdmin = () => {
     // when page loads, get user data
     useEffect(() => {
         getUserData();
+        getCuidadores();
+        getClientes();
+		getReviews();
     }, []);
 
     // console.log('contracts');
@@ -597,7 +634,73 @@ const ContractsAdmin = () => {
 									: 'bg-gray-700'} p-5 m-5 rounded-md flex flex-col items-start text-white font-medium`}
 									key={contract.id}
 								>
-									<p>Fecha: {contract.date}</p>
+									{ reviews.some((review) => review.contract_id === contract.id) &&(
+										<p
+											className='text-sm text-gray-200 py-1.5 px-2 bg-gray-500 rounded-full ml-auto'
+											onClick={() => {
+												setSelectedContractId(contract.id)
+												setShowReviewModal(true);
+											}}
+										>
+											Ver reseña del cliente
+										</p>
+									)}
+									{showReviewModal && selectedContractId === contract.id && (
+										<ReviewModalAdmin
+											contract = {contract}
+											onClose = {onCloseReviewModal}
+											review = {reviews.find(review => review.contract_id === contract.id)}
+										/>
+									)}
+
+									{/* (
+										<div className='fixed inset-0 bg-gray-800 bg-opacity-30 z-50 flex justify-center items-center'>
+											<div className='flex flex-col relative bg-gray-800 p-3 rounded-md'>
+												<div className='flex flex-row items-center justify-center relative border-b-2 border-b-gray-200 w-full'>
+													<FontAwesomeIcon
+														className='absolute right-0 top-0 cursor-pointer'
+														icon={faXmark}
+														onClick={ () => setShowReviewModal(false) }
+													/>
+													<h1 className='flex justify-center font-bold text-lg py-4'>Datos reseña</h1>
+												</div>
+												<div className='p-5 flex flex-col gap-5 w-full'>
+													<div className='flex flex-col py-2'>
+													{reviews.map((review) => (
+														review.contract_id === contract.id && (
+														<>
+															<label className="block mb-2 mr-auto text-sm font-medium text-white">
+																Texto de la reseña
+															</label>
+															<p>
+																{review.observation}
+															</p>
+														</>
+														)
+													))}
+													</div>
+												</div>
+											</div>
+										</div>
+									)} */}
+									<p className='font-bold'>Nº: {contract.id}</p>
+									<p className='flex flex-row gap-2'><p className='font-bold'>Fecha:</p> {contract.date}</p>
+									<p className='flex flex-row gap-2'>
+										<p className='font-bold'>Email del cuidador:</p> 
+										{cuidadores.find(cuidador => cuidador.id === contract.caregiver_id)?.mail}
+									</p>
+									<p className='flex flex-row gap-2'>
+										<p className='font-bold'>Nombre del cuidador:</p>
+										{cuidadores.find(cuidador => cuidador.id === contract.caregiver_id)?.name}
+									</p>
+									<p className='flex flex-row gap-2'>
+										<p className='font-bold'>Email del cliente:</p>
+										{clientes.find(cliente => cliente.id === contract.customer_id)?.mail}
+									</p>
+									<p className='flex flex-row gap-2'>
+										<p className='font-bold'>Nombre del cliente:</p> 
+										{clientes.find(cliente => cliente.id === contract.customer_id)?.name}
+									</p>
 									<p>Estado del contrato: {contract.status === 'active' ? 'Activo' 
 									: contract.status === 'completed' ? 'Completado'
 									: contract.status === 'cancelled' ? 'Cancelado'

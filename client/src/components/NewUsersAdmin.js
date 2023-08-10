@@ -33,7 +33,7 @@ const NewUsersAdmin = () => {
     const [updateStatusFilter, setUpdateStatusFilter] = useState('all');
     const [updateStatusSearch, setUpdateStatusSearch] = useState('all');
     const [statusSearch, setStatusSearch] = useState('all');
-    const [userType, setUserType] = useState();
+    const [userType, setUserType] = useState('all');
 	const [showAddUserModal, setShowAddUserModal] = useState(false);
     const [userEmail, setUserEmail] = useState('');
     const [noUsersWithThatStatusMessage, setNoUsersWithThatStatusMessage] = useState('');
@@ -199,6 +199,7 @@ const NewUsersAdmin = () => {
 			console.log('status: ', statusSearch);
 			
 			// get coinciding user IDS from user table first, then get contracts
+			console.log('type: ', userType)
 
             const response = await fetch((process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER : `http://localhost:5000/`) + `users?user_email=${userEmail}&user_firstname=${userFirstname}&user_lastname=${userLastname}&status=${statusSearch}&type=${userType}`);
             const jsonData = await response.json();

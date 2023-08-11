@@ -39,26 +39,26 @@ const ComprobanteContrato = ({ contract, cuidador, cliente, renderTimeRanges }) 
 					<Text>
 						<Text style={{ fontStyle: 'bold' }}>Número de contrato: </Text> {contract.id}
 					</Text>
-					<Text>Nombre del cuidador: {cuidador.name}</Text>
-					<Text>Email del cuidador: {cuidador.mail}</Text>
-					<Text>Dni del cuidador: {cuidador.dni}</Text>
-					<Text>Nombre del cliente: {cliente.name}</Text>
-					<Text>Dni del cliente: {cliente.dni}</Text>
-					<Text>Email del cliente: {cliente.mail}</Text>
-					<Text>Fecha del contrato: {contract.date}</Text>
-					<Text>Horarios: {renderTimeRanges(contract.horarios)}.</Text>
-					<Text>Monto total: ${contract.amount}</Text>
+					<Text>Nombre del cuidador: {cuidador?.name}</Text>
+					<Text>Email del cuidador: {cuidador?.mail}</Text>
+					<Text>Dni del cuidador: {cuidador?.dni}</Text>
+					<Text>Nombre del cliente: {cliente?.name}</Text>
+					<Text>Dni del cliente: {cliente?.dni}</Text>
+					<Text>Email del cliente: {cliente?.mail}</Text>
+					<Text>Fecha del contrato: {contract?.date}</Text>
+					<Text>Horarios: {renderTimeRanges(contract?.horarios)}.</Text>
+					<Text>Monto total: ${contract?.amount}</Text>
 					<Text>
-						Estado del pago: {contract.payment_status === 'approved' ? 'Pagado' 
-						: contract.payment_status === 'pending' ? 'Pendiente'
-						: contract.payment_status === 'cancelled' ? 'Cancelado'
+						Estado del pago: {contract?.payment_status === 'approved' ? 'Pagado' 
+						: contract?.payment_status === 'pending' ? 'Pendiente'
+						: contract?.payment_status === 'cancelled' ? 'Cancelado'
 						: ''}
 					</Text>
 					<Text>
-						{ contract.payment_method_id === 1 && (
+						{ contract?.payment_method_id === 1 && (
 							'Método de pago: Mercado Pago.'
 						)}	
-						{ contract.payment_method_id === 2 && (
+						{ contract?.payment_method_id === 2 && (
 							'Método de pago: Efectivo.'
 						)}	
 					</Text>

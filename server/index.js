@@ -1077,6 +1077,41 @@ app.post("/contract", async(req, res) => {
 });
 
 // update available dates json for a specific caregiver
+app.put("/contract_cash_confirmation/:id", async (req, res) => {
+    try {
+        const { user_type } = req.body;
+        const { id } = req.params;
+
+        console.log('----------- at contract_cash_confirmation')
+
+        let update_contract;
+
+        if(user_type === 0) {
+            update_contract = await pool.query(
+                `UPDATE contract SET customer_cash_confirmation = $1 WHERE id = $2 RETURNING *`, 
+                [true, id]
+            );
+        }
+        if(user_type === 1) {
+            update_contract = await pool.query(
+                `UPDATE contract SET caregiver_cash_confirmation = $1, payment_status = $2 WHERE id = $3 RETURNING *`, 
+                [true, 'approved', id]
+            );
+        }
+
+        if(update_contract.rowCount > 0){
+            res.status(200).json(update_contract.rows[0]);
+        }
+        else {
+            res.json('Oops! No contract with given ID (' + id + ') has been found.');
+        }
+    }
+    catch (error) {
+        console.log(error);
+    }
+});
+
+// update available dates json for a specific caregiver
 app.post("/caregiver_update_available_dates", async (req, res) => {
     try {
 		const { dates, caregiver_id } = req.body;

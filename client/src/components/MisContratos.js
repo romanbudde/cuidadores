@@ -8,7 +8,7 @@ import Cookies from 'universal-cookie';
 import { useContext } from 'react';
 import { AuthContext } from './AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronLeft, faHouse, faCheck, faMoneyBillWave, faHandshake, faFilePdf } from '@fortawesome/free-solid-svg-icons';
+import { faChevronLeft, faHouse, faCheck, faMoneyBillWave, faHandshake, faFilePdf, faCircleInfo, faSquareCheck } from '@fortawesome/free-solid-svg-icons';
 import ClientBottomBar from './ClientBottomBar';
 import CuidadorBottomBar from './CuidadorBottomBar';
 import ReviewModal from './ReviewModal';
@@ -107,6 +107,42 @@ const MisContratos = () => {
 
 	const onCloseReviewModal = () => {
 		setShowReviewModal(false);
+	}
+
+	const markContractAsPaid = async (contract) => {
+
+		let bodyJSON = { 
+			user_type: user.type
+		};
+
+		// update contract cash payment status by its id (contract.id)
+		const contract_update = await fetch(
+			(process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER : `http://localhost:5000/`) + `contract_cash_confirmation/${contract.id}`,
+			{
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify(bodyJSON)
+			}
+		)
+			.then(response => response.json())
+			.then(result => {
+				console.log('result: ', result);
+				console.log('contracts: ', contracts)
+				console.log('displayed contracts: ', displayedContracts)
+
+				if(result.id > 0) {
+					if(user.type === 1) {
+						setContracts(contracts.map((contract) => contract.id === result.id ? { ...contract, caregiver_cash_confirmation: true, payment_status: "approved" } : contract));
+						setDisplayedContracts(displayedContracts.map((contract) => contract.id === result.id ? { ...contract, caregiver_cash_confirmation: true, payment_status: "approved"  } : contract));
+					}
+					if(user.type === 0) {
+						setContracts(contracts.map((contract) => contract.id === result.id ? { ...contract, customer_cash_confirmation: true} : contract));
+						setDisplayedContracts(displayedContracts.map((contract) => contract.id === result.id ? { ...contract, customer_cash_confirmation: true } : contract));
+					}
+				}
+			})
 	}
 
 	const changeContractStatusToComplete = async (contract) => {
@@ -507,6 +543,26 @@ const MisContratos = () => {
 											Reseña enviada
 										</p>
 									)}
+
+									{ user.type === 1 && 
+									(contract.customer_cash_confirmation && !contract.caregiver_cash_confirmation) && 
+									contract.status === 'completed' && (
+										<div
+											className='py-2 px-3 mb-3 bg-green-800 rounded-md flex flex-row items-center gap-3'
+											onClick={() => markContractAsPaid(contract)}
+										>
+											<FontAwesomeIcon icon={faSquareCheck} className='text-2xl text-green-400'/>
+											<p className='text-sm'>Marcar pago recibido con éxito</p>
+										</div>
+									)}
+									{ user.type === 1 && 
+									!contract.customer_cash_confirmation && 
+									contract.status === 'completed' && (
+										<div className='py-2 px-3 mb-3 bg-gray-600 rounded-md flex flex-row items-center gap-3'>
+											<FontAwesomeIcon icon={faCircleInfo} className='text-2xl'/>
+											<p className='text-sm'>Esperando pago del cliente</p>
+										</div>
+									)}
 									<p className='font-bold'>Nº: {contract.id}</p>
 									<p className='flex flex-row gap-2'><p className='font-bold'>Fecha:</p> {contract.date}</p>
 									<p className='flex flex-row gap-2'>
@@ -632,8 +688,33 @@ const MisContratos = () => {
 											className='flex flex-row items-center justify-left bg-black p-2 mt-4 rounded-md w-full bg-gradient-to-r from-gray-900 to-gray-700'
 											onClick={ () => changeContractStatusToComplete(contract) }
 										>
+											<FontAwesomeIcon icon={faCheck} size="2xl" className='text-3xl mr-5 ml-2' style={{color: "#fff",}} />
+											<p className=''>Marcar servicio como realizado</p>
+										</div>
+									)}
+									{user.type === 0 && 
+									contract.status === 'completed' && 
+									contract.payment_method_id === 2 &&
+									!contract.customer_cash_confirmation &&
+									(
+										moment(contract.date, 'DD/MM/YYYY').isBefore(moment().startOf('day')) || 
+										(
+											moment(contract.date, 'DD/MM/YYYY').isSame(moment(), 'day') && 
+											moment(contract.horarios[contract.horarios.length - 1], 'HH:mm').add(30,'minutes').format('HH:mm') < moment().format('HH:mm')
+										) 
+									) && (
+										<div
+											className='flex flex-row items-center justify-left bg-black p-2 mt-4 rounded-md w-full bg-gradient-to-r from-green-500 to-green-600'
+											onClick={ () => markContractAsPaid(contract) }
+										>
 											<FontAwesomeIcon icon={faCheck} size="2xl" className='text-3xl mr-7 ml-2' style={{color: "#fff",}} />
-											<p className=''>Marcar como completado</p>
+											<p className=''>Marcar pago realizado</p>
+										</div>
+									)}
+									{ user.type === 0 && contract.customer_cash_confirmation && (
+										<div className='py-2 px-3 mt-3 bg-gray-600 rounded-md flex flex-row items-center gap-3'>
+											<FontAwesomeIcon icon={faCircleInfo} className='text-2xl'/>
+											<p className='text-sm'>Esperando confirmación del cuidador sobre la recepción del efectivo</p>
 										</div>
 									)}
 									{/* <button

@@ -108,7 +108,7 @@ const Account = () => {
 				)}
 				<div className='w-full flex flex-col items-center px-5 space-y-3'>
 					<h1 className='font-medium text-lg flex flex-row items-center gap-1'>
-						Hola, <p className='p-1 px-2 bg-cyan-200 rounded-md'>{user.name}!</p>
+						Hola, <p className='p-1 px-2 bg-cyan-200 rounded-md'>{user && user.name}!</p>
 					</h1>
 					<UserEditData
 						user={user}
@@ -120,25 +120,25 @@ const Account = () => {
 					<div className='w-full ml-5 flex flex-col text-left space-y-4'>
 					<div className='flex flex-row gap-3 items-center'>
 							<FontAwesomeIcon className='text-2xl' icon={faEnvelope} />
-							<p>Tu email actual es {user.mail}</p>
+							<p>Tu email actual es {user && user.mail}</p>
 						</div>
 						<div className='flex flex-row gap-3 items-center'>
 							<FontAwesomeIcon className='text-2xl' icon={faComment} />
-							<p>Tu descripción es: {user.description}</p>
+							<p>Tu descripción es: {user && user.description}</p>
 						</div>
 						<div className='flex flex-row gap-3 items-center'>
 							<FontAwesomeIcon className='text-2xl mr-2' icon={faMapPin} />
-							<p>Tu dirección es: {user.address}</p>
+							<p>Tu dirección es: {user && user.address}</p>
 						</div>
-						{ user.type === 1 && (
+						{ user && user.type === 1 && (
 							<>
 								<div className='flex flex-row gap-2'>
 									<FontAwesomeIcon className='text-2xl mr-1' icon={faCoins} />
-									<p>Tarifa por media hora: {user.hourly_rate}</p>
+									<p>Tarifa por media hora: {user && user.hourly_rate}</p>
 								</div>
 								<div className='flex flex-row gap-2'>
 									<FontAwesomeIcon className='text-2xl' icon={faStar} />
-									<p>Puntaje promedio segun las reseñas: {user.average_review_score}</p>
+									<p>Puntaje promedio segun las reseñas: {user && user.average_review_score}</p>
 								</div>
 							</>
 						)}

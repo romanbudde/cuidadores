@@ -82,7 +82,7 @@ const Account = () => {
 		getUserTypes();
     }, []);
 
-	if (!isAuthenticated || !user) {
+	if (!isAuthenticated) {
 		return navigate('/');; // Add this line to prevent further rendering
 	}
 

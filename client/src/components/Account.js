@@ -43,13 +43,13 @@ const Account = () => {
 	}
 
 	const redirectLanding = () => {
-		if(user.type === 2) {
+		if(user && user.type === 2) {
 			navigate('/landing-admin');
 		}
-		if(user.type === 1) {
+		if(user && user.type === 1) {
 			navigate('/landing-cuidador');
 		}
-		if(user.type === 0) {
+		if(user && user.type === 0) {
 			navigate('/landing');
 		}
 	}
@@ -77,13 +77,14 @@ const Account = () => {
         } catch (error) {
             console.error(error.message);
         }
+
+		setLoading(false);
     };
 
 	useEffect(() => {
         getUserData();
 
 		getUserTypes();
-		setLoading(false);
     }, []);
 
 	if (!isAuthenticated) {

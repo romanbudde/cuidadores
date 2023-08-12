@@ -316,6 +316,8 @@ const FechasHorarios = () => {
 		console.log(jsonData);
 
 		setUser(jsonData);
+
+		setLoading(false);
 	}
 
     // when page loads, get all Users
@@ -325,7 +327,6 @@ const FechasHorarios = () => {
 
 		const today = moment().format('DD/MM/YYYY');
 		setDatesArrayToAdd([today]);
-		setLoading(false);
     }, []);
 
 	const api_caregiver_update_available_dates = async newHorariosDisponibles => {

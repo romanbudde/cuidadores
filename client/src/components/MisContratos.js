@@ -429,8 +429,9 @@ const MisContratos = () => {
 
 			setReviews(jsonData);
         } catch (error) {
-            console.error(error.message);
+			console.error(error.message);
         }
+		setLoading(false);
     };
 
 	console.log('reviews: ', reviews)
@@ -442,7 +443,6 @@ const MisContratos = () => {
         getClientes();
         getUserData();
 		getReviews();
-		setLoading(false);
     }, []);
 
     // console.log('contracts');

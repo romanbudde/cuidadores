@@ -382,7 +382,6 @@ app.post("/search_cuidadores", async(req, res) => {
 		console.log(lowest_score_acceptable);
 		
 		const values = [];
-		values.push(lowest_score_acceptable);
 
 		let query = "SELECT * FROM users WHERE type = '1' AND enabled = true";
 

@@ -250,16 +250,22 @@ const FilterCuidadores = () => {
 					<>
 						<div className='mx-5 my-7 border border-gray-300'>
 						</div>
-						<div className='flex flex-col space-y-7 mx-auto items-center rounded-md justify-start w-96 mb-28'>
-							<h1 className='flex justify-center font-bold text-md'>{cuidadores.length} Cuidadores encontrados:</h1>
+						<div className='flex flex-col space-y-7 mx-auto items-center rounded-md justify-start w-9/12 mb-28'>
+							<h1 className='flex justify-center font-bold text-md'>
+								{cuidadores.length} Cuidadores encontrados:
+							</h1>
 							{currentPosts.map(cuidador => (
 								<div 
-									className='bg-gray-300 p-4 rounded-md shadow-lg'
+									className='bg-gray-300 p-4 w-full rounded-md shadow-lg'
 									key={cuidador.id}
 								>
 									<h2 className='flex flex-row gap-1'><p className='font-semibold'>Cuidador:</p> {cuidador.name}</h2>
 									<h2 className='flex flex-row gap-1'><p className='font-semibold'>Tarifa por hora:</p> {cuidador.hourly_rate}</h2>
-									<h2 className='flex flex-row gap-1'><p className='font-semibold'>Puntaje promedio de reseñas:</p> {cuidador.average_review_score}</h2>
+									<h2 className='flex flex-row gap-1'>
+										<p className='font-semibold'>
+											Puntaje promedio de reseñas: 
+										</p> {cuidador.average_review_score ? cuidador.average_review_score : 'Aún no tiene reseñas.'}
+									</h2>
 									<button
 										className='w-full mt-7 text-white bg-gradient-to-r from-green-500 to-green-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'
 										onClick={handleShowDisponibilidadModal(cuidador)}

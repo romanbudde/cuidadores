@@ -715,7 +715,7 @@ const MisContratos = () => {
 											<p className=''>Marcar pago realizado</p>
 										</div>
 									)}
-									{ user.type === 0 && contract.customer_cash_confirmation && (
+									{ user.type === 0 && contract.customer_cash_confirmation && !contract.caregiver_cash_confirmation &&(
 										<div className='py-2 px-3 mt-3 bg-gray-600 rounded-md flex flex-row items-center gap-3'>
 											<FontAwesomeIcon icon={faCircleInfo} className='text-2xl'/>
 											<p className='text-sm'>Esperando confirmación del cuidador sobre la recepción del efectivo</p>

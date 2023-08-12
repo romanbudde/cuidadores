@@ -11,6 +11,7 @@ import { GeoapifyGeocoderAutocomplete, GeoapifyContext } from '@geoapify/react-g
 import '@geoapify/geocoder-autocomplete/styles/minimal.css';
 import Autocomplete from "react-google-autocomplete";
 import '../css/autocomplete.css';
+import MoonLoader from "react-spinners/ClipLoader";
 
 
 const Register = () => {
@@ -27,6 +28,7 @@ const Register = () => {
 	const [address, setAddress] = useState('');
 	const [displayErrorMessage, setDisplayErrorMessage] = useState(false);
 	const [errorMessage, setErrorMessage] = useState('');
+	const [loading, setLoading] = useState(false);
 
 	const SignupSchema = Yup.object().shape({
 		firstname: Yup.string()
@@ -69,6 +71,7 @@ const Register = () => {
 	}
 
 	const onSubmitUser = async (values) => {
+		setLoading(true);
 		console.log('----------------- on function onSubmitUser -------------- ');
 
 		// e.preventDefault();
@@ -129,6 +132,7 @@ const Register = () => {
 		catch (error) {
 			console.error(error.message);
 		}
+		setLoading(false);
 	}
 
 	//   const formik = useFormik({
@@ -308,7 +312,16 @@ const Register = () => {
 					</div>
 				</div>
 			)}
-
+			{loading && (
+				<div className='bg-gray-800 fixed inset-0 opacity-95 z-50 flex flex-row justify-center items-center'>
+					<MoonLoader
+						color="#36d7b7"
+						size={60}
+						loading={true}
+						speedMultiplier={0.7}
+					/>
+				</div>
+			)}
 		</Fragment>
 
 	)

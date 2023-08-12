@@ -116,7 +116,7 @@ const ReviewModal = ({ contract, onClose, reviews, setReviews }) => {
 	if(isAuthenticated){
 		return (
 			<Fragment>
-				<div className='fixed inset-0 bg-gray-800 bg-opacity-80 z-50 flex justify-center items-center'>
+				<div className='fixed inset-0 bg-gray-800 bg-opacity-50 z-50 flex justify-center items-center'>
 					<div className='flex flex-col relative bg-gray-800 p-3 rounded-md'>
 						<div className='flex flex-row items-center justify-center relative border-b-2 border-b-gray-200 w-full'>
 							<FontAwesomeIcon

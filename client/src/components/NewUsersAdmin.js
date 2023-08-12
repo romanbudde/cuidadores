@@ -16,6 +16,7 @@ import moment from 'moment';
 import CuidadorBottomBar from './CuidadorBottomBar';
 import Paginate from './Paginate';
 import Select from 'react-select';
+import MoonLoader from "react-spinners/ClipLoader";
 
 const NewUsersAdmin = () => {
 	const navigate = useNavigate();
@@ -39,6 +40,7 @@ const NewUsersAdmin = () => {
     const [noUsersWithThatStatusMessage, setNoUsersWithThatStatusMessage] = useState('');
 	const [selectedDatesInterval, setSelectedDatesInterval] = useState({});
     const [user, setUser] = useState([]);
+    const [loading, setLoading] = useState(false);
 	
 	// -- Pagination
     // const [displayedContracts, setDisplayedContracts] = useState([]);
@@ -185,6 +187,7 @@ const NewUsersAdmin = () => {
 	}
 
 	const searchUsers = async () => {
+		setLoading(true);
 		// console.log('search contracts');
 
 		// console.log('selected dates: ', selectedDatesInterval);
@@ -217,6 +220,7 @@ const NewUsersAdmin = () => {
 
             setUsers(jsonData);
 			setDisplayedUsers(jsonData);
+			setLoading(false);
 
         } catch (error) {
             console.error(error.message);
@@ -648,7 +652,16 @@ const NewUsersAdmin = () => {
 						)}
 					</div>
                 </div>
-
+				{loading && (
+					<div className='bg-gray-800 fixed inset-0 opacity-95 z-50 flex flex-row justify-center items-center'>
+						<MoonLoader
+							color="#36d7b7"
+							size={60}
+							loading={true}
+							speedMultiplier={0.7}
+						/>
+					</div>
+				)}
 			</Fragment>
 		);
 	}

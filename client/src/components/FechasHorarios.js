@@ -17,6 +17,7 @@ import es from 'date-fns/locale/es';
 // registerLocale('es', es)
 import dayjs from 'dayjs';
 import moment from 'moment';
+import MoonLoader from "react-spinners/ClipLoader";
 
 const FechasHorarios = () => {
 	const { isAuthenticated } = useContext(AuthContext);
@@ -38,6 +39,7 @@ const FechasHorarios = () => {
 	const [eliminarDisponibilidadError, setEliminarDisponibilidadError] = useState('');
 	const navigate = useNavigate();
 	const cookies = new Cookies();
+	const [loading, setLoading] = useState(true);
 
 	let formattedDate = date.toLocaleDateString("en-GB");
 	console.log(formattedDate);
@@ -323,6 +325,7 @@ const FechasHorarios = () => {
 
 		const today = moment().format('DD/MM/YYYY');
 		setDatesArrayToAdd([today]);
+		setLoading(false);
     }, []);
 
 	const api_caregiver_update_available_dates = async newHorariosDisponibles => {
@@ -633,6 +636,16 @@ const FechasHorarios = () => {
 								Continuar
 							</button>
 						</div>
+					</div>
+				)}
+				{loading && (
+					<div className='bg-gray-800 fixed inset-0 opacity-95 z-50 flex flex-row justify-center items-center'>
+						<MoonLoader
+							color="#36d7b7"
+							size={60}
+							loading={true}
+							speedMultiplier={0.7}
+						/>
 					</div>
 				)}
 			</Fragment>

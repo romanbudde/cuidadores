@@ -13,6 +13,7 @@ import CuidadorBottomBar from './CuidadorBottomBar';
 import { Formik, Form, Field, ErrorMessage, useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useSearchParams } from 'react-router-dom';
+import MoonLoader from "react-spinners/ClipLoader";
 
 const MercadoPagoConfig = () => {
 	const { isAuthenticated } = useContext(AuthContext);
@@ -154,6 +155,7 @@ const MercadoPagoConfig = () => {
         getUserData();
 		getUserTypes();
 		getAccessToken();
+		setLoading(false);
     }, []);
 
 	if(isAuthenticated){
@@ -255,6 +257,16 @@ const MercadoPagoConfig = () => {
 					)}
 					</div>
 				</div>
+				{loading && (
+					<div className='bg-gray-800 fixed inset-0 opacity-95 z-50 flex flex-row justify-center items-center'>
+						<MoonLoader
+							color="#36d7b7"
+							size={60}
+							loading={true}
+							speedMultiplier={0.7}
+						/>
+					</div>
+				)}
 			</Fragment>
 		);
 	}

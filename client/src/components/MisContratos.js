@@ -17,6 +17,8 @@ import Paginate from './Paginate';
 import moment from 'moment';
 import Select from 'react-select';
 
+import MoonLoader from "react-spinners/ClipLoader";
+
 import ComprobanteContrato from './ComprobanteContrato';
 import mercado_pago_icon from "../images/mercado-pago-icon.svg";
 import cash_bill_icon from "../images/cash-bill.svg";
@@ -32,6 +34,7 @@ const MisContratos = () => {
     const [user, setUser] = useState([]);
     const [reviews, setReviews] = useState([]);
     const [showReviewModal, setShowReviewModal] = useState(false);
+    const [loading, setLoading] = useState(true);
 	
 	// -- Pagination
     // const [displayedContracts, setDisplayedContracts] = useState([]);
@@ -439,6 +442,7 @@ const MisContratos = () => {
         getClientes();
         getUserData();
 		getReviews();
+		setLoading(false);
     }, []);
 
     // console.log('contracts');
@@ -733,7 +737,16 @@ const MisContratos = () => {
 						)}
 					</div>
                 </div>
-
+				{loading && (
+					<div className='bg-gray-800 fixed inset-0 opacity-95 z-50 flex flex-row justify-center items-center'>
+						<MoonLoader
+							color="#36d7b7"
+							size={60}
+							loading={true}
+							speedMultiplier={0.7}
+						/>
+					</div>
+				)}
 			</Fragment>
 		);
 	}

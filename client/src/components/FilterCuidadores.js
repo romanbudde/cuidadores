@@ -13,6 +13,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import ClientBottomBar from './ClientBottomBar';
 import Paginate from './Paginate';
+import MoonLoader from "react-spinners/ClipLoader";
 
 const FilterCuidadores = () => {
 
@@ -29,6 +30,7 @@ const FilterCuidadores = () => {
 	const [cuidadores, setCuidadores] = useState([]);
 	const [displayedCuidadores, setDisplayedCuidadores] = useState([]);
 	const [showDisponibilidadModal, setShowDisponibilidadModal] = useState(false);
+	const [loading, setLoading] = useState(false);
 
 	const [currentPage, setCurrentPage] = useState(1);
 	const [postsPerPage] = useState(3);
@@ -83,6 +85,7 @@ const FilterCuidadores = () => {
 	}
 
 	const searchCuidadores = async (e) => {
+		setLoading(true);
 		e.preventDefault();
 
 		let lowestScoreAcceptable = 0;
@@ -121,6 +124,7 @@ const FilterCuidadores = () => {
 		console.log(response);
 		setCuidadores(response);
 		setDisplayedCuidadores(response);
+		setLoading(false);
 	}
 	console.log('cuidadores: ', cuidadores.length)
 	// console.log(cuidadores)
@@ -272,40 +276,16 @@ const FilterCuidadores = () => {
 						</div>
 					</>
 				)}
-							
-
-				{/* { cuidadores.length > 0 && (
-					<div className='flex flex-col space-y-4 mx-auto items-center rounded-md justify-start w-96 py-2 my-5 border-t-2 border-t-gray-200 mb-28'>
-						<h1 className='flex justify-center font-bold text-md py-4'>{cuidadores.length} Cuidadores encontrados:</h1>
-						{cuidadores.length > 0 && cuidadores.map(cuidador => (
-							<div 
-								className='bg-gray-200 p-4 rounded-md'
-								key={cuidador.id}
-							>
-								<h2>Cuidador: {cuidador.name}</h2>
-								<h2>Hourly rate: ${cuidador.hourly_rate}</h2>
-								<h2>Average review score: {cuidador.average_review_score}</h2>
-								<button
-									className='w-full text-white bg-gradient-to-r from-green-500 to-green-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'
-									onClick={handleShowDisponibilidadModal(cuidador)}
-								>
-									Ver disponibilidad
-								</button>
-								<VerDisponibilidad
-									cuidador={cuidador}
-									show={showDisponibilidadModal === cuidador}
-									onClose={handleClose}
-								/>
-							</div>
-						))}
+				{loading && (
+					<div className='bg-gray-800 fixed inset-0 opacity-95 z-50 flex flex-row justify-center items-center'>
+						<MoonLoader
+							color="#36d7b7"
+							size={60}
+							loading={true}
+							speedMultiplier={0.7}
+						/>
 					</div>
 				)}
-				{ cuidadores.length <= 0 && (
-					<div className='flex flex-col space-y-4 mx-auto items-center rounded-md justify-start w-96 py-2 my-5 border-t-2 border-t-gray-200'>
-						<h1 className='flex justify-center font-bold text-md py-4'>{cuidadores.length} Cuidadores encontrados</h1>
-						
-					</div>
-				)} */}
 			</Fragment>
 		);
 	}

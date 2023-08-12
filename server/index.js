@@ -294,10 +294,10 @@ app.post('/register', async(req, res) => {
         );
 
         if(userDniExists.rows.length > 0) {
-            return res.status(401).json({ error: 'Ups, el dni ya está registrado con otro usuario.' });
+            return res.status(401).json({ error: 'Ups! El dni ya está registrado con otro usuario.' });
         } 
         if(userEmailExists.rows.length > 0) {
-            return res.status(401).json({ error: 'Ups, el email ya está registrado con otro usuario.' });
+            return res.status(401).json({ error: 'Ups! El email ya está registrado con otro usuario.' });
         } 
         
         const newUser = await pool.query(

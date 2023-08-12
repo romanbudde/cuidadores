@@ -10,6 +10,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faEnvelope, faComment, faPenToSquare, faMapPin, faCoins, faStar, faRightFromBracket} from '@fortawesome/free-solid-svg-icons';
 import ClientBottomBar from './ClientBottomBar';
 import CuidadorBottomBar from './CuidadorBottomBar';
+import MoonLoader from "react-spinners/ClipLoader";
 
 const Account = () => {
 	const { isAuthenticated } = useContext(AuthContext);
@@ -19,6 +20,8 @@ const Account = () => {
 	const [userTypes, setUserTypes] = useState([]);
 
 	const [showEditModal, setShowEditModal] = useState(false);
+
+    const [loading, setLoading] = useState(true);
     
     const handleShow = () => setShowEditModal(true);
     const handleClose = () => {
@@ -80,6 +83,7 @@ const Account = () => {
         getUserData();
 
 		getUserTypes();
+		setLoading(false);
     }, []);
 
 	if (!isAuthenticated) {
@@ -152,6 +156,16 @@ const Account = () => {
 					</div>
 				</div>
 			</div>
+			{loading && (
+				<div className='bg-gray-800 fixed inset-0 opacity-95 z-50 flex flex-row justify-center items-center'>
+					<MoonLoader
+						color="#36d7b7"
+						size={60}
+						loading={true}
+						speedMultiplier={0.7}
+					/>
+				</div>
+			)}
 		</Fragment>
 	);
 }

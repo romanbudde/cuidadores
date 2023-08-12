@@ -17,6 +17,7 @@ import moment from 'moment';
 import CuidadorBottomBar from './CuidadorBottomBar';
 import Paginate from './Paginate';
 import Select from 'react-select';
+import MoonLoader from "react-spinners/ClipLoader";
 
 import mercado_pago_icon from "../images/mercado-pago-icon.svg";
 import cash_bill_icon from "../images/cash-bill.svg";
@@ -45,7 +46,7 @@ const ContractsAdmin = () => {
     const [user, setUser] = useState([]);
     const [showReviewModal, setShowReviewModal] = useState(false);
     const [selectedContractId, setSelectedContractId] = useState();
-
+    const [loading, setLoading] = useState(false);
 	
 	// -- Pagination
     // const [displayedContracts, setDisplayedContracts] = useState([]);
@@ -155,6 +156,7 @@ const ContractsAdmin = () => {
 	}
 
 	const searchContracts = async () => {
+		setLoading(true);
 		// console.log('search contracts');
 
 		// console.log('selected dates: ', selectedDatesInterval);
@@ -197,7 +199,7 @@ const ContractsAdmin = () => {
 
             setContracts(jsonData);
 			setDisplayedContracts(jsonData);
-
+			setLoading(false);
         } catch (error) {
             console.error(error.message);
         }
@@ -761,7 +763,16 @@ const ContractsAdmin = () => {
 						)}
 					</div>
                 </div>
-
+				{loading && (
+					<div className='bg-gray-800 fixed inset-0 opacity-95 z-50 flex flex-row justify-center items-center'>
+						<MoonLoader
+							color="#36d7b7"
+							size={60}
+							loading={true}
+							speedMultiplier={0.7}
+						/>
+					</div>
+				)}
 			</Fragment>
 		);
 	}

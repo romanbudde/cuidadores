@@ -11,7 +11,7 @@ import { AuthContext } from './AuthContext';
 import Datepicker from "react-tailwindcss-datepicker";
 import CuidadorBottomBar from './CuidadorBottomBar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronLeft, faHouse, faXmark, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
+import { faChevronLeft, faHouse, faXmark, faCircleXmark, faCircleCheck } from '@fortawesome/free-solid-svg-icons';
 // import { registerLocale, setDefaultLocale } from  "react-tailwindcss-datepicker";
 import es from 'date-fns/locale/es';
 // registerLocale('es', es)
@@ -40,6 +40,8 @@ const FechasHorarios = () => {
 	const navigate = useNavigate();
 	const cookies = new Cookies();
 	const [loading, setLoading] = useState(true);
+	const [displayAddAvailabilitiesMessage, setDisplayAddAvailabilitiesMessage] = useState(false);
+	const [addAvailabilitiesMessageError, setAddAvailabilitiesMessageError] = useState(false);
 
 	let formattedDate = date.toLocaleDateString("en-GB");
 	console.log(formattedDate);
@@ -207,6 +209,10 @@ const FechasHorarios = () => {
 		setDisplayEliminarDisponibilidadError(false);
 	}
 
+	const closeAddAvailabilitiesMessage = () => {
+		setDisplayAddAvailabilitiesMessage(false);
+	}
+
 	// delete horario function
     const deleteHorario = async (horario) => {
         try {
@@ -352,6 +358,13 @@ const FechasHorarios = () => {
 				if(result){
 					console.log('newAvailabilities: ');
 					console.log(result);
+					setDisplayAddAvailabilitiesMessage(true);
+					if(Object.keys(result.newAvailabilities.dates).length > 0) {
+						setAddAvailabilitiesMessageError(false);
+					}
+					else {
+						setAddAvailabilitiesMessageError(true);
+					}
 				}
 			});
 	}
@@ -639,6 +652,45 @@ const FechasHorarios = () => {
 						</div>
 					</div>
 				)}
+				{ displayAddAvailabilitiesMessage && addAvailabilitiesMessageError &&(
+					<div className='fixed inset-0 bg-gray-900 bg-opacity-40 z-50 flex justify-center items-center'>
+						<div className='bg-red-500 p-5 rounded w-9/12 flex flex-col gap-5 items-center justify-center relative'>
+							<button onClick={ closeAddAvailabilitiesMessage } type="button" className="absolute top-2 right-2 text-gray-100 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="defaultModal">
+								<svg aria-hidden="true" className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"></path></svg>
+								<span className="sr-only">Close modal</span>
+							</button>
+							<p className='font-bold text-2xl text-white'>Error!</p>
+							<p className='text-white text-center font-medium'>No se han podido disponibilizar las horas.</p>
+							<FontAwesomeIcon icon={faCircleXmark} size="2xl" className='text-8xl' style={{color: "#fff",}} />
+							<button
+								className='bg-red-800 mt-10 hover:bg-blue-700 text-white font-bold py-2 px-16 rounded-full'
+								onClick={ closeAddAvailabilitiesMessage }
+							>
+								Continuar
+							</button>
+						</div>
+					</div>
+				)}
+				{ displayAddAvailabilitiesMessage && !addAvailabilitiesMessageError && (
+					<div className='fixed inset-0 bg-gray-900 bg-opacity-40 z-50 flex justify-center items-center'>
+						<div className='bg-green-400 p-5 rounded w-9/12 flex flex-col gap-5 items-center justify-center relative'>
+							<button onClick={ closeAddAvailabilitiesMessage } type="button" className="absolute top-2 right-2 text-gray-200 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="defaultModal">
+								<svg aria-hidden="true" className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"></path></svg>
+								<span className="sr-only">Close modal</span>
+							</button>
+							<p className='font-bold text-2xl text-white'>Genial!</p>
+							<p className='text-white text-center font-medium'>Horarios disponibilizados con éxito</p>
+							<FontAwesomeIcon icon={faCircleCheck} size="2xl" className='text-8xl' style={{color: "#fff",}} />
+							<button
+								className='bg-green-600 mt-10 hover:bg-blue-700 text-white font-bold py-2 px-16 rounded-full'
+								onClick={ closeAddAvailabilitiesMessage }
+							>
+								Continuar
+							</button>
+						</div>
+					</div>
+				)}
+
 				{loading && (
 					<div className='bg-gray-800 fixed inset-0 opacity-95 z-50 flex flex-row justify-center items-center'>
 						<MoonLoader

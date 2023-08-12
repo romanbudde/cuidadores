@@ -8,6 +8,7 @@ const Home = () => {
 	const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
 	const { userId, setUserId } = useContext(AuthContext);
 	const [email, setEmail] = useState('');
+	const [loading, setLoading] = useState(false);
 	const [password, setPassword] = useState('');
 	const [credentialsErrorMessage, setCredentialsErrorMessage] = useState(false);
 	const navigate = useNavigate();
@@ -16,6 +17,7 @@ const Home = () => {
     const loginUser = async (e) => {
 		console.log('----------------- onLoginUser -------------- ');
 		e.preventDefault();
+		setLoading(true);
 		try {
 			const body = {email, password};
 			console.log(JSON.stringify(body));
@@ -32,11 +34,13 @@ const Home = () => {
 					if(!response.ok) {
 						// console.log('CREDENTIALS ERROR');
 						setCredentialsErrorMessage(true);
+						setLoading(false);
 					}
 
 					return response.json();
 				})
 				.then(result => {
+					setLoading(false);
 					console.log('there is a result: ');
 					console.log(result);
 					if(result){
@@ -143,6 +147,11 @@ const Home = () => {
 			</div>
 	
 		</form>
+		{loading && (
+			<div className='fixed inset-0 bg-gray-800 opacity-70 text-white font-semibold min-h-screen'>
+				<p>LOADINGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG</p>
+			</div>
+		)}
 	
 		</Fragment>
 	)

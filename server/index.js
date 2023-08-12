@@ -281,6 +281,7 @@ app.post('/register', async(req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
         const created_at = new Date();
 
+        console.log('email: ', email)
 
         const userEmailExists = await pool.query(
             "SELECT * FROM users WHERE mail = $1",
@@ -292,10 +293,10 @@ app.post('/register', async(req, res) => {
             [dni]
         );
 
-        if(userDniExists.rows > 0) {
+        if(userDniExists.rows.length > 0) {
             return res.status(401).json({ error: 'Ups, el dni ya está registrado con otro usuario.' });
         } 
-        if(userEmailExists.rows > 0) {
+        if(userEmailExists.rows.length > 0) {
             return res.status(401).json({ error: 'Ups, el email ya está registrado con otro usuario.' });
         } 
         
@@ -327,7 +328,7 @@ app.post('/register', async(req, res) => {
 // get all - cuidadores
 app.get("/cuidadores", async(req, res) => {
     try {
-        const allCuidadores = await pool.query("SELECT * from users")
+        const allCuidadores = await pool.query("SELECT * FROM users")
         res.json(allCuidadores.rows);
     }
     catch (error) {
@@ -339,7 +340,7 @@ app.get("/cuidadores", async(req, res) => {
 app.get("/fetch-cuidadores", async(req, res) => {
     try {
         console.log('------- at fetch-cuidadores endpoint')
-        const allCuidadores = await pool.query("SELECT * from users WHERE type = '1'")
+        const allCuidadores = await pool.query("SELECT * FROM users WHERE type = '1'")
         console.log('------- CUIDADORES: ', allCuidadores)
         res.json(allCuidadores.rows);
     }
@@ -352,7 +353,7 @@ app.get("/fetch-cuidadores", async(req, res) => {
 app.get("/fetch-clientes", async(req, res) => {
     try {
         console.log('------- at fetch-clientes endpoint')
-        const allClientes = await pool.query("SELECT * from users WHERE type = '0'")
+        const allClientes = await pool.query("SELECT * FROM users WHERE type = '0'")
         console.log('------- clientes: ', allClientes)
         res.json(allClientes.rows);
     }
@@ -364,7 +365,7 @@ app.get("/fetch-clientes", async(req, res) => {
 // get all - user types
 app.get("/user_types", async(req, res) => {
     try {
-        const userTypes = await pool.query("SELECT * from user_type")
+        const userTypes = await pool.query("SELECT * FROM user_type")
         res.json(userTypes.rows);
     }
     catch (error) {
@@ -489,7 +490,7 @@ app.get("/users", async(req, res) => {
     try {
         let { user_email, user_firstname, user_lastname, status, type } = req.query;
 
-        // bring from users table those that have similarities with client email or caregiver email
+        // bring FROM users table those that have similarities with client email or caregiver email
         let users;
 
         console.log('type: ', type)
@@ -580,7 +581,7 @@ app.get("/payment_methods", async(req, res) => {
     try {
         let payment_methods;
 
-        payment_methods = await pool.query("SELECT * from payment_methods");
+        payment_methods = await pool.query("SELECT * from payment_method");
 
         console.log('payment_methods: ', payment_methods);
         res.json({
@@ -635,7 +636,7 @@ app.get("/contracts", async(req, res) => {
     try {
         let { client_email, caregiver_email, start_date, end_date, status } = req.query;
 
-        // bring from users table those that have similarities with client email or caregiver email
+        // bring FROM users table those that have similarities with client email or caregiver email
         let users;
 		// users = await pool.query("SELECT * FROM users WHERE mail LIKE $1 OR mail LIKE $2", [client_email, caregiver_email]);
 

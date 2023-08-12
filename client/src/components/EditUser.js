@@ -52,7 +52,7 @@ const UserEditData = ({ user, users, setUsers, displayedUsers, setDisplayedUsers
 			.required('Campo requerido!'),
 		telefono: Yup.string()
 			.min(6, 'El telefono es demasiado corto!')
-			.max(15, 'El telefono es demasiado largo!')
+			.max(10, 'El telefono es demasiado largo!')
 			.required('Campo requerido!'),
 		description: Yup.string()
 			.min(2, 'La descripción es demasiado corta!')

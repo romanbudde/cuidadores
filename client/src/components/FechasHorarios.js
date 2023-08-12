@@ -23,16 +23,18 @@ const FechasHorarios = () => {
 	const { userId } = useContext(AuthContext);
     const [date, setDate] = useState(new Date());
     const [user, setUser] = useState();
-    const [selectedHoraDesde, setSelectedHoraDesde] = useState();
-    const [selectedHoraHasta, setSelectedHoraHasta] = useState();
+    const [selectedHoraDesde, setSelectedHoraDesde] = useState('');
+    const [selectedHoraHasta, setSelectedHoraHasta] = useState('');
     const [selectedDatesInterval, setSelectedDatesInterval] = useState({ 
-		startDate: new Date(), 
-		endDate: new Date()
+		startDate: '', 
+		endDate: ''
 	});
 	const [horariosDisponibles, setHorariosDisponibles] = useState([]);
 	const [datesArrayToAdd, setDatesArrayToAdd] = useState([]);
 	const [timeOptionsToUse, setTimeOptionsToUse] = useState([]);
 	const [displayEliminarDisponibilidadError, setDisplayEliminarDisponibilidadError] = useState(false);
+	const [horariosForToday, setHorariosForToday] = useState(false);
+	const [horariosForTheFuture, setHorariosForTheFuture] = useState(false);
 	const [eliminarDisponibilidadError, setEliminarDisponibilidadError] = useState('');
 	const navigate = useNavigate();
 	const cookies = new Cookies();
@@ -126,6 +128,25 @@ const FechasHorarios = () => {
 		console.log("selected date: ", selectedDate);
 	};
 
+	const handleHorariosForToday = () => {
+		setHorariosForToday(true);
+		setHorariosForTheFuture(false);
+		const today = moment().format('DD/MM/YYYY');
+		// const todayInYYYYMMDD = moment().format('YYYY-MM-DD');
+		setDatesArrayToAdd([today]);
+		setSelectedDatesInterval({
+			startDate: '',
+			endDate: ''
+		})
+		setTimeOptionsToUse(options);
+	}
+	
+	const handleHorariosForTheFuture = () => {
+		setHorariosForTheFuture(true);
+		setHorariosForToday(false);
+		setTimeOptionsToUse(optionsUnfiltered);
+	}
+
 	const handleHoraDesdeChange = (e) => {
 		console.log('change hora desde: ', e.value);
 		setSelectedHoraDesde(e.value);
@@ -154,7 +175,7 @@ const FechasHorarios = () => {
 		console.log(`startDate at Interval Change: ${startDate}`);
 		console.log(`endDate at Interval Change: ${endDate}`);
 
-		// console.log("Formatted dates interval new value:", newInterval);
+		console.log("Formatted dates interval new value:", newInterval);
 		setSelectedDatesInterval(newInterval);
 
 		console.log('start date: ', startDate);
@@ -344,8 +365,8 @@ const FechasHorarios = () => {
 		let end;
 		let timeArray = [];
 
-		// console.log(`----- datesArrayToAdd: -----`);
-		// console.log(datesArrayToAdd);
+		console.log(`----- datesArrayToAdd: -----`);
+		console.log(datesArrayToAdd);
 
 		datesArrayToAdd.forEach(day => {
 			// console.log('day we are adding (foreach loop): ', day);
@@ -481,13 +502,43 @@ const FechasHorarios = () => {
 							minDate={new Date()} 
 							locale={'es-ES'}
 						/>
+						<h4>Tus horarios para el día {formattedDate}</h4>
+						{console.log('horariosDisponibles[formattedDate] in return')}
+						{console.log(horariosDisponibles[formattedDate])}
+						<ul className="flex flex-col w-full rounded-md bg-green-300 max-h-40 overflow-auto">
+							{console.log('date: ', date)}
+							{console.log('formatted date: ', formattedDate)}
+							{renderHorarios()}
+						</ul>
 						<div className='w-full flex flex-row items-center gap-10'>
 							<div className='flex flex-col justify-between w-full'>
+								<div className='flex flex-row justify-between gap-5'>
+									<button
+										className={`mb-3 text-center text-sm shadow-md p-2 rounded-md w-1/2 ${horariosForToday ? 'bg-green-300' : 'bg-gray-300'}`}
+										onClick={() => {
+											handleHorariosForToday();
+										}}
+									>
+										Disponibilizar horarios para hoy
+									</button>
+									<button
+										className={`mb-3 text-center text-sm shadow-md bg-gray-300 p-2 rounded-md w-1/2 ${horariosForTheFuture ? 'bg-green-300' : 'bg-gray-300'}`}
+										onClick={() => {
+											handleHorariosForTheFuture();
+										}}
+									>
+										Disponibilizar horarios para días próximos
+									</button>
+								</div>
+							</div>
+						</div>
+						{horariosForTheFuture && (
+							<>
 								<p className='mb-3 text-center'>Seleccione una o más fechas para disponibilizar horarios:</p>
 								<Datepicker
 									primaryColor={"emerald"}
 									i18n={"es"} 
-									minDate={moment().subtract(1, 'day')} 
+									minDate={moment()} 
 									// dateFormat="MMMM eeee d, yyyy h:mm aa"
 									separator={"a"}
 									displayFormat={"DD/MM/YYYY"} 
@@ -495,64 +546,72 @@ const FechasHorarios = () => {
 									locale="es"
 									onChange={handleSelectedDatesIntervalChange}
 								/>
-							</div>
-						</div>
-						<div className='w-full flex flex-row items-center gap-10'>
-							<div className='flex flex-col justify-between w-full'>
-								<p className='pl-2'>Desde</p>
-								<Select
-									value={selectedHoraDesde}
-									onChange={e => handleHoraDesdeChange(e)}
-									placeholder={selectedHoraDesde ? selectedHoraDesde : 'Hora'}
-									options={timeOptionsToUse}
-									maxMenuHeight={160}
-									className='rounded-md'
-									theme={(theme) => ({
-										...theme,
-										borderRadius: 10,
-										colors: {
-										...theme.colors,
-										primary25: '#8FD5FF',
-										primary: 'black',
-										},
-									})}
-								/>
-								
-							</div>
-							<div className='flex flex-col justify-between w-full'>
-								<p className='pl-2'>Hasta</p>
-								<Select
-									value={selectedHoraHasta}
-									onChange={e => handleHoraHastaChange(e)}
-									placeholder={selectedHoraHasta ? selectedHoraHasta : 'Hora'}
-									options={timeOptionsToUse}
-									maxMenuHeight={160}
-									theme={(theme) => ({
-										...theme,
-										borderRadius: 10,
-										colors: {
-										...theme.colors,
-										primary25: '#8FD5FF',
-										primary: 'black',
-										},
-									})}
-								/>
-							</div>
-						</div>
-						<button
-							className='w-full text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'
-							onClick = {disponibilizarHorarios}
-						>
-							Disponibilizar horarios
-						</button>
-						<h4>Tus horarios para el día {formattedDate}</h4>
-						{console.log('horariosDisponibles[formattedDate] in return')}
-						{console.log(horariosDisponibles[formattedDate])}
-						<ul className="flex flex-col w-full rounded-md bg-green-300 max-h-60 overflow-auto">
-							{console.log('date: ', date)}
-							{console.log('formatted date: ', formattedDate)}
-							{renderHorarios()}
-						</ul>
+							</>
+						)}
+						{(horariosForTheFuture || horariosForToday) && (
+							<>
+								<div className='w-full flex flex-row items-center gap-10'>
+									<div className='flex flex-col justify-between w-full'>
+										<p className='pl-2'>Desde</p>
+										<Select
+											value={selectedHoraDesde}
+											onChange={e => handleHoraDesdeChange(e)}
+											placeholder={selectedHoraDesde ? selectedHoraDesde : 'Hora'}
+											options={timeOptionsToUse}
+											maxMenuHeight={160}
+											className='rounded-md'
+											theme={(theme) => ({
+												...theme,
+												borderRadius: 10,
+												colors: {
+												...theme.colors,
+												primary25: '#8FD5FF',
+												primary: 'black',
+												},
+											})}
+										/>
+										
+									</div>
+									<div className='flex flex-col justify-between w-full'>
+										<p className='pl-2'>Hasta</p>
+										<Select
+											value={selectedHoraHasta}
+											onChange={e => handleHoraHastaChange(e)}
+											placeholder={selectedHoraHasta ? selectedHoraHasta : 'Hora'}
+											options={timeOptionsToUse}
+											maxMenuHeight={160}
+											theme={(theme) => ({
+												...theme,
+												borderRadius: 10,
+												colors: {
+												...theme.colors,
+												primary25: '#8FD5FF',
+												primary: 'black',
+												},
+											})}
+										/>
+									</div>
+								</div>
+								<button
+									className={`w-full text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center 
+									${( horariosForTheFuture && (selectedDatesInterval.startDate === '' || selectedDatesInterval.startDate === null ||  selectedDatesInterval.endDate === '' || selectedDatesInterval.endDate === null || selectedHoraDesde === '' || selectedHoraHasta === '') )
+									||
+									(
+										horariosForToday && (selectedHoraDesde === '' || selectedHoraHasta === '')
+									) ? 'opacity-60' : ''}`}
+									onClick = {disponibilizarHorarios}
+									disabled = {
+										( horariosForTheFuture && (selectedDatesInterval.startDate === '' || selectedDatesInterval.startDate === null ||  selectedDatesInterval.endDate === '' || selectedDatesInterval.endDate === null || selectedHoraDesde === '' || selectedHoraHasta === '') )
+										||
+										(
+											horariosForToday && (selectedHoraDesde === '' || selectedHoraHasta === '')
+										)
+									}
+								>
+									Disponibilizar horarios
+								</button>
+							</>
+						)}
 					</div>
 					
 					

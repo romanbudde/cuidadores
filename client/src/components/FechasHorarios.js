@@ -497,7 +497,7 @@ const FechasHorarios = () => {
 						/>
 						<h1 className='flex justify-center font-bold text-lg py-4'>Tus dias y horarios disponibles</h1>
 					</div>
-					<div className='space-y-5 p-10 mx-auto flex flex-col justify-center items-center mb-20'>
+					<div className='space-y-5 p-10 mx-auto flex flex-col justify-center items-center mb-40'>
 						<p>Elija un día y vea sus horarios disponibles</p>
 						<Calendar
 							className={'rounded-md border-transparent'}
@@ -597,7 +597,7 @@ const FechasHorarios = () => {
 									</div>
 								</div>
 								<button
-									className={`w-full text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center 
+									className={`w-full text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center
 									${( horariosForTheFuture && (selectedDatesInterval.startDate === '' || selectedDatesInterval.startDate === null ||  selectedDatesInterval.endDate === '' || selectedDatesInterval.endDate === null || selectedHoraDesde === '' || selectedHoraHasta === '') )
 									||
 									(

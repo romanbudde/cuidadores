@@ -384,8 +384,12 @@ app.post("/search_cuidadores", async(req, res) => {
 		const values = [];
 		values.push(lowest_score_acceptable);
 
-		let query = "SELECT * FROM users WHERE type = '1' AND enabled = true AND average_review_score >= $1";
+		let query = "SELECT * FROM users WHERE type = '1' AND enabled = true";
 
+        if (lowest_score_acceptable) {
+			query += " AND average_review_score >= $1";
+			values.push(lowest_score_acceptable);
+		}
 
 		if (min_rate && max_rate) {
 			query += " AND hourly_rate BETWEEN $2 AND $3";
@@ -1230,11 +1234,11 @@ app.get("/cuidadores/:id", async(req, res) => {
 app.put("/cuidadores/:id", async(req, res) => {
     try {
         const {id} = req.params;
-        const { description, email, firstname, lastname, dni, telefono, userType, enabled, hourlyRate, address } = req.body;
+        const { description, email, firstname, lastname, dni, telefono, userType, enabled, hourly_rate, address } = req.body;
         const modified_at = new Date();
         const updateUser = await pool.query(
             "UPDATE users SET description = $1, mail = $2, name = $3, last_name = $4, dni = $5, telefono = $6, type = $7,  modified_at = $8, enabled = $9, hourly_rate = $10, address = $11 WHERE id = $12 RETURNING *", 
-            [description, email, firstname, lastname, dni, telefono, userType, modified_at, enabled, hourlyRate, address, id]
+            [description, email, firstname, lastname, dni, telefono, userType, modified_at, enabled, hourly_rate, address, id]
         );
 
         if(updateUser.rowCount > 0){

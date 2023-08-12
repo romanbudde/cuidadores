@@ -452,10 +452,10 @@ COPY public.contract (id, status, date, customer_id, created_at, modified_at, am
 48	active	08/08/2023	50	2023-08-07 19:50:59.27	2023-08-07 19:50:59.27	55	51	["13:00"]	2	pending	\N	\N	\N
 49	active	08/08/2023	50	2023-08-07 19:53:10.843	2023-08-07 19:53:10.843	0	51	[]	2	pending	\N	\N	\N
 50	active	08/08/2023	50	2023-08-07 19:53:17.177	2023-08-07 19:53:17.177	55	51	["12:00"]	2	pending	\N	\N	\N
-51	active	08/08/2023	50	2023-08-07 19:54:29.345	2023-08-07 19:54:29.345	55	51	["13:30"]	2	pending	\N	\N	\N
 52	completed	10/08/2023	50	2023-08-10 17:08:12.912	2023-08-10 17:08:12.912	55	51	["17:30"]	2	approved	\N	t	t
 53	completed	10/08/2023	50	2023-08-10 17:09:04.718	2023-08-10 17:09:04.718	55	51	["21:30"]	2	pending	Honduras 5720, C1414 CABA, Argentina	\N	\N
 54	completed	10/08/2023	50	2023-08-10 23:13:51.275	2023-08-10 23:13:51.275	55	51	["22:30"]	2	approved	Honduras 5720, C1414 CABA, Argentina	t	t
+51	active	08/08/2023	50	2023-08-07 19:54:29.345	2023-08-07 19:54:29.345	55	51	["13:30"]	2	pending	Av. San Martín 2595, A4400 Salta, Argentina	\N	\N
 \.
 
 
@@ -510,6 +510,7 @@ COPY public.users (id, description, name, last_name, password, mail, type, creat
 1	desccc	111111111111	111111111	\N	11111111111	1	2023-04-09 18:04:41.672	2023-08-10 16:45:53.067	t	\N	\N	\N	\N	\N
 755	descriptionnnn	firstname	asdasdsda	$2b$10$FKEeFnI1rC6cwkaLD2ncJO1CvEX/58WKfUqNIfrW5fxhiOWE4h3NO	cuidador755	1	2023-06-03 12:53:35.977	2023-08-10 16:56:44.021	t	\N	\N	\N	\N	\N
 50	descriptionnnn	50updatedat20.05	asdasdsda	$2b$10$FKEeFnI1rC6cwkaLD2ncJO1CvEX/58WKfUqNIfrW5fxhiOWE4h3NO	client	0	2023-06-03 12:53:35.977	2023-08-10 17:08:55.373	t	\N	\N	Honduras 5720, C1414 CABA, Argentina	541234242445	2442222
+57	\N	wadasd	qwdasdas	$2b$10$j5bME0BIsLA/NaXdyVhy3upPnzUIRWOOqNI/JuQmJzBUmxAD2GCDy	emaiadazxcxzcl@hotmail.com	0	2023-08-11 22:03:16.558	\N	t	\N	\N	Moreno 550, C1091AAL CABA, Argentina	2931288	12323242
 \.
 
 
@@ -559,7 +560,7 @@ SELECT pg_catalog.setval('public.user_type_id_seq', 3, true);
 -- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.users_id_seq', 56, true);
+SELECT pg_catalog.setval('public.users_id_seq', 57, true);
 
 
 --

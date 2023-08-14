@@ -5,8 +5,9 @@ import dayjs from 'dayjs';
 import moment from 'moment';
 import EditUser from './EditUser';
 import UserEditData from './UserEditData';
+// import MoonLoader from "react-spinners/ClipLoader";
 
-const User = ({ user, users, setUsers, displayedUsers, setDisplayedUsers, disableUser, enableUser }) => {
+const User = ({ user, users, setUsers, displayedUsers, setDisplayedUsers, disableUser, enableUser, loading, setLoading }) => {
 
     const [showEditModal, setShowEditModal] = useState(false);
     const [showModalDisableUser, setShowModalDisableUser] = useState(false);
@@ -14,7 +15,7 @@ const User = ({ user, users, setUsers, displayedUsers, setDisplayedUsers, disabl
     const [userToDisableEnable, setUserToDisableEnable] = useState(false);
     const [userIdToEnable, setUserIdToEnable] = useState();
     const [userToEnable, setUserToEnable] = useState();
-    
+
     const handleShow = () => setShowEditModal(true);
     const handleClose = () => {
         console.log('----------- HANDLE CLOSE() -----------')
@@ -114,6 +115,7 @@ const User = ({ user, users, setUsers, displayedUsers, setDisplayedUsers, disabl
                                 <button
                                     className='bg-transparent focus:outline-none mt-2 text-gray-300 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded'
                                     onClick={() => {
+                                        setLoading(true);
                                         disableUser(userToDisableEnable);
                                         setShowModalDisableUser(false);
                                     }}
@@ -140,6 +142,7 @@ const User = ({ user, users, setUsers, displayedUsers, setDisplayedUsers, disabl
                                 <button
                                     className='bg-transparent focus:outline-none mt-2 text-gray-300 font-semibold hover:text-white py-2 px-4 border border-green-400 hover:border-transparent rounded'
                                     onClick={() => {
+                                        setLoading(true);
                                         enableUser(userIdToEnable, userToEnable);
                                         setShowModalEnableUser(false);
                                     }}

@@ -123,6 +123,7 @@ const NewUsersAdmin = () => {
         } catch (error) {
             console.error(error);
         }
+		setLoading(false);
     }
 
     // enable user function
@@ -159,6 +160,7 @@ const NewUsersAdmin = () => {
         } catch (error) {
             console.error(error);
         }
+		setLoading(false);
     }
 
 	const handleSearchUserTypeChange = (e) => {
@@ -647,6 +649,8 @@ const NewUsersAdmin = () => {
 									disableUser = {disableUser}
 									enableUser = {enableUser}
 									key={user.id}
+									loading={loading}
+									setLoading={setLoading}
 								/>
 							))
 						)}

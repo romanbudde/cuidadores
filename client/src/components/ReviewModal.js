@@ -13,6 +13,7 @@ import CuidadorBottomBar from './CuidadorBottomBar';
 import { Formik, Form, Field, ErrorMessage, useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useSearchParams } from 'react-router-dom';
+import MoonLoader from "react-spinners/ClipLoader";
 
 const ReviewModal = ({ contract, onClose, reviews, setReviews }) => {
 	const { isAuthenticated } = useContext(AuthContext);
@@ -22,6 +23,7 @@ const ReviewModal = ({ contract, onClose, reviews, setReviews }) => {
 
 	const [editDataMessageError, setEditDataMessageError] = useState(false);
 	const [displayEditDataMessage, setDisplayEditDataMessage] = useState(false);
+	const [loading, setLoading] = useState(false);
     
     const handleShow = () => setShowEditModal(true);
     const handleClose = () => {
@@ -43,6 +45,7 @@ const ReviewModal = ({ contract, onClose, reviews, setReviews }) => {
 	}
 
 	const saveReview = async (values) => {
+		setLoading(true);
         // console.log(description);
 
 		console.log('values: ', values);
@@ -80,11 +83,17 @@ const ReviewModal = ({ contract, onClose, reviews, setReviews }) => {
             console.log(add_review);
             console.log(add_review.id);
 
+			setLoading(false);
 			if (add_review.id > 0){
-				setEditDataMessageError(false);
+				console.log('Show success message')
 				setDisplayEditDataMessage(true);
-				setReviews([...reviews, add_review])
+				setEditDataMessageError(false);
 			}
+			else {
+				setEditDataMessageError(true);
+				setEditDataMessageError(true);
+			}
+			setReviews(add_review.id ? [...reviews, add_review] : reviews);
 
         } catch (error) {
             console.error(error.message);
@@ -109,9 +118,10 @@ const ReviewModal = ({ contract, onClose, reviews, setReviews }) => {
 
 	const closeEditDataMessage = () => {
         setDisplayEditDataMessage(false);
+		onClose();
     }
 
-	console.log('contract clicked on: ', contract)
+	console.log('---------- contract clicked on: ', contract)
 
 	if(isAuthenticated){
 		return (
@@ -178,50 +188,60 @@ const ReviewModal = ({ contract, onClose, reviews, setReviews }) => {
 											Enviar reseña
 										</button>
 									</div>
-									{  displayEditDataMessage && editDataMessageError === true  &&(
-										<div className='fixed inset-0 bg-gray-900 bg-opacity-40 z-50 flex justify-center items-center'>
-											<div className='bg-red-500 p-5 rounded w-9/12 flex flex-col gap-5 items-center justify-center relative'>
-												<button onClick={ closeEditDataMessage } type="button" className="absolute top-2 right-2 text-gray-100 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="defaultModal">
-													<svg aria-hidden="true" className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"></path></svg>
-													<span className="sr-only">Close modal</span>
-												</button>
-												<p className='font-bold text-2xl text-white'>Error!</p>
-												<p className='text-white text-center font-medium'>No se han podido crear la reseña.</p>
-												<FontAwesomeIcon icon={faCircleXmark} size="2xl" className='text-8xl' style={{color: "#fff",}} />
-												<button
-													className='bg-red-800 mt-10 hover:bg-blue-700 text-white font-bold py-2 px-16 rounded-full'
-													onClick={ closeEditDataMessage }
-												>
-													Continuar
-												</button>
-											</div>
-										</div>
-									)}
-									{ displayEditDataMessage && editDataMessageError === false && (
-										<div className='fixed inset-0 bg-gray-900 bg-opacity-40 z-50 flex justify-center items-center'>
-											<div className='bg-green-400 p-5 rounded w-9/12 flex flex-col gap-5 items-center justify-center relative'>
-												<button onClick={ closeEditDataMessage } type="button" className="absolute top-2 right-2 text-gray-200 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="defaultModal">
-													<svg aria-hidden="true" className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"></path></svg>
-													<span className="sr-only">Close modal</span>
-												</button>
-												<p className='font-bold text-2xl text-white'>Genial!</p>
-												<p className='text-white text-center font-medium'>Reseña creada con éxito!</p>
-												<FontAwesomeIcon icon={faCircleCheck} size="2xl" className='text-8xl' style={{color: "#fff",}} />
-												<button
-													className='bg-green-600 mt-10 hover:bg-blue-700 text-white font-bold py-2 px-16 rounded-full'
-													onClick={ closeEditDataMessage }
-												>
-													Continuar
-												</button>
-											</div>
-										</div>
-									)}
 								</Form>
 							)}
 						</Formik>
 						</div>
 					</div>
 				</div>
+				{  displayEditDataMessage && editDataMessageError === true && (
+					<div className='fixed inset-0 bg-gray-900 bg-opacity-40 z-50 flex justify-center items-center'>
+						<div className='bg-red-500 p-5 rounded w-9/12 flex flex-col gap-5 items-center justify-center relative'>
+							<button onClick={ closeEditDataMessage } type="button" className="absolute top-2 right-2 text-gray-100 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="defaultModal">
+								<svg aria-hidden="true" className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"></path></svg>
+								<span className="sr-only">Close modal</span>
+							</button>
+							<p className='font-bold text-2xl text-white'>Error!</p>
+							<p className='text-white text-center font-medium'>No se han podido crear la reseña.</p>
+							<FontAwesomeIcon icon={faCircleXmark} size="2xl" className='text-8xl' style={{color: "#fff",}} />
+							<button
+								className='bg-red-800 mt-10 hover:bg-blue-700 text-white font-bold py-2 px-16 rounded-full'
+								onClick={ closeEditDataMessage }
+							>
+								Continuar
+							</button>
+						</div>
+					</div>
+				)}
+				{ displayEditDataMessage && editDataMessageError === false && (
+					<div className='fixed inset-0 bg-gray-900 bg-opacity-40 z-50 flex justify-center items-center'>
+						<div className='bg-green-400 p-5 rounded w-9/12 flex flex-col gap-5 items-center justify-center relative'>
+							<button onClick={ closeEditDataMessage } type="button" className="absolute top-2 right-2 text-gray-200 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="defaultModal">
+								<svg aria-hidden="true" className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"></path></svg>
+								<span className="sr-only">Close modal</span>
+							</button>
+							<p className='font-bold text-2xl text-white'>Genial!</p>
+							<p className='text-white text-center font-medium'>Reseña creada con éxito!</p>
+							<FontAwesomeIcon icon={faCircleCheck} size="2xl" className='text-8xl' style={{color: "#fff",}} />
+							<button
+								className='bg-green-600 mt-10 hover:bg-blue-700 text-white font-bold py-2 px-16 rounded-full'
+								onClick={ closeEditDataMessage }
+							>
+								Continuar
+							</button>
+						</div>
+					</div>
+				)}
+				{loading && (
+					<div className='bg-gray-800 fixed inset-0 opacity-95 z-50 flex flex-row justify-center items-center'>
+						<MoonLoader
+							color="#36d7b7"
+							size={60}
+							loading={true}
+							speedMultiplier={0.7}
+						/>
+					</div>
+				)}
 			</Fragment>
 		);
 	}

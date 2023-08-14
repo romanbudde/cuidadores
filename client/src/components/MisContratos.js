@@ -34,6 +34,7 @@ const MisContratos = () => {
     const [user, setUser] = useState([]);
     const [reviews, setReviews] = useState([]);
     const [showReviewModal, setShowReviewModal] = useState(false);
+    const [contractClickedOn, setContractClickedOn] = useState('');
     const [loading, setLoading] = useState(true);
 	
 	// -- Pagination
@@ -90,6 +91,11 @@ const MisContratos = () => {
 		if(user.type === 0) {
 			navigate('/landing');
 		}
+	}
+
+	const handleDisplayReviewModal = (id) => {
+		setShowReviewModal(true);
+		setContractClickedOn(id);
 	}
 
 	const handleStatusFilterChange = (e) => {
@@ -528,19 +534,20 @@ const MisContratos = () => {
 										<>
 											<button
 												className='p-2 bg-gray-600 rounded-md ml-auto'
-												onClick={() => setShowReviewModal(true)}
+												onClick={() => handleDisplayReviewModal(contract.id)}
 											>
 												Agregar reseña
 											</button>
-											{ showReviewModal && (
-												<ReviewModal 
-													contract = {contract}
-													onClose = {onCloseReviewModal}
-													reviews = {reviews}
-													setReviews = {setReviews}
-												/>
-											)}
+											
 										</>
+									)}
+									{ showReviewModal && contract.id === contractClickedOn && (
+										<ReviewModal 
+											contract = {contract}
+											onClose = {onCloseReviewModal}
+											reviews = {reviews}
+											setReviews = {setReviews}
+										/>
 									)}
 									{ reviews.some((review) => review.contract_id === contract.id) &&(
 										<p className='text-sm text-gray-200 py-1 px-2 bg-gray-500 rounded-full ml-auto'>

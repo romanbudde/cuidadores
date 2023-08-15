@@ -36,6 +36,7 @@ const MisContratos = () => {
     const [showReviewModal, setShowReviewModal] = useState(false);
     const [contractClickedOn, setContractClickedOn] = useState('');
     const [loading, setLoading] = useState(true);
+    const [showOnlyToday, setShowOnlyToday] = useState(false);
 	
 	// -- Pagination
     // const [displayedContracts, setDisplayedContracts] = useState([]);
@@ -93,6 +94,18 @@ const MisContratos = () => {
 		}
 	}
 
+	const handleCheckboxChange = () => {
+		// if(showOnlyToday === true) {
+		// 	setDisplayedContracts(displayedContracts.filter(contract => contract.date === moment().format('DD/MM/YYYY')));
+		// }
+		// else {
+		// 	setDisplayedContracts(displayedContracts.filter(contract => contract.date === moment().format('DD/MM/YYYY')));
+		// }
+		newSortContracts(dateFilter, statusFilter, !showOnlyToday);
+		setShowOnlyToday(!showOnlyToday);
+		setCurrentPage(1);
+	}
+
 	const handleDisplayReviewModal = (id) => {
 		setShowReviewModal(true);
 		setContractClickedOn(id);
@@ -100,13 +113,13 @@ const MisContratos = () => {
 
 	const handleStatusFilterChange = (e) => {
 		setStatusFilter(e.value)
-		newSortContracts('', e.value);
+		newSortContracts('', e.value, showOnlyToday);
 		setCurrentPage(1);
 	}
 	
 	const handleDateFilterChange = (e) => {
 		setDateFilter(e.value);
-		newSortContracts(e.value, '');
+		newSortContracts(e.value, '', showOnlyToday);
 		setCurrentPage(1);
 	}
 
@@ -187,12 +200,13 @@ const MisContratos = () => {
 
 	}
 
-	const newSortContracts = (date, status) => {
+	const newSortContracts = (date, status, onlyToday) => {
 		// de todos los contratos (contracts) filtrarlos por fecha, y luego por estado, todo en esta func, y 
 		// hacer un setDisplayedContracts($contractsFiltered)
 
 		console.log('dateFilter: ', date);
 		console.log('statusFilter: ', status);
+		console.log('onlyToday: ', onlyToday);
 
 		let contractsFiltered = [];
 
@@ -245,6 +259,11 @@ const MisContratos = () => {
 				contractsFiltered = sortContractsByAll(contractsFiltered);
 			}
 		}
+
+		if(onlyToday === true){
+			contractsFiltered = sortContractsForToday(contractsFiltered);
+		}
+		
 		
 		setDisplayedContracts(contractsFiltered);
 	}
@@ -293,6 +312,19 @@ const MisContratos = () => {
 		console.log('sortContractsByAll');
 
 		console.log('by all contracts: ', contractsFiltered);
+
+		return contractsFiltered;
+	}
+
+	const sortContractsForToday = (contractsFiltered) => {
+		console.log('contracts for today!');
+
+		const currentDate = moment().format('DD/MM/YYYY');
+
+		contractsFiltered = contractsFiltered.filter(contract => {
+			const contractDate = moment(contract.date, 'DD/MM/YYYY').format('DD/MM/YYYY');
+			return contractDate === currentDate;
+		});
 
 		return contractsFiltered;
 	}
@@ -475,6 +507,21 @@ const MisContratos = () => {
 						<h1 className='flex justify-center font-bold text-lg py-4'>Mis contratos</h1>
 					</div>
 					<div className='mb-28'>
+						<div className='flex flex-row justify-center items-center gap-1 mt-3'>
+							{/* <input type="checkbox"></input>
+							<p>Mostrar contratos de hoy</p> */}
+							<input
+								type="checkbox"
+								value="only-today"
+								checked={showOnlyToday}
+								onChange={handleCheckboxChange}
+								class="w-6 h-6 text-teal-600 bg-gray-100 border-gray-300 rounded focus:ring-teal-500"
+							>	
+							</input>
+							<label for="teal-checkbox" class="ml-2 text-md font-medium text-gray-900">
+								Mostrar contratos para hoy
+							</label>
+						</div>
 						<div className='flex flex-row'>
 							<Select
 								// value={selectedHoraDesde}

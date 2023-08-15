@@ -8,7 +8,7 @@ import Cookies from 'universal-cookie';
 import { useContext } from 'react';
 import { AuthContext } from './AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronLeft, faHouse, faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faChevronLeft, faHouse, faCheck, faXmark, faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import Datepicker from "react-tailwindcss-datepicker";
 import ReviewModalAdmin from './ReviewModalAdmin';
 import '../css/datepicker.css';
@@ -46,6 +46,9 @@ const ContractsAdmin = () => {
     const [user, setUser] = useState([]);
     const [showReviewModal, setShowReviewModal] = useState(false);
     const [selectedContractId, setSelectedContractId] = useState();
+    const [totalAmount, setTotalAmount] = useState('');
+    const [totalReviewsCounter, setTotalReviewsCounter] = useState('');
+    const [averageReviewScore, setAverageReviewScore] = useState('');
     const [loading, setLoading] = useState(false);
 	
 	// -- Pagination
@@ -199,6 +202,21 @@ const ContractsAdmin = () => {
 
             setContracts(jsonData);
 			setDisplayedContracts(jsonData);
+			let total_amount = 0;
+			let total_review_score = 0;
+			let total_reviews_counter = 0;
+			jsonData.map(contract => {
+				total_amount += contract.amount;
+				total_review_score += reviews.find(review => review.contract_id === contract.id)?.score ?? 0;
+				total_reviews_counter += reviews.find(review => review.contract_id === contract.id) ? 1 : 0;
+			})
+			setTotalAmount(total_amount);
+			setTotalReviewsCounter(total_reviews_counter);
+			setAverageReviewScore(total_review_score / total_reviews_counter);
+			console.log('------- TOTAL AMOUNT: ', total_amount);
+			console.log('------- TOTAL REVIEW: ', total_review_score);
+			console.log('------- TOTAL REVIEWS COUNTER: ', total_reviews_counter);
+			console.log('------- AVG REVIEW SCORE: ', total_review_score / total_reviews_counter);
 			setLoading(false);
         } catch (error) {
             console.error(error.message);
@@ -570,6 +588,13 @@ const ContractsAdmin = () => {
 						{/* <p className='m-5'>Más nuevos</p> */}
 						{searchButtonClicked && (
 							<>
+							<div className='flex flex-col pt-5 pb-3 px-5 bg-gray-100 m-5 rounded-lg'>
+								<FontAwesomeIcon icon={faCircleInfo} className='text-2xl mr-auto mb-3'/>
+								<p>Cantidad de reseñas: {totalReviewsCounter}</p>
+								<p>Promedio puntaje de reseñas: {averageReviewScore}</p>
+								<p>Monto total entre todos los contratos: ${totalAmount}</p>
+								<p>Monto promedio entre todos los contratos: ${totalAmount}</p>
+							</div>
 							<div className='flex flex-row'>
 								<Select
 									// value={selectedHoraDesde}

@@ -16,6 +16,8 @@ import { PDFDownloadLink } from "@react-pdf/renderer";
 import Paginate from './Paginate';
 import moment from 'moment';
 import Select from 'react-select';
+import Datepicker from "react-tailwindcss-datepicker";
+import '../css/datepicker.css';
 
 import MoonLoader from "react-spinners/ClipLoader";
 
@@ -25,6 +27,7 @@ import cash_bill_icon from "../images/cash-bill.svg";
 
 const MisContratos = () => {
 	const { isAuthenticated, userId } = useContext(AuthContext);
+    const [allContracts, setAllContracts] = useState([]);
     const [contracts, setContracts] = useState([]);
     const [cuidadores, setCuidadores] = useState([]);
     const [clientes, setClientes] = useState([]);
@@ -37,6 +40,7 @@ const MisContratos = () => {
     const [contractClickedOn, setContractClickedOn] = useState('');
     const [loading, setLoading] = useState(true);
     const [showOnlyToday, setShowOnlyToday] = useState(false);
+	const [selectedDatesInterval, setSelectedDatesInterval] = useState({});
 	
 	// -- Pagination
     // const [displayedContracts, setDisplayedContracts] = useState([]);
@@ -94,6 +98,39 @@ const MisContratos = () => {
 		}
 	}
 
+	const handleSelectedDatesIntervalChange = (newInterval) => {
+		console.log("Dates interval new value:", newInterval);
+		console.log("Formatting start date:", moment(newInterval.startDate).format('DD/MM/YYYY'));
+		let startDate = moment(newInterval.startDate).format('DD/MM/YYYY');
+		let endDate = moment(newInterval.endDate).format('DD/MM/YYYY');
+
+		console.log(`startDate at Interval Change: ${startDate}`);
+		console.log(`endDate at Interval Change: ${endDate}`);
+
+		// console.log("Formatted dates interval new value:", newInterval);
+		if(newInterval.startDate && newInterval.endDate) {
+			setSelectedDatesInterval(newInterval);
+			setContracts(allContracts.filter(contract => {
+				const contractDate = moment(contract.date, 'DD/MM/YYYY');
+				return contractDate.isSameOrAfter(newInterval.startDate, 'day') && contractDate.isSameOrBefore(newInterval.endDate, 'day');
+			}));
+			setDisplayedContracts(allContracts.filter(contract => {
+				const contractDate = moment(contract.date, 'DD/MM/YYYY');
+				return contractDate.isSameOrAfter(newInterval.startDate, 'day') && contractDate.isSameOrBefore(newInterval.endDate, 'day');
+			}));
+		}
+		else {
+			setSelectedDatesInterval({});
+			setContracts(allContracts);
+			setDisplayedContracts(allContracts);
+		}
+
+
+
+		// console.log('start date: ', startDate);
+		// console.log('end date: ', endDate);
+	}
+
 	const handleCheckboxChange = () => {
 		// if(showOnlyToday === true) {
 		// 	setDisplayedContracts(displayedContracts.filter(contract => contract.date === moment().format('DD/MM/YYYY')));
@@ -104,6 +141,10 @@ const MisContratos = () => {
 		newSortContracts(dateFilter, statusFilter, !showOnlyToday);
 		setShowOnlyToday(!showOnlyToday);
 		setCurrentPage(1);
+		console.log('---------- showOnlyToday: ', showOnlyToday)
+		if(!showOnlyToday === false) {
+			handleSelectedDatesIntervalChange(selectedDatesInterval);
+		}
 	}
 
 	const handleDisplayReviewModal = (id) => {
@@ -406,6 +447,7 @@ const MisContratos = () => {
 			console.log('jsonData: ');
 			console.log(jsonData);
 
+            setAllContracts(jsonData);
             setContracts(jsonData);
 			setDisplayedContracts(jsonData);
 
@@ -507,6 +549,20 @@ const MisContratos = () => {
 						<h1 className='flex justify-center font-bold text-lg py-4'>Mis contratos</h1>
 					</div>
 					<div className='mb-28'>
+						<div className='m-5'>
+							<Datepicker
+								primaryColor={"emerald"}
+								i18n={"es"}
+								disabled={showOnlyToday}
+								// minDate={moment().subtract(1, 'day')} 
+								dateFormat="MMMM eeee d, yyyy h:mm aa"
+								separator={"a"}
+								displayFormat={"DD/MM/YYYY"}
+								value={selectedDatesInterval}
+								locale="es"
+								onChange={handleSelectedDatesIntervalChange}
+							/>
+						</div>
 						<div className='flex flex-row justify-center items-center gap-1 mt-3'>
 							{/* <input type="checkbox"></input>
 							<p>Mostrar contratos de hoy</p> */}

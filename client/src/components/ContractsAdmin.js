@@ -8,7 +8,7 @@ import Cookies from 'universal-cookie';
 import { useContext } from 'react';
 import { AuthContext } from './AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronLeft, faHouse, faCheck, faXmark, faCircleInfo } from '@fortawesome/free-solid-svg-icons';
+import { faChevronLeft, faHouse, faCheck, faXmark, faCircleInfo, faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import Datepicker from "react-tailwindcss-datepicker";
 import ReviewModalAdmin from './ReviewModalAdmin';
 import '../css/datepicker.css';
@@ -50,6 +50,7 @@ const ContractsAdmin = () => {
     const [totalReviewsCounter, setTotalReviewsCounter] = useState('');
     const [averageReviewScore, setAverageReviewScore] = useState('');
     const [loading, setLoading] = useState(false);
+    const [showEstadisticas, setShowEstadisticas] = useState(false);
 	
 	// -- Pagination
     // const [displayedContracts, setDisplayedContracts] = useState([]);
@@ -206,8 +207,8 @@ const ContractsAdmin = () => {
 			let total_review_score = 0;
 			let total_reviews_counter = 0;
 			jsonData.map(contract => {
-				total_amount += contract.amount;
-				total_review_score += reviews.find(review => review.contract_id === contract.id)?.score ?? 0;
+				total_amount += parseFloat(contract.amount);
+				total_review_score += parseFloat(reviews.find(review => review.contract_id === contract.id)?.score || 0);
 				total_reviews_counter += reviews.find(review => review.contract_id === contract.id) ? 1 : 0;
 			})
 			setTotalAmount(total_amount);
@@ -588,41 +589,35 @@ const ContractsAdmin = () => {
 						{/* <p className='m-5'>Más nuevos</p> */}
 						{searchButtonClicked && (
 							<>
-							<div className='flex flex-col pt-5 pb-3 px-5 bg-gray-100 m-5 rounded-lg'>
-								<FontAwesomeIcon icon={faCircleInfo} className='text-2xl mr-auto mb-3'/>
-								<p>Cantidad de reseñas: {totalReviewsCounter}</p>
-								<p>Promedio puntaje de reseñas: {averageReviewScore}</p>
-								<p>Monto total entre todos los contratos: ${totalAmount}</p>
-								<p>Monto promedio entre todos los contratos: ${totalAmount}</p>
-							</div>
-							<div className='flex flex-row'>
-								<Select
-									// value={selectedHoraDesde}
-									onChange={e => handleDateFilterChange(e)}
-									placeholder={'Fecha:'}
-									options={optionsFecha}
-									maxMenuHeight={240}
-									isSearchable={false}
-									className='rounded-md m-5 w-1/2'
-									theme={(theme) => ({
-										...theme,
-										borderRadius: 10,
-										colors: {
-										...theme.colors,
-										primary25: '#8FD5FF',
-										primary: 'black',
-										},
-									})}
-								/>
-								{searchButtonClicked && updateStatusSearch === 'all' && (
+								<div
+									className='flex flex-row items-center mt-7 gap-3 p-3 px-5 bg-gray-300 m-5 rounded-lg'
+									onClick={ () => setShowEstadisticas(!showEstadisticas) }
+								>
+									<FontAwesomeIcon icon={faCircleInfo} className='text-2xl'/>
+									<p>Ver estadísticas para el periodo</p>
+									{showEstadisticas ? (
+										<FontAwesomeIcon icon={faChevronUp} className='ml-auto text-lg'/>
+									) : (
+										<FontAwesomeIcon icon={faChevronDown} className='ml-auto text-lg'/>
+									)}
+								</div>
+								{ showEstadisticas && (
+									<div className='flex flex-col pt-5 pb-3 px-5 bg-gray-300 m-5 rounded-lg'>
+										<p>Cantidad de reseñas: {totalReviewsCounter}</p>
+										<p>Promedio puntaje de reseñas: {totalReviewsCounter > 0 ? (averageReviewScore).toFixed(2) : 'No hubo reseñas.'}</p>
+										<p>Monto total entre todos los contratos: ${totalAmount}</p>
+										<p>Monto promedio por contrato: ${ (totalAmount / displayedContracts.length).toFixed(2)}</p>
+									</div>
+								)}
+								<div className='flex flex-row'>
 									<Select
-										value={optionsEstado.find((option) => option.value === updateStatusFilter)}
-										onChange={e => handleStatusFilterChange(e)}
-										placeholder={'Estado:'}
-										options={statusSearch === 'all' ? optionsEstado : [optionsEstado.find((option) => option.value === updateStatusFilter)]}
+										// value={selectedHoraDesde}
+										onChange={e => handleDateFilterChange(e)}
+										placeholder={'Fecha:'}
+										options={optionsFecha}
 										maxMenuHeight={240}
-										className='rounded-md m-5 w-1/2'
 										isSearchable={false}
+										className='rounded-md m-5 w-1/2'
 										theme={(theme) => ({
 											...theme,
 											borderRadius: 10,
@@ -633,20 +628,38 @@ const ContractsAdmin = () => {
 											},
 										})}
 									/>
+									{searchButtonClicked && updateStatusSearch === 'all' && (
+										<Select
+											value={optionsEstado.find((option) => option.value === updateStatusFilter)}
+											onChange={e => handleStatusFilterChange(e)}
+											placeholder={'Estado:'}
+											options={statusSearch === 'all' ? optionsEstado : [optionsEstado.find((option) => option.value === updateStatusFilter)]}
+											maxMenuHeight={240}
+											className='rounded-md m-5 w-1/2'
+											isSearchable={false}
+											theme={(theme) => ({
+												...theme,
+												borderRadius: 10,
+												colors: {
+												...theme.colors,
+												primary25: '#8FD5FF',
+												primary: 'black',
+												},
+											})}
+										/>
+									)}
+								</div>
+								{currentPosts.length < 1 && noContractsWithThatStatusMessage !== '' && (
+									<div className='flex flex-row mx-5'>
+										<p className='text-md font-normal text-center'>No se han encontrado contratos en estado <span className='font-bold'>{noContractsWithThatStatusMessage}!</span></p>
+									</div>
 								)}
-							</div>
-							{currentPosts.length < 1 && noContractsWithThatStatusMessage !== '' && (
-								<div className='flex flex-row mx-5'>
-									<p className='text-md font-normal text-center'>No se han encontrado contratos en estado <span className='font-bold'>{noContractsWithThatStatusMessage}!</span></p>
-								</div>
-							)}
 
-							{currentPosts.length < 1 && noContractsWithThatStatusMessage === '' && (
-								<div className='flex flex-row w-full justify-center'>
-									<p className='text-md font-normal text-center'>No se han encontrado contratos!</p>
-								</div>
-							)}
-
+								{currentPosts.length < 1 && noContractsWithThatStatusMessage === '' && (
+									<div className='flex flex-row w-full justify-center'>
+										<p className='text-md font-normal text-center'>No se han encontrado contratos!</p>
+									</div>
+								)}
 							</>
 						)}
 						{/* {currentPosts.length > 0 && (

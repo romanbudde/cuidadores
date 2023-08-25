@@ -40,6 +40,7 @@ const MisContratos = () => {
     const [contractClickedOn, setContractClickedOn] = useState('');
     const [loading, setLoading] = useState(true);
     const [showOnlyToday, setShowOnlyToday] = useState(false);
+    const [showThoseToComplete, setShowThoseToComplete] = useState(false);
 	const [selectedDatesInterval, setSelectedDatesInterval] = useState({});
 	
 	// -- Pagination
@@ -106,9 +107,11 @@ const MisContratos = () => {
 
 		console.log(`startDate at Interval Change: ${startDate}`);
 		console.log(`endDate at Interval Change: ${endDate}`);
-
 		// console.log("Formatted dates interval new value:", newInterval);
+
+		// intervalo de datepicker tiene valores nuevos
 		if(newInterval.startDate && newInterval.endDate) {
+			setShowThoseToComplete(false);
 			setSelectedDatesInterval(newInterval);
 			setContracts(allContracts.filter(contract => {
 				const contractDate = moment(contract.date, 'DD/MM/YYYY');
@@ -119,13 +122,13 @@ const MisContratos = () => {
 				return contractDate.isSameOrAfter(newInterval.startDate, 'day') && contractDate.isSameOrBefore(newInterval.endDate, 'day');
 			}));
 		}
+		// el datepicker se cancela desde la cruz y se limpia el intervalo
 		else {
 			setSelectedDatesInterval({});
 			setContracts(allContracts);
 			setDisplayedContracts(allContracts);
+			setShowThoseToComplete(false);
 		}
-
-
 
 		// console.log('start date: ', startDate);
 		// console.log('end date: ', endDate);
@@ -138,11 +141,27 @@ const MisContratos = () => {
 		// else {
 		// 	setDisplayedContracts(displayedContracts.filter(contract => contract.date === moment().format('DD/MM/YYYY')));
 		// }
-		newSortContracts(dateFilter, statusFilter, !showOnlyToday);
+		newSortContracts(dateFilter, statusFilter, !showOnlyToday, showThoseToComplete);
 		setShowOnlyToday(!showOnlyToday);
 		setCurrentPage(1);
 		console.log('---------- showOnlyToday: ', showOnlyToday)
-		if(!showOnlyToday === false) {
+		if(!showOnlyToday === false && showThoseToComplete === false) {
+			handleSelectedDatesIntervalChange(selectedDatesInterval);
+		}
+	}
+
+	const handleCheckboxToCompleteChange = () => {
+		// if(showOnlyToday === true) {
+		// 	setDisplayedContracts(displayedContracts.filter(contract => contract.date === moment().format('DD/MM/YYYY')));
+		// }
+		// else {
+		// 	setDisplayedContracts(displayedContracts.filter(contract => contract.date === moment().format('DD/MM/YYYY')));
+		// }
+		newSortContracts(dateFilter, statusFilter, showOnlyToday, !showThoseToComplete);
+		setShowThoseToComplete(!showThoseToComplete);
+		setCurrentPage(1);
+		console.log('---------- showThoseToComplete: ', showThoseToComplete)
+		if(!showThoseToComplete === false && showOnlyToday === false) {
 			handleSelectedDatesIntervalChange(selectedDatesInterval);
 		}
 	}
@@ -154,13 +173,13 @@ const MisContratos = () => {
 
 	const handleStatusFilterChange = (e) => {
 		setStatusFilter(e.value)
-		newSortContracts('', e.value, showOnlyToday);
+		newSortContracts('', e.value, showOnlyToday, showThoseToComplete);
 		setCurrentPage(1);
 	}
 	
 	const handleDateFilterChange = (e) => {
 		setDateFilter(e.value);
-		newSortContracts(e.value, '', showOnlyToday);
+		newSortContracts(e.value, '', showOnlyToday, showThoseToComplete);
 		setCurrentPage(1);
 	}
 
@@ -241,7 +260,7 @@ const MisContratos = () => {
 
 	}
 
-	const newSortContracts = (date, status, onlyToday) => {
+	const newSortContracts = (date, status, onlyToday, toComplete) => {
 		// de todos los contratos (contracts) filtrarlos por fecha, y luego por estado, todo en esta func, y 
 		// hacer un setDisplayedContracts($contractsFiltered)
 
@@ -304,7 +323,10 @@ const MisContratos = () => {
 		if(onlyToday === true){
 			contractsFiltered = sortContractsForToday(contractsFiltered);
 		}
-		
+
+		if(toComplete === true){
+			contractsFiltered = sortContractsForToComplete(contractsFiltered);
+		}
 		
 		setDisplayedContracts(contractsFiltered);
 	}
@@ -365,6 +387,29 @@ const MisContratos = () => {
 		contractsFiltered = contractsFiltered.filter(contract => {
 			const contractDate = moment(contract.date, 'DD/MM/YYYY').format('DD/MM/YYYY');
 			return contractDate === currentDate;
+		});
+
+		return contractsFiltered;
+	}
+
+	const sortContractsForToComplete = (contractsFiltered) => {
+		console.log('contracts to mark as completed!');
+		const currentDate = moment().format('DD/MM/YYYY');
+
+		contractsFiltered = contractsFiltered.filter(contract => {
+			if(
+				contract.status === 'active' && 
+				(
+					moment(contract.date, 'DD/MM/YYYY').isBefore(moment().startOf('day')) || 
+					(
+						moment(contract.date, 'DD/MM/YYYY').isSame(moment(), 'day') && 
+						moment(contract.horarios[contract.horarios.length - 1], 'HH:mm').add(30,'minutes').format('HH:mm') < moment().format('HH:mm')
+					) 
+				)
+			) {
+				return true;
+			}
+			return false;
 		});
 
 		return contractsFiltered;
@@ -553,7 +598,7 @@ const MisContratos = () => {
 							<Datepicker
 								primaryColor={"emerald"}
 								i18n={"es"}
-								disabled={showOnlyToday}
+								disabled={showOnlyToday }
 								// minDate={moment().subtract(1, 'day')} 
 								dateFormat="MMMM eeee d, yyyy h:mm aa"
 								separator={"a"}
@@ -563,20 +608,37 @@ const MisContratos = () => {
 								onChange={handleSelectedDatesIntervalChange}
 							/>
 						</div>
-						<div className='flex flex-row justify-center items-center gap-1 mt-3'>
-							{/* <input type="checkbox"></input>
-							<p>Mostrar contratos de hoy</p> */}
-							<input
-								type="checkbox"
-								value="only-today"
-								checked={showOnlyToday}
-								onChange={handleCheckboxChange}
-								class="w-6 h-6 text-teal-600 bg-gray-100 border-gray-300 rounded focus:ring-teal-500"
-							>	
-							</input>
-							<label for="teal-checkbox" class="ml-2 text-md font-medium text-gray-900">
-								Mostrar contratos para hoy
-							</label>
+						<div className='flex flex-col items-start mx-5'>
+							<div className='flex flex-row justify-center items-center gap-1 mt-3'>
+								{/* <input type="checkbox"></input>
+								<p>Mostrar contratos de hoy</p> */}
+								<input
+									type="checkbox"
+									value="only-today"
+									checked={showOnlyToday}
+									onChange={handleCheckboxChange}
+									class="w-6 h-6 text-teal-600 bg-gray-100 border-gray-300 rounded focus:ring-teal-500"
+								>	
+								</input>
+								<label for="teal-checkbox" class="ml-2 text-md font-medium text-gray-900">
+									Mostrar contratos para hoy
+								</label>
+							</div>
+							{user.type === 1 && (
+								<div className='flex flex-row justify-center items-center gap-1 mt-3'>
+									<input
+										type="checkbox"
+										value="only-today"
+										checked={showThoseToComplete}
+										onChange={handleCheckboxToCompleteChange}
+										class="w-6 h-6 text-teal-600 bg-gray-100 border-gray-300 rounded focus:ring-teal-500"
+									>	
+									</input>
+									<label for="teal-checkbox" class="ml-2 text-md font-medium text-gray-900">
+										Mostrar contratos para completar
+									</label>
+								</div>
+							)}
 						</div>
 						<div className='flex flex-row'>
 							<Select

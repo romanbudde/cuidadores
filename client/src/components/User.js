@@ -73,7 +73,12 @@ const User = ({ user, users, setUsers, displayedUsers, setDisplayedUsers, disabl
                 <p>Dni: {user.telefono}</p>
                 <p>Telefono: {user.telefono}</p>
                 {user.type === 1 && (
-                    <p>Tarifa por media hora: ${user.hourly_rate}</p>
+                    <>
+                        <p>Tarifa por media hora: ${user.hourly_rate}</p>
+                        {user.average_review_score && user.average_review_score > 0 && (
+                            <p>Puntaje promedio de reseña: {user.average_review_score}</p>
+                        )}
+                    </>
                 )}
                 <p>Apellido: {user.last_name}</p>
                 <p>Dirección: {user.address}</p>

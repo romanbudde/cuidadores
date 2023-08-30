@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "./static/css/main.dcf8e987.css",
-    "main.js": "./static/js/main.54a71cbc.js",
+    "main.js": "./static/js/main.5ccbf3bc.js",
     "static/media/mercado-pago-icon.svg": "./static/media/mercado-pago-icon.a6d29f81aa0d679408a6f647e827dc09.svg",
     "static/media/cash-bill.svg": "./static/media/cash-bill.bbf242e817f294b34ec2db7af834ecc6.svg",
     "index.html": "./index.html",
     "main.dcf8e987.css.map": "./static/css/main.dcf8e987.css.map",
-    "main.54a71cbc.js.map": "./static/js/main.54a71cbc.js.map"
+    "main.5ccbf3bc.js.map": "./static/js/main.5ccbf3bc.js.map"
   },
   "entrypoints": [
     "static/css/main.dcf8e987.css",
-    "static/js/main.54a71cbc.js"
+    "static/js/main.5ccbf3bc.js"
   ]
 }

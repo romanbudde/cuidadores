@@ -10,7 +10,7 @@ import { faChevronLeft, faHouse, faMagnifyingGlass, faFolderOpen, faUser } from 
 import ClientBottomBar from './ClientBottomBar';
 // import { faHouse as heartSolido } from '@fortawesome/free-regular-svg-icons'
 
-const ListUsers = () => {
+const UserLanding = () => {
 	const { isAuthenticated } = useContext(AuthContext);
     
 	const navigate = useNavigate();
@@ -84,4 +84,4 @@ const ListUsers = () => {
 	}
 }
 
-export default ListUsers;
+export default UserLanding;

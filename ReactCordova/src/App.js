@@ -1,7 +1,6 @@
 import React, { Fragment } from "react";
 import { BrowserRouter as Router, Switch, Route, Routes, Navigate } from "react-router-dom";
 import HomePage from './routes/HomePage';
-import UsersListPage from './routes/UsersListPage';
 import UserLandingPage from './routes/UserLandingPage';
 import RegisterPage from './routes/RegisterPage';
 import FilterCuidadoresPage from './routes/FilterCuidadoresPage';
@@ -18,18 +17,10 @@ import { AuthProvider, AuthContext } from './components/AuthContext';
 import './App.css';
 
 // components
-import AddUser from './components/AddUser';
-import ListUsers from './components/ListUsers';
-import User from "./components/User";
 import NewUsersListPage from "./routes/NewUsersListPage";
 import MercadoPagoConfigPage from "./routes/MercadoPagoConfigPage";
 
 const App = () => {
-  // return (
-  //   <Fragment>
-  //       <ListUsers />
-  //   </Fragment>
-  // );
   return <div>
 	<AuthProvider>
 		<Router>
@@ -47,14 +38,6 @@ const App = () => {
 				element={
 					<>
 					{ <RegisterPage />}
-					</>
-				} 
-				/>
-				<Route 
-				path="/users_old"
-				element={
-					<>
-					{ <UsersListPage /> }
 					</>
 				} 
 				/>

@@ -8,9 +8,11 @@ services:
         - 5000:5000
       volumes:
         - ./server:/app
-      command: npm start
+      command: npm run startdevlt
+      # command: npm run startdev
+      # command: npm start
     client:
-      build: ./client
+      build: ./ReactCordova
       container_name: client_container
       # environment:
       #   <<: *common-variables
@@ -18,7 +20,7 @@ services:
       ports:
         - 3000:3000
       volumes:
-        - ./client/src:/app/src
+        - ./ReactCordova/src:/app/src
       links:
         - server
       command: npm start
@@ -37,3 +39,11 @@ services:
       restart: always
       ports:
         - 8080:8080
+
+    # ngrok:
+    #   image: wernight/ngrok
+    #   volumes:
+    #     - ./ngrok.yml:/home/ngrok/.ngrok2/ngrok.yml
+    #   ports:
+    #     - "4040:4040"
+    #   command: ["ngrok", "http", "server:5000"]

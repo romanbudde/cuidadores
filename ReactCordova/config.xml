@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="io.cordova.hellocordova" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>Cuidar</name>
+    <description>Cuidar app - built with apache cordova</description>
+    <author email="roman_budde@hotmail.com" href="https://www.google.com.ar">
+        Apache Cordova Team
+    </author>
+    <content src="/" />
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+    <access origin="*" />
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+    <allow-intent href="blob://*/*" />
+    <allow-intent href="blob:*" />
+    <allow-intent href="blob:http" />
+    <allow-intent href="tel:*" />
+    <allow-intent href="sms:*" />
+    <allow-intent href="mailto:*" />
+    <allow-intent href="geo:*" />
+
+    <preference name="hostname" value="charming-genie-43c782.netlify.app" />
+
+    <preference
+        name="SplashScreen"
+        value="screen" />
+    <preference
+        name="AutoHideSplashScreen"
+        value="true" />
+    <preference
+        name="SplashScreenDelay"
+        value="5000" />
+
+    <feature name="SplashScreen" >
+        <param
+            name="android-package"
+            value="org.apache.cordova.splashscreen.SplashScreen" />
+
+        <param
+            name="onload"
+            value="true" />
+    </feature>
+    
+    <hook type="before_prepare" src="scripts/prebuild.js"/>
+</widget>

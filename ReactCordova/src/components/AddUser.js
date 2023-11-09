@@ -83,52 +83,55 @@ const AddUser = ( {users, setUsers, show, onClose, displayedUsers, setDisplayedU
 
     const onSubmitUser = async (values) => {
         console.log('----------------- onSubmitUser -------------- ');
-
-		const authToken = cookies.get('auth-token');
-		if(!authToken) {
-			return navigate('/');
-		}
 		
-        try {
-            // const body = {description, email, userType, firstname, lastname, dni, telefono, password};
-			console.log('values: ', values)
-            const body = {...values};
-            console.log(JSON.stringify(body));
-            console.log('---- end of body to be submitted ----');
-            let newUser = {};
-            const response = await fetch((process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER : `http://localhost:5000/`) + `cuidadores/`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(body)
-            })
-                .then(response => response.json())
-                .then(result => {
-                    if(result.id){
-                        console.log('add user result: ');
-                        console.log(result);
-                        newUser = result;
+		setEditDataMessageError(false);
+		setDisplayEditDataMessage(true);
+			
+		// const authToken = cookies.get('auth-token');
+		// if(!authToken) {
+		// 	return navigate('/');
+		// }
+		
+        // try {
+        //     // const body = {description, email, userType, firstname, lastname, dni, telefono, password};
+		// 	console.log('values: ', values)
+        //     const body = {...values};
+        //     console.log(JSON.stringify(body));
+        //     console.log('---- end of body to be submitted ----');
+        //     let newUser = {};
+        //     const response = await fetch((process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER : `http://localhost:5000/`) + `cuidadores/`, {
+        //         method: "POST",
+        //         headers: {
+        //             "Content-Type": "application/json"
+        //         },
+        //         body: JSON.stringify(body)
+        //     })
+        //         .then(response => response.json())
+        //         .then(result => {
+		// 			setEditDataMessageError(false);
+		// 			setDisplayEditDataMessage(true);
+        //             // if(result.id){
+        //             //     console.log('add user result: ');
+        //             //     console.log(result);
+        //             //     newUser = result;
 
-						setEditDataMessageError(false);
-						setDisplayEditDataMessage(true);
-                    }
-					if(result.error){
-						setEditDataMessageError(true);
-						setDisplayEditDataMessage(true);
-						setAddUserErrorMessage(result.error);
-					}
-                });
+        //             // }
+		// 			// if(result.error){
+		// 			// 	setEditDataMessageError(true);
+		// 			// 	setDisplayEditDataMessage(true);
+		// 			// 	setAddUserErrorMessage(result.error);
+		// 			// }
+        //         });
 
-            // console.log(response.json();
+        //     // console.log(response.json();
 
-            setUsers(newUser.id ? [...users, newUser] : users);
-            setDisplayedUsers(newUser.id ? [...users, newUser] : users);
-            // window.location = '/';
-        }
-        catch (error) {
-            console.error (error.message);
-        }
+        //     setUsers(newUser.id ? [...users, newUser] : users);
+        //     setDisplayedUsers(newUser.id ? [...users, newUser] : users);
+        //     // window.location = '/';
+        // }
+        // catch (error) {
+        //     console.error (error.message);
+        // }
     }
 
     if(!show) return null;
@@ -308,7 +311,7 @@ const AddUser = ( {users, setUsers, show, onClose, displayedUsers, setDisplayedU
 											Dirección
 										</label>
 										<Autocomplete
-											apiKey={'AIzaSyDdEqsnFUhTgQJmNN1t4iyn3VhMLJY6Yk4'}
+											apiKey={'AIzaSyDRwPmZLQ_nyeHHBymLfqgAcdyD2TN-oWU'}
 											debounce={1000}
 											name='address'
 											placeholder='Escriba su dirección'
